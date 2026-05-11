@@ -1,0 +1,609 @@
+<form class="{{cssClass}}" autocomplete="off">
+
+  <header class="sheet-header">
+    <div class="header-left">
+      <img class="profile-img"
+           src="{{actor.img}}"
+           data-edit="img"
+           title="{{actor.name}}"
+           height="100"
+           width="100"/>
+    </div>
+  </header>
+
+  <section class="vitales-bar">
+
+    <div class="vital hp">
+      <img class="vital-icon"
+           src="systems/mtrol/assets/ui/potion-red.webp"
+           title="HP">
+
+      <label>HP</label>
+
+      <input type="number"
+             name="system.vitales.hp.value"
+             value="{{system.vitales.hp.value}}">
+
+      <span>/</span>
+
+      <input type="number"
+             name="system.vitales.hp.max"
+             value="{{system.vitales.hp.max}}">
+    </div>
+
+    <div class="vital mp">
+      <img class="vital-icon"
+           src="systems/mtrol/assets/ui/potion-blue.webp"
+           title="MP">
+
+      <label>MP</label>
+
+      <input type="number"
+             name="system.vitales.mp.value"
+             value="{{system.vitales.mp.value}}"
+             min="0">
+
+      <span class="sep">/</span>
+
+      <input type="number"
+             name="system.vitales.mp.max"
+             value="{{system.vitales.mp.max}}"
+             min="0">
+    </div>
+
+  </section>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="personaje">Personaje</a>
+    <a class="item" data-tab="competencias">Competencias</a>
+    <a class="item" data-tab="equipamiento">Equipamiento</a>
+    <a class="item" data-tab="inventario">Inventario</a>
+    <a class="item" data-tab="progresion">Progresión</a>
+  </nav>
+
+  <section class="sheet-body">
+
+    <!-- TAB PERSONAJE -->
+    <div class="tab" data-group="primary" data-tab="personaje">
+
+      <section class="stats-bar">
+
+        <div class="stat">
+          <label>Nivel</label>
+          <span>{{system.recursos.nivel}}</span>
+        </div>
+
+        <div class="stat">
+          <label>EXP</label>
+          <span>{{system.recursos.exp}}</span>
+        </div>
+
+        <div class="stat">
+          <label>Karma</label>
+          <span>{{system.recursos.karma}}</span>
+        </div>
+
+        <div class="stat">
+          <label>Dharma</label>
+          <span>{{system.recursos.dharma}}</span>
+        </div>
+
+      </section>
+
+      <section class="identidad">
+        <h2>Identidad</h2>
+
+        <div class="identidad-grid">
+
+          <div>
+            <label>Título</label>
+            <input type="text"
+                   name="system.identidad.titulo"
+                   value="{{system.identidad.titulo}}">
+          </div>
+
+          <div>
+            <label>Clase</label>
+            <input type="text"
+                   name="system.identidad.clase"
+                   value="{{system.identidad.clase}}">
+          </div>
+
+          <div>
+            <label>Raza</label>
+            <input type="text"
+                   name="system.identidad.raza"
+                   value="{{system.identidad.raza}}">
+          </div>
+
+          <div>
+            <label>Profesión</label>
+            <input type="text"
+                   name="system.identidad.profesion"
+                   value="{{system.identidad.profesion}}">
+          </div>
+
+          <div>
+            <label>Maestría</label>
+            <input type="text"
+                   name="system.identidad.maestria"
+                   value="{{system.identidad.maestria}}">
+          </div>
+
+        </div>
+      </section>
+
+      <section class="atributos">
+        <h2>Atributos</h2>
+
+        <div class="atributos-grid">
+
+          <div class="atributo rollable" data-attr="resistencia">
+            <label>Resistencia</label>
+            <input type="number"
+                   name="system.atributos.resistencia"
+                   value="{{system.atributos.resistencia}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div class="atributo rollable" data-attr="carisma">
+            <label>Carisma</label>
+            <input type="number"
+                   name="system.atributos.carisma"
+                   value="{{system.atributos.carisma}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div class="atributo rollable" data-attr="fuerza">
+            <label>Fuerza</label>
+            <input type="number"
+                   name="system.atributos.fuerza"
+                   value="{{system.atributos.fuerza}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div class="atributo rollable" data-attr="inteligencia">
+            <label>Inteligencia</label>
+            <input type="number"
+                   name="system.atributos.inteligencia"
+                   value="{{system.atributos.inteligencia}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div class="atributo rollable" data-attr="voluntad">
+            <label>Voluntad</label>
+            <input type="number"
+                   name="system.atributos.voluntad"
+                   value="{{system.atributos.voluntad}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div class="atributo rollable" data-attr="aura">
+            <label>Aura</label>
+            <input type="number"
+                   name="system.atributos.aura"
+                   value="{{system.atributos.aura}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div class="atributo rollable" data-attr="percepcion">
+            <label>Percepción</label>
+            <input type="number"
+                   name="system.atributos.percepcion"
+                   value="{{system.atributos.percepcion}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div class="atributo rollable" data-attr="destreza">
+            <label>Destreza</label>
+            <input type="number"
+                   name="system.atributos.destreza"
+                   value="{{system.atributos.destreza}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div class="atributo rollable" data-attr="suerte">
+            <label>Suerte</label>
+            <input type="number"
+                   name="system.atributos.suerte"
+                   value="{{system.atributos.suerte}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+   <!-- TAB COMPETENCIAS -->
+<div class="tab" data-group="primary" data-tab="competencias">
+
+  <section class="sheet-section">
+
+    <h2>
+      Competencias
+
+      {{#if esGM}}
+        <a class="add-competencia" title="Agregar competencia">
+          <i class="fas fa-plus"></i>
+        </a>
+      {{/if}}
+    </h2>
+
+    <div class="competencias-list">
+
+      {{#if competencias.length}}
+
+        {{#each competencias}}
+
+          <div class="competencia-row item" data-item-id="{{this.id}}">
+
+            <span class="competencia-nombre">
+              {{this.name}}
+            </span>
+
+            <span class="competencia-controles">
+
+              {{#if ../esGM}}
+                <a class="competencia-down" title="Bajar nivel">
+                  <i class="fas fa-minus"></i>
+                </a>
+              {{/if}}
+
+              <span class="competencia-nivel">
+                {{this.system.nivel}}
+              </span>
+
+              {{#if ../esGM}}
+                <a class="competencia-up" title="Subir nivel">
+                  <i class="fas fa-plus"></i>
+                </a>
+              {{/if}}
+
+              <a class="competencia-roll" title="Tirar competencia">
+                <i class="fas fa-dice"></i>
+              </a>
+
+              {{#if ../esGM}}
+                <a class="item-edit" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </a>
+              {{/if}}
+
+              {{#if ../esGM}}
+                <a class="item-delete" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </a>
+              {{/if}}
+
+            </span>
+
+          </div>
+
+        {{/each}}
+
+      {{else}}
+
+        <p class="hint">
+          No tienes competencias aún.
+        </p>
+
+      {{/if}}
+
+    </div>
+
+  </section>
+
+</div>
+
+    <!-- TAB EQUIPAMIENTO -->
+    <!-- TAB EQUIPAMIENTO -->
+<div class="tab" data-group="primary" data-tab="equipamiento">
+
+  <section class="equipamiento-tab">
+
+    <h2>Equipamiento</h2>
+
+    <table class="tabla-equipamiento">
+
+      <thead>
+        <tr>
+          <th>Slot</th>
+          <th>Objeto equipado</th>
+          <th>Defensa</th>
+          <th>Daño</th>
+          <th>Defensa actual/base</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        {{#each slotsEquipamiento as |slot|}}
+
+          <tr>
+
+            <td>
+              {{slot.label}}
+            </td>
+
+            {{#if slot.ocupado}}
+
+              <td class="item-nombre-col">
+
+                <div class="item-miniatura">
+                  <img src="{{slot.item.img}}" alt="{{slot.item.name}}">
+                  <span>{{slot.item.name}}</span>
+                </div>
+
+              </td>
+
+              <td>
+                {{slot.defensa}}
+              </td>
+
+              <td>
+
+                {{#if slot.danio}}
+                  {{slot.danio}}
+                {{else}}
+                  -
+                {{/if}}
+
+              </td>
+
+              <td>
+                {{slot.item.system.defensa}} /
+                {{slot.item.system.defensaBase}}
+              </td>
+
+              <td>
+
+                {{#if slot.item.system.roto}}
+                  <span class="objeto-roto">
+                    ROTO
+                  </span>
+                {{else}}
+                  <span class="objeto-ok">
+                    OK
+                  </span>
+                {{/if}}
+
+              </td>
+
+              <td>
+
+                <div class="item" data-item-id="{{slot.item.id}}">
+
+                  <a class="item-edit" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </a>
+
+                  <a class="item-unequip" title="Desequipar">
+                    <i class="fas fa-user-minus"></i>
+                  </a>
+
+                  <a class="item-delete" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                  </a>
+
+                </div>
+
+              </td>
+
+            {{else}}
+
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+
+            {{/if}}
+
+          </tr>
+
+        {{/each}}
+
+      </tbody>
+
+    </table>
+
+  </section>
+
+</div>
+
+    <!-- TAB INVENTARIO -->
+    <!-- TAB INVENTARIO -->
+<div class="tab" data-group="primary" data-tab="inventario">
+
+  <section class="inventario-tab">
+
+    <div class="inventario-header">
+
+      <h2>Inventario</h2>
+
+      <a class="item-create-objeto" title="Crear objeto">
+        <i class="fas fa-plus"></i>
+        Nuevo objeto
+      </a>
+
+    </div>
+
+    <div class="slots-resumen">
+      <span><strong>Slots máximos:</strong> {{inventario.maximos}}</span>
+      <span><strong>Slots usados:</strong> {{inventario.usados}}</span>
+      <span><strong>Slots libres:</strong> {{inventario.libres}}</span>
+    </div>
+
+    {{#if objetosInventario.length}}
+
+      <table class="tabla-inventario">
+
+        <thead>
+          <tr>
+            <th>Objeto</th>
+            <th>Cantidad</th>
+            <th>Slots usados</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {{#each objetosInventario as |objeto|}}
+
+            <tr class="item" data-item-id="{{objeto.id}}">
+
+              <td class="item-nombre-col">
+
+                <div class="item-miniatura">
+                  <img src="{{objeto.img}}" alt="{{objeto.name}}">
+                  <span>{{objeto.name}}</span>
+                </div>
+
+              </td>
+
+              <td>
+                {{objeto.system.cantidad}}
+              </td>
+
+              <td>
+                {{objeto.system.slots}}
+              </td>
+
+              <td>
+                {{objeto.system.tipoObjeto}}
+              </td>
+
+              <td>
+
+                <a class="item-edit" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </a>
+
+                {{#if objeto.system.equipable}}
+                  <a class="item-equip" title="Equipar">
+                    <i class="fas fa-shield-alt"></i>
+                  </a>
+                {{/if}}
+
+                <a class="item-delete" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </a>
+
+              </td>
+
+            </tr>
+
+          {{/each}}
+
+        </tbody>
+
+      </table>
+
+    {{else}}
+
+      <p class="hint">
+        No tienes objetos aún.
+      </p>
+
+    {{/if}}
+
+  </section>
+
+</div>
+
+    <!-- TAB PROGRESIÓN -->
+    <div class="tab" data-group="primary" data-tab="progresion">
+
+      <section class="sheet-section">
+
+        <div class="progresion-header">
+
+          <h2>Progresión</h2>
+
+          {{#if esGM}}
+            <button type="button" class="mtrol-restaurar-dia">
+              🌙 Restaurar día
+            </button>
+          {{/if}}
+
+        </div>
+
+        <div class="recursos-grid">
+
+          <div>
+            <label>Nivel</label>
+            <input type="number"
+                   name="system.recursos.nivel"
+                   value="{{system.recursos.nivel}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div>
+            <label>EXP</label>
+            <input type="number"
+                   name="system.recursos.exp"
+                   value="{{system.recursos.exp}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div>
+            <label>Doblones</label>
+            <input type="number"
+                   name="system.recursos.doblones"
+                   value="{{system.recursos.doblones}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div>
+            <label>Dharma</label>
+            <input type="number"
+                   name="system.recursos.dharma"
+                   value="{{system.recursos.dharma}}">
+          </div>
+
+          <div>
+            <label>Karma</label>
+            <input type="number"
+                   name="system.recursos.karma"
+                   value="{{system.recursos.karma}}">
+          </div>
+
+          <div>
+            <label>MVP</label>
+            <input type="number"
+                   name="system.recursos.mvp"
+                   value="{{system.recursos.mvp}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div>
+            <label>Estrés</label>
+            <input type="number"
+                   name="system.recursos.estres"
+                   value="{{system.recursos.estres}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+          <div>
+            <label>Corrupción</label>
+            <input type="number"
+                   name="system.recursos.corrupcion"
+                   value="{{system.recursos.corrupcion}}"
+                   {{#unless esGM}}disabled{{/unless}}>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </section>
+
+</form>

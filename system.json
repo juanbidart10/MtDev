@@ -1,0 +1,50 @@
+{
+"id": "mtrol",
+"title": "MtRol",
+"description": "Sistema oficial de MtRol para Foundry Virtual Tabletop.",
+"version": "0.0.1",
+
+"authors": [
+{
+"name": "Juan Bidart"
+}
+],
+
+"compatibility": {
+"minimum": "13",
+"verified": "13"
+},
+
+"esmodules": [
+"scripts/mtrol.js"
+],
+
+"styles": [
+  "styles/mtrol.css"
+],
+
+"packs": [],
+
+"documentTypes": {
+"Actor": {
+"personaje": {}
+},
+"Item": {
+"competencia": {},
+"objeto": {}
+}
+},
+
+"languages": [
+{
+"lang": "es",
+"name": "Español",
+"path": "lang/es.json"
+},
+{
+"lang": "en",
+"name": "English",
+"path": "lang/en.json"
+}
+]
+}

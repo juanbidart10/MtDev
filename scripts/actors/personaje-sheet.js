@@ -1,4 +1,6 @@
-export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
+const { ActorSheet } = foundry.appv1.sheets;
+
+export class PersonajeSheet extends ActorSheet {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -56,7 +58,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
         key: slotKey,
         label: this._capitalizarSlot(slotKey),
         ocupado: !!item,
-        item: item,
+        item,
         defensa: item?.system?.defensa ?? 0,
         danio: item?.system?.danio ?? ""
       };
@@ -122,7 +124,6 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
     await this.actor.createEmbeddedDocuments("Item", [itemData]);
 
     ui.notifications.info(`Objeto agregado: ${item.name}`);
-
     this.render(true);
     return true;
   }

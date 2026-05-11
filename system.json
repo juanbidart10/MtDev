@@ -1,50 +1,47 @@
 {
-"id": "mtrol",
-"title": "MtRol",
-"description": "Sistema oficial de MtRol para Foundry Virtual Tabletop.",
-"version": "0.0.1",
+  "id": "mtrol",
+  "title": "MtRol Dev",
+  "version": "0.0.1",
 
-"authors": [
-{
-"name": "Juan Bidart"
-}
-],
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
 
-"compatibility": {
-"minimum": "13",
-"verified": "13"
-},
+  "manifest": "https://raw.githubusercontent.com/juanbidart10/Mt-Dev/main/system.json",
 
-"esmodules": [
-"scripts/mtrol.js"
-],
+  "download": "https://github.com/juanbidart10/Mt-Dev/releases/latest/download/mtrol.zip",
 
-"styles": [
-  "styles/mtrol.css"
-],
+  "esmodules": [
+    "scripts/mtrol.js"
+  ],
 
-"packs": [],
+  "styles": [
+    "styles/mtrol.css"
+  ],
 
-"documentTypes": {
-"Actor": {
-"personaje": {}
-},
-"Item": {
-"competencia": {},
-"objeto": {}
-}
-},
+  "packs": [],
 
-"languages": [
-{
-"lang": "es",
-"name": "Español",
-"path": "lang/es.json"
-},
-{
-"lang": "en",
-"name": "English",
-"path": "lang/en.json"
-}
-]
+  "documentTypes": {
+    "Actor": {
+      "personaje": {}
+    },
+    "Item": {
+      "competencia": {},
+      "objeto": {}
+    }
+  },
+
+  "languages": [
+    {
+      "lang": "es",
+      "name": "Español",
+      "path": "lang/es.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ]
 }

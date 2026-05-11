@@ -5,7 +5,7 @@ export class PersonajeSheet extends ActorSheet {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["mtrol", "sheet", "actor"],
+      classes: ["mtrol", "sheet", "actor", "personaje-sheet"],
 
       template: "systems/mtrol/templates/actors/personaje-sheet.html",
 

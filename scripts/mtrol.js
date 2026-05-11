@@ -1,21 +1,33 @@
 import { PersonajeDataModel } from "../models/personaje-model.js";
 import { CompetenciaDataModel } from "../models/competencia-model.js";
 import { ObjetoDataModel } from "../models/objeto-model.js";
+
 import { PersonajeSheet } from "./actors/personaje-sheet.js";
 import { ObjetoSheet } from "./items/objeto-sheet.js";
+
 import { aplicarDanioLocalizado } from "./utils/combat.js";
 
 Hooks.once("init", function () {
   console.log("MtRol | INIT");
 
+  // =========================
+  // DATA MODELS
+  // =========================
+
   CONFIG.Actor.dataModels = {
-    personaje: PersonajeDataModel
+    personaje: PersonajeDataModel,
+    character: PersonajeDataModel // Legacy Simple Worldbuilding
   };
 
   CONFIG.Item.dataModels = {
+    objeto: ObjetoDataModel,
     competencia: CompetenciaDataModel,
-    objeto: ObjetoDataModel
+    item: ObjetoDataModel // Legacy Simple Worldbuilding
   };
+
+  // =========================
+  // ACTOR SHEETS
+  // =========================
 
   foundry.documents.collections.Actors.unregisterSheet(
     "core",
@@ -26,10 +38,14 @@ Hooks.once("init", function () {
     "mtrol",
     PersonajeSheet,
     {
-      types: ["personaje"],
+      types: ["personaje", "character"],
       makeDefault: true
     }
   );
+
+  // =========================
+  // ITEM SHEETS
+  // =========================
 
   foundry.documents.collections.Items.unregisterSheet(
     "core",
@@ -40,7 +56,7 @@ Hooks.once("init", function () {
     "mtrol",
     ObjetoSheet,
     {
-      types: ["objeto"],
+      types: ["objeto", "item"],
       makeDefault: true
     }
   );
@@ -59,6 +75,9 @@ Hooks.once("ready", function () {
   console.log("MtRol | API de combate registrada.");
 });
 
+// =========================
+// ITEM PILES - LIMPIAR COMPETENCIAS
+// =========================
 
 Hooks.on("updateActor", async (actor, changes, options, userId) => {
   if (!game.user.isGM) return;
@@ -81,8 +100,6 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
 
     console.log(`MtRol | Competencias removidas del botín: ${actor.name}`);
   }, 500);
-
-  
 });
 
 Hooks.on("renderItemPileInventoryApp", async (app, html, data) => {

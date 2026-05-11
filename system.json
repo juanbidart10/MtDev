@@ -23,14 +23,16 @@
   "packs": [],
 
   "documentTypes": {
-    "Actor": {
-      "personaje": {}
-    },
-    "Item": {
-      "competencia": {},
-      "objeto": {}
-    }
+  "Actor": {
+    "personaje": {},
+    "character": {}
   },
+  "Item": {
+    "objeto": {},
+    "competencia": {},
+    "item": {}
+  }
+},
 
   "languages": [
     {

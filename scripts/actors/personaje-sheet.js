@@ -2,15 +2,22 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["mtrol", "sheet", "personaje"],
-      template: "systems/mtrol/templates/actors/personaje-sheet.html",
+      classes: ["mtrol", "sheet", "actor"],
       width: 900,
-      height: 780,
+      height: 700,
       tabs: [{
-        navSelector: ".sheet-tabs",
+        navSelector: ".tabs",
         contentSelector: ".sheet-body",
         initial: "personaje"
-      }]
+      }],
+      dragDrop: [
+        {
+          dragSelector: ".item",
+          dropSelector: null
+        }
+      ],
+      submitOnChange: true,
+      closeOnSubmit: false
     });
   }
 
@@ -23,7 +30,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
 
     context.competencias = this.actor.items.filter(i => i.type === "competencia");
 
-    const objetos = this.actor.items.filter(i => i.type === "objeto");
+    const objetos = this.actor.items.filter(i => i.type === "objeto" || i.type === "item");
 
     context.objetosInventario = objetos.filter(o => !o.system.equipado);
     context.objetosEquipados = objetos.filter(o => o.system.equipado);
@@ -72,6 +79,54 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
     return context;
   }
 
+  async _onDrop(event) {
+    event.preventDefault();
+
+    let data;
+
+    try {
+      data = JSON.parse(event.dataTransfer.getData("text/plain"));
+    } catch (err) {
+      console.error("MtRol | Drop inválido", err);
+      return false;
+    }
+
+    if (data.type !== "Item") return false;
+
+    const item = await Item.implementation.fromDropData(data);
+
+    if (!item) {
+      ui.notifications.warn("No se pudo leer el objeto arrastrado.");
+      return false;
+    }
+
+    const itemData = item.toObject();
+
+    if (itemData.type === "item") {
+      itemData.type = "objeto";
+    }
+
+    itemData.system = {
+      tipoObjeto: itemData.system?.tipoObjeto ?? "general",
+      cantidad: itemData.system?.cantidad ?? 1,
+      slots: itemData.system?.slots ?? 1,
+      equipable: itemData.system?.equipable ?? false,
+      equipado: false,
+      slot: itemData.system?.slot ?? "",
+      defensa: itemData.system?.defensa ?? 0,
+      danio: itemData.system?.danio ?? "",
+      valor: itemData.system?.valor ?? 0,
+      descripcion: itemData.system?.descripcion ?? itemData.system?.description ?? ""
+    };
+
+    await this.actor.createEmbeddedDocuments("Item", [itemData]);
+
+    ui.notifications.info(`Objeto agregado: ${item.name}`);
+
+    this.render(true);
+    return true;
+  }
+
   async _updateObject(event, formData) {
     if (!game.user.isGM) {
       const recursosBloqueados = [
@@ -84,13 +139,8 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
       ];
 
       for (const key of Object.keys(formData)) {
-        if (key.startsWith("system.atributos.")) {
-          delete formData[key];
-        }
-
-        if (recursosBloqueados.includes(key)) {
-          delete formData[key];
-        }
+        if (key.startsWith("system.atributos.")) delete formData[key];
+        if (recursosBloqueados.includes(key)) delete formData[key];
       }
     }
 
@@ -162,9 +212,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
     await this.actor.createEmbeddedDocuments("Item", [{
       name: "Nueva competencia",
       type: "competencia",
-      system: {
-        nivel: 1
-      }
+      system: { nivel: 1 }
     }]);
   }
 
@@ -182,9 +230,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
     const nivelActual = Number(item.system.nivel || 1);
     const nivelNuevo = Math.min(5, nivelActual + 1);
 
-    await item.update({
-      "system.nivel": nivelNuevo
-    });
+    await item.update({ "system.nivel": nivelNuevo });
   }
 
   async _onCompetenciaDown(event) {
@@ -201,9 +247,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
     const nivelActual = Number(item.system.nivel || 1);
     const nivelNuevo = Math.max(1, nivelActual - 1);
 
-    await item.update({
-      "system.nivel": nivelNuevo
-    });
+    await item.update({ "system.nivel": nivelNuevo });
   }
 
   async _onCompetenciaRoll(event) {
@@ -264,7 +308,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
       return;
     }
 
-    if (item.type === "objeto" && item.system.equipado && item.system.slot) {
+    if ((item.type === "objeto" || item.type === "item") && item.system.equipado && item.system.slot) {
       await this.actor.update({
         [`system.equipamiento.${item.system.slot}`]: ""
       });
@@ -279,7 +323,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
 
     const item = this._getItemFromEvent(event);
     if (!item) return;
-    if (item.type !== "objeto") return;
+    if (item.type !== "objeto" && item.type !== "item") return;
 
     if (!item.system.equipable) {
       ui.notifications.warn("Este objeto no es equipable.");
@@ -315,9 +359,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
     if (ocupadoId && ocupadoId !== item.id) {
       const itemOcupado = this.actor.items.get(ocupadoId);
       if (itemOcupado) {
-        await itemOcupado.update({
-          "system.equipado": false
-        });
+        await itemOcupado.update({ "system.equipado": false });
       }
     }
 
@@ -325,9 +367,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
       [`system.equipamiento.${slot}`]: item.id
     });
 
-    await item.update({
-      "system.equipado": true
-    });
+    await item.update({ "system.equipado": true });
 
     this.render(true);
   }
@@ -337,7 +377,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
 
     const item = this._getItemFromEvent(event);
     if (!item) return;
-    if (item.type !== "objeto") return;
+    if (item.type !== "objeto" && item.type !== "item") return;
 
     const slot = item.system.slot;
     if (slot) {
@@ -346,9 +386,7 @@ export class PersonajeSheet extends foundry.appv1.sheets.ActorSheet {
       });
     }
 
-    await item.update({
-      "system.equipado": false
-    });
+    await item.update({ "system.equipado": false });
 
     this.render(true);
   }

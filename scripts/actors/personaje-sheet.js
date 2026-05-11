@@ -1,23 +1,30 @@
 const { ActorSheet } = foundry.appv1.sheets;
 
+
 export class PersonajeSheet extends ActorSheet {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["mtrol", "sheet", "actor"],
+
+      template: "systems/mtrol/templates/actors/personaje-sheet.html",
+
       width: 900,
       height: 700,
+
       tabs: [{
         navSelector: ".tabs",
         contentSelector: ".sheet-body",
         initial: "personaje"
       }],
+
       dragDrop: [
         {
           dragSelector: ".item",
           dropSelector: null
         }
       ],
+
       submitOnChange: true,
       closeOnSubmit: false
     });

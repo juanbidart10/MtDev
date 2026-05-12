@@ -1,7 +1,7 @@
 {
   "id": "mtrol",
   "title": "MtRol Dev",
-  "version": "1.0.4",
+  "version": "1.0.3",
 
   "compatibility": {
     "minimum": "13",
@@ -9,15 +9,19 @@
     "maximum": "14"
   },
 
-  "background": "assets/ui/mtrol-logo.webp",
-
+"media": [
+  {
+    "type": "cover",
+    "url": "assets/ui/mtrol-banner.png",
+    "caption": "MtRol Dev"
+  }
+],
   "manifest": "https://raw.githubusercontent.com/juanbidart10/Mt-Dev/main/system.json",
 
   "download": "https://github.com/juanbidart10/Mt-Dev/releases/latest/download/mtrol.zip",
 
   "esmodules": [
-    "scripts/mtrol.js",
-    "scripts/core/mtrol-rolls.js"
+    "scripts/mtrol.js"
   ],
 
   "styles": [

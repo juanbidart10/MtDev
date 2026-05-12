@@ -125,6 +125,7 @@ if (!rolls.length) return;
 if (!game.user.isGM) return;
 
 const actor = _mtrolObtenerActorDesdeMensaje(message);
+if (!actor) return;
 
     let sumaDharma = false;
     let sumaKarma = false;

@@ -10,24 +10,16 @@ import { aplicarDanioLocalizado } from "./utils/combat.js";
 Hooks.once("init", function () {
   console.log("MtRol | INIT");
 
-  // =========================
-  // DATA MODELS
-  // =========================
-
   CONFIG.Actor.dataModels = {
     personaje: PersonajeDataModel,
-    character: PersonajeDataModel // Legacy Simple Worldbuilding
+    character: PersonajeDataModel
   };
 
   CONFIG.Item.dataModels = {
     objeto: ObjetoDataModel,
     competencia: CompetenciaDataModel,
-    item: ObjetoDataModel // Legacy Simple Worldbuilding
+    item: ObjetoDataModel
   };
-
-  // =========================
-  // ACTOR SHEETS
-  // =========================
 
   foundry.documents.collections.Actors.unregisterSheet(
     "core",
@@ -42,10 +34,6 @@ Hooks.once("init", function () {
       makeDefault: true
     }
   );
-
-  // =========================
-  // ITEM SHEETS
-  // =========================
 
   foundry.documents.collections.Items.unregisterSheet(
     "core",
@@ -65,10 +53,6 @@ Hooks.once("init", function () {
 Hooks.once("ready", function () {
   console.log("MtRol | READY - Sistema completamente cargado");
 
-  // =========================
-  // API GLOBAL MTROL
-  // =========================
-
   game.mtrol = game.mtrol || {};
   game.mtrol.aplicarDanioLocalizado = aplicarDanioLocalizado;
 
@@ -79,7 +63,7 @@ Hooks.once("ready", function () {
 // ITEM PILES - LIMPIAR COMPETENCIAS
 // =========================
 
-Hooks.on("updateActor", async (actor, changes, options, userId) => {
+Hooks.on("updateActor", async (actor) => {
   if (!game.user.isGM) return;
 
   const tieneFlagItemPiles =
@@ -90,7 +74,6 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
 
   setTimeout(async () => {
     const competencias = actor.items.filter(i => i.type === "competencia");
-
     if (!competencias.length) return;
 
     await actor.deleteEmbeddedDocuments(
@@ -102,7 +85,7 @@ Hooks.on("updateActor", async (actor, changes, options, userId) => {
   }, 500);
 });
 
-Hooks.on("renderItemPileInventoryApp", async (app, html, data) => {
+Hooks.on("renderItemPileInventoryApp", async (app) => {
   if (!game.user.isGM) return;
 
   const actor = app.actor;
@@ -119,67 +102,122 @@ Hooks.on("renderItemPileInventoryApp", async (app, html, data) => {
   app.render(true);
 });
 
+// =========================
+// DHARMA / KARMA AUTOMÁTICO
+// =========================
+
 Hooks.on("createChatMessage", async (message) => {
-  if (!game.user.isGM) return;
+  try {
+    const rolls = message.rolls ?? [];
+    if (!rolls.length) return;
 
-  const rolls = message.rolls ?? [];
-  if (!rolls.length) return;
+    if (message.user?.id !== game.user.id) return;
 
-  const speaker = message.speaker;
-  if (!speaker?.actor) return;
+    const actor = _mtrolObtenerActorDesdeMensaje(message);
 
-  const actor = game.actors.get(speaker.actor);
-  if (!actor) return;
+    if (!actor) {
+      console.warn("MtRol | No se encontró actor para Dharma/Karma.");
+      return;
+    }
 
-  let resultadoEncontrado = null;
+    let sumaDharma = false;
+    let sumaKarma = false;
 
-  for (const roll of rolls) {
-    for (const term of roll.terms) {
-      if (!term.results) continue;
+    for (const roll of rolls) {
+      for (const die of roll.dice ?? []) {
+        for (const result of die.results ?? []) {
+          if (result.active === false) continue;
 
-      for (const result of term.results) {
-        const valor = result.result;
+          const valor = Number(result.result);
 
-        if (valor === 1) {
-          resultadoEncontrado = "dharma";
-          break;
-        }
-
-        if (valor === 2) {
-          resultadoEncontrado = "karma";
-          break;
+          if (valor === 1) sumaDharma = true;
+          if (valor === 2) sumaKarma = true;
         }
       }
-
-      if (resultadoEncontrado) break;
     }
 
-    if (resultadoEncontrado) break;
-  }
+    if (!sumaDharma && !sumaKarma) return;
 
-  if (!resultadoEncontrado) return;
+    const updates = {};
 
-  const path = `system.recursos.${resultadoEncontrado}`;
-  const actual = Number(foundry.utils.getProperty(actor, path) ?? 0);
-  const nuevoValor = actual + 1;
+    if (sumaDharma) {
+      const actual = Number(actor.system.recursos?.dharma ?? 0);
+      const nuevo = Math.min(5, actual + 1);
 
-  await actor.update({
-    [path]: nuevoValor
-  });
+      updates["system.recursos.dharma"] = nuevo;
 
-  if (resultadoEncontrado === "dharma") {
-    console.log(`🏆 Carta de Dharma | ${actor.name}`);
+      console.log(`🏆 MtRol | ${actor.name} suma +1 Dharma (${actual} → ${nuevo})`);
 
-    if (nuevoValor >= 5) {
-      console.log(`🏆 Carta de Dharma | ${actor.name} llegó a 5 puntos de Dharma.`);
+      if (actual === 4 && nuevo === 5) {
+        ui.notifications.info(`🏆 ${actor.name} obtuvo una Carta de Dharma`);
+
+        await ChatMessage.create({
+          speaker: ChatMessage.getSpeaker({ actor }),
+          content: `
+            <div style="text-align:center; font-size:18px; padding:10px;">
+              🏆 <strong>Carta de Dharma</strong> 🏆
+              <br><br>
+              ${actor.name} alcanzó 5 puntos de Dharma.
+            </div>
+          `
+        });
+
+        console.log(`🏆 Carta de Dharma | ${actor.name}`);
+      }
     }
-  }
 
-  if (resultadoEncontrado === "karma") {
-    console.log(`💀 Carta de Karma | ${actor.name}`);
+    if (sumaKarma) {
+      const actual = Number(actor.system.recursos?.karma ?? 0);
+      const nuevo = Math.min(5, actual + 1);
 
-    if (nuevoValor >= 5) {
-      console.log(`💀 Carta de Karma | ${actor.name} llegó a 5 puntos de Karma.`);
+      updates["system.recursos.karma"] = nuevo;
+
+      console.log(`💀 MtRol | ${actor.name} suma +1 Karma (${actual} → ${nuevo})`);
+
+      if (actual === 4 && nuevo === 5) {
+        ui.notifications.info(`💀 ${actor.name} obtuvo una Carta de Karma`);
+
+        await ChatMessage.create({
+          speaker: ChatMessage.getSpeaker({ actor }),
+          content: `
+            <div style="text-align:center; font-size:18px; padding:10px;">
+              💀 <strong>Carta de Karma</strong> 💀
+              <br><br>
+              ${actor.name} alcanzó 5 puntos de Karma.
+            </div>
+          `
+        });
+
+        console.log(`💀 Carta de Karma | ${actor.name}`);
+      }
     }
+
+    if (Object.keys(updates).length) {
+      await actor.update(updates);
+    }
+
+  } catch (error) {
+    console.error("MtRol | Error procesando Dharma/Karma:", error);
   }
 });
+
+function _mtrolObtenerActorDesdeMensaje(message) {
+  const speaker = message.speaker ?? {};
+
+  if (speaker.actor) {
+    const actor = game.actors.get(speaker.actor);
+    if (actor) return actor;
+  }
+
+  if (speaker.token && canvas?.scene) {
+    const tokenDoc = canvas.scene.tokens.get(speaker.token);
+    if (tokenDoc?.actor) return tokenDoc.actor;
+  }
+
+  if (canvas?.tokens?.controlled?.length) {
+    const actor = canvas.tokens.controlled[0]?.actor;
+    if (actor) return actor;
+  }
+
+  return null;
+}

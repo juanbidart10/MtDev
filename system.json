@@ -4,7 +4,7 @@
   "version": "0.0.24",
 
   "compatibility": {
-    "minimum": "12",
+    "minimum": "13",
     "verified": "14",
     "maximum": "14"
   },
@@ -24,7 +24,6 @@
   "packs": [],
 
   "documentTypes": {
-
     "Actor": {
       "personaje": {},
       "character": {}
@@ -35,7 +34,6 @@
       "competencia": {},
       "item": {}
     }
-
   },
 
   "languages": [

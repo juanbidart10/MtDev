@@ -62,12 +62,12 @@ export class PersonajeSheet extends ActorSheet {
       initial: "personaje"
     }],
 
-    dragDrop: [
-      {
-        dragSelector: ".item",
-        dropSelector: null
-      }
-    ],
+   dragDrop: game.user?.isGM ? [
+  {
+    dragSelector: ".item",
+    dropSelector: null
+  }
+] : [],
 
     submitOnChange: true,
     closeOnSubmit: false
@@ -134,6 +134,10 @@ export class PersonajeSheet extends ActorSheet {
 
   async _onDrop(event) {
     event.preventDefault();
+    if (!game.user.isGM) {
+  ui.notifications.warn("Solo el GM puede mover o agregar objetos.");
+  return false;
+}
 
     let data;
 

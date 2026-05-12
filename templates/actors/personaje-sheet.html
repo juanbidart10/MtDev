@@ -587,20 +587,24 @@
           </div>
 
           <div>
-            <label>Dharma</label>
-            <input type="number"
-       name="system.recursos.dharma"
-       value="{{system.recursos.dharma}}"
-       {{#unless esGM}}disabled{{/unless}}>
-          </div>
+  <label>Dharma</label>
+  <input type="number"
+         name="system.recursos.dharma"
+         value="{{system.recursos.dharma}}"
+         min="0"
+         max="5"
+         {{#unless esGM}}disabled{{/unless}}>
+</div>
 
-          <div>
-            <label>Karma</label>
-            <input type="number"
-                   name="system.recursos.karma"
-                   value="{{system.recursos.karma}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
+<div>
+  <label>Karma</label>
+  <input type="number"
+         name="system.recursos.karma"
+         value="{{system.recursos.karma}}"
+         min="0"
+         max="5"
+         {{#unless esGM}}disabled{{/unless}}>
+</div>
 
           <div>
             <label>MVP</label>

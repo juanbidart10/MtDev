@@ -5,11 +5,18 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
   }
 
   const data = actor.getRollData ? actor.getRollData() : {};
+
+  data.atributos = actor.system?.atributos ?? {};
+  data.recursos = actor.system?.recursos ?? {};
+  data.vitales = actor.system?.vitales ?? {};
+
   const roll = await new Roll(formula, data).evaluate({ async: true });
 
   if (game.dice3d) {
     await game.dice3d.showForRoll(roll, game.user, true);
   }
+
+  const rollHTML = await roll.render();
 
   let totalExtra = 0;
   const detalles = [];
@@ -30,6 +37,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
               <br>
               El dado mostró un 2.
             </div>
+            ${rollHTML}
           `
         });
 
@@ -65,6 +73,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
                 <br>
                 La tirada fue cancelada durante la cadena crítica.
               </div>
+              ${rollHTML}
             `
           });
 
@@ -107,7 +116,9 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
         <strong>${flavor}</strong>
         <br>
         Fórmula: <code>${formula}</code>
-        <br>
+        <hr>
+        ${rollHTML}
+        <hr>
         Resultado base ajustado: <strong>${totalBase}</strong>
         ${detalles.length ? `<hr>${detalles.join("<br>")}` : ""}
         <hr>

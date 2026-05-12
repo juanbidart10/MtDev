@@ -33,21 +33,18 @@ export class ObjetoDataModel extends foundry.abstract.TypeDataModel {
         initial: ""
       }),
 
-      // Defensa actual del objeto.
-      // Esta baja cuando recibe daño.
-      // Si llega a 0, el objeto se destruye.
       defensa: new fields.NumberField({
         initial: 0,
         integer: true,
-        min: 0
+        min: 0,
+        max: 20
       }),
 
-      // Defensa máxima/original del objeto.
-      // Sirve como referencia para reparación o visualización.
       defensaBase: new fields.NumberField({
         initial: 0,
         integer: true,
-        min: 0
+        min: 0,
+        max: 20
       }),
 
       danio: new fields.StringField({
@@ -64,9 +61,6 @@ export class ObjetoDataModel extends foundry.abstract.TypeDataModel {
         initial: ""
       }),
 
-      // Se mantiene por compatibilidad visual/lógica futura.
-      // Pero la regla principal será:
-      // defensa = 0 => item eliminado.
       roto: new fields.BooleanField({
         initial: false
       })

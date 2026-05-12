@@ -71,14 +71,6 @@
       </div>
 
       <div>
-        <label>Equipado</label>
-
-        <input type="checkbox"
-               name="system.equipado"
-               {{checked system.equipado}}>
-      </div>
-
-      <div>
         <label>Slot corporal</label>
 
         <select name="system.slot">
@@ -93,19 +85,26 @@
       <div>
         <label>Defensa actual</label>
 
-        <input type="number"
-               name="system.defensa"
-               value="{{system.defensa}}"
-               min="0">
+        <input
+
+             type="number"
+             name="system.defensa"
+             value="{{system.defensa}}"
+             min="0"
+             max="20">
+             
       </div>
 
       <div>
         <label>Defensa base</label>
 
-        <input type="number"
-               name="system.defensaBase"
-               value="{{system.defensaBase}}"
-               min="0">
+        <input
+  type="number"
+  name="system.defensaBase"
+  value="{{system.defensaBase}}"
+  min="0"
+  max="20">
+
       </div>
 
       <div>

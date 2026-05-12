@@ -1,7 +1,7 @@
 {
   "id": "mtrol",
   "title": "MtRol Dev",
-  "version": "0.0.14",
+  "version": "0.0.16",
 
   "compatibility": {
     "minimum": "13",
@@ -24,16 +24,16 @@
   "packs": [],
 
   "documentTypes": {
+
     "Actor": {
-      "personaje": {},
-      "character": {}
+      "personaje": {}
     },
 
     "Item": {
       "objeto": {},
-      "competencia": {},
-      "item": {}
+      "competencia": {}
     }
+
   },
 
   "languages": [

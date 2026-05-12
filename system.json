@@ -1,10 +1,10 @@
 {
   "id": "mtrol",
   "title": "MtRol Dev",
-  "version": "0.0.20",
+  "version": "0.0.21",
 
   "compatibility": {
-    "minimum": "13",
+    "minimum": "12",
     "verified": "14",
     "maximum": "14"
   },

@@ -115,7 +115,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
       <div>
         <strong>${flavor}</strong>
         <br>
-        Fórmula: <code>${formula}</code>
+        Fórmula: <code>${formulaVisual}</code>
         <hr>
         ${rollHTML}
         <hr>

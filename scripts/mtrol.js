@@ -6,6 +6,7 @@ import { PersonajeSheet } from "./actors/personaje-sheet.js";
 import { ObjetoSheet } from "./items/objeto-sheet.js";
 
 import { aplicarDanioLocalizado } from "./utils/combat.js";
+import { mtrolRoll } from "./core/mtrol-rolls.js";
 
 Hooks.once("init", function () {
   console.log("MtRol | INIT");
@@ -53,8 +54,16 @@ Hooks.once("init", function () {
 Hooks.once("ready", function () {
   console.log("MtRol | READY - Sistema completamente cargado");
 
+  // =========================
+  // API GLOBAL MTROL
+  // =========================
+
   game.mtrol = game.mtrol || {};
+
   game.mtrol.aplicarDanioLocalizado = aplicarDanioLocalizado;
+
+  // MOTOR CENTRAL DE TIRADAS
+  game.mtrol.roll = mtrolRoll;
 
   console.log("MtRol | API de combate registrada.");
 });
@@ -109,16 +118,13 @@ Hooks.on("renderItemPileInventoryApp", async (app) => {
 Hooks.on("createChatMessage", async (message) => {
   try {
     const rolls = message.rolls ?? [];
-    if (!rolls.length) return;
+if (!rolls.length) return;
 
-    if (message.user?.id !== game.user.id) return;
+// Cualquier jugador puede tirar.
+// Solo el GM actualiza Dharma/Karma automáticamente.
+if (!game.user.isGM) return;
 
-    const actor = _mtrolObtenerActorDesdeMensaje(message);
-
-    if (!actor) {
-      console.warn("MtRol | No se encontró actor para Dharma/Karma.");
-      return;
-    }
+const actor = _mtrolObtenerActorDesdeMensaje(message);
 
     let sumaDharma = false;
     let sumaKarma = false;

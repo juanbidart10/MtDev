@@ -1,7 +1,7 @@
 {
   "id": "mtrol",
   "title": "MtRol Dev",
-  "version": "0.0.25",
+  "version": "1.0.0",
 
   "compatibility": {
     "minimum": "13",
@@ -13,9 +13,10 @@
 
   "download": "https://github.com/juanbidart10/Mt-Dev/releases/latest/download/mtrol.zip",
 
-  "esmodules": [
-    "scripts/mtrol.js"
-  ],
+"esmodules": [
+  "scripts/mtrol.js",
+  "scripts/core/mtrol-rolls.js"
+],
 
   "styles": [
     "styles/mtrol.css"

@@ -1,30 +1,75 @@
 const { ActorSheet } = foundry.appv1.sheets;
 
+const FX_ATRIBUTOS = {
+  resistencia: {
+    label: "Resistencia",
+    file: "modules/JB2A_DnD5e/Library/Generic/Conditions/Boon01/ConditionBoon01_010_Green_600x600.webm"
+  },
+
+  carisma: {
+    label: "Carisma",
+    file: "modules/JB2A_DnD5e/Library/Generic/Nature/SwirlingLeavesOutburst_01_01_Regular_Pink_400x400.webm"
+  },
+
+  fuerza: {
+    label: "Fuerza",
+    file: "modules/JB2A_DnD5e/Library/Generic/Conditions/Curse01/ConditionCurse01_004_Red_600x600.webm"
+  },
+
+  inteligencia: {
+    label: "Inteligencia",
+    file: "modules/JB2A_DnD5e/Library/Generic/Template/Circle/WhirlOutro_01_Regular_Blue_600x600.webm"
+  },
+
+  voluntad: {
+    label: "Voluntad",
+    file: "modules/JB2A_DnD5e/Library/1st_Level/Bless/Bless_01_Regular_Yellow_Intro_400x400.webm"
+  },
+
+  aura: {
+    label: "Aura",
+    file: "modules/JB2A_DnD5e/Library/5th_Level/Antilife_Shell/AntilifeShell_01_Blue_Circle_400x400.webm"
+  },
+
+  percepcion: {
+    label: "Percepción",
+    file: "modules/JB2A_DnD5e/Library/TMFX/Runes/Circle/IllusionSimple_01_Circle_Normal_500.webm"
+  },
+
+  destreza: {
+    label: "Destreza",
+    file: "modules/JB2A_DnD5e/Library/Generic/Energy/Teleport/Teleport01_01_Regular_Blue_500x300.webm"
+  },
+
+  suerte: {
+    label: "Suerte",
+    file: "modules/JB2A_DnD5e/Library/Generic/Fireworks/Firework01_01_Regular_OrangeYellow_600x600.webm"
+  }
+};
 
 export class PersonajeSheet extends ActorSheet {
 
-static get defaultOptions() {
-  return foundry.utils.mergeObject(super.defaultOptions, {
-    classes: ["mtrol", "sheet", "actor", "personaje-sheet", "mtrol-personaje"],
-    template: "systems/mtrol/templates/actors/personaje-sheet.html",
-    width: 900,
-    height: 700,
-    tabs: [{
-      navSelector: ".tabs",
-      contentSelector: ".sheet-body",
-      initial: "personaje"
-    }],
-    dragDrop: [
-      {
-        dragSelector: ".item",
-        dropSelector: null
-      }
-    ],
-    submitOnChange: true,
-    closeOnSubmit: false
-  });
-}
-
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ["mtrol", "sheet", "actor", "personaje-sheet", "mtrol-personaje"],
+      template: "systems/mtrol/templates/actors/personaje-sheet.html",
+      width: 900,
+      height: 700,
+      tabs: [{
+        navSelector: ".tabs",
+        contentSelector: ".sheet-body",
+        initial: "personaje"
+      }],
+      dragDrop: [
+        {
+          dragSelector: ".item",
+          dropSelector: null
+        }
+      ],
+      submitOnChange: true,
+      closeOnSubmit: false
+    });
+  }
 
   getData(options) {
     const context = super.getData(options);
@@ -154,7 +199,7 @@ static get defaultOptions() {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find(".atributo.rollable").click(this._onRollAtributo.bind(this));
+    html.find(".mtrol-roll-atributo").click(this._onRollAtributo.bind(this));
 
     html.find(".add-competencia").click(this._onAddCompetencia.bind(this));
     html.find(".competencia-up").click(this._onCompetenciaUp.bind(this));
@@ -193,16 +238,52 @@ static get defaultOptions() {
   async _onRollAtributo(event) {
     event.preventDefault();
 
-    const attr = event.currentTarget.dataset.attr;
+    const attr = event.currentTarget.dataset.atributo || event.currentTarget.dataset.attr;
     if (!attr) return;
+
+    const fxData = FX_ATRIBUTOS[attr] ?? {
+      label: this._capitalizar(attr),
+      file: null
+    };
 
     const valor = Number(this.actor.system.atributos?.[attr] ?? 0);
     const roll = await new Roll(`1d10 + ${valor}`).evaluate({ async: true });
 
-    roll.toMessage({
+    await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `Tirada de ${this._capitalizar(attr)}`
+      flavor: `⚔️ Tirada de ${fxData.label}: 1d10 + ${valor}`
     });
+
+    await this._playAtributoFX(attr, fxData);
+  }
+
+  async _playAtributoFX(attr, fxData) {
+    if (!game.modules.get("sequencer")?.active) {
+      console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX.");
+      return;
+    }
+
+    if (!fxData?.file) {
+      console.warn(`MtRol | No hay FX configurado para el atributo: ${attr}`);
+      return;
+    }
+
+    const token = this.actor.getActiveTokens()[0];
+
+    if (!token) {
+      ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
+      return;
+    }
+
+    new Sequence()
+  .effect()
+  .file(fxData.file)
+  .atLocation(token)
+  .scale(0.8)
+  .fadeIn(500)
+  .fadeOut(500)
+  .duration(5000)
+  .play();
   }
 
   async _onAddCompetencia(event) {

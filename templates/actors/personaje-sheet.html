@@ -143,87 +143,103 @@
         </div>
       </section>
 
-      <section class="atributos">
-        <h2>Atributos</h2>
+     <section class="atributos">
+  <h2>Atributos</h2>
 
-        <div class="atributos-grid">
+  <div class="atributos-grid">
 
-          <div class="atributo rollable" data-attr="resistencia">
-            <label>Resistencia</label>
-            <input type="number"
-                   name="system.atributos.resistencia"
-                   value="{{system.atributos.resistencia}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable" data-attr="carisma">
-            <label>Carisma</label>
-            <input type="number"
-                   name="system.atributos.carisma"
-                   value="{{system.atributos.carisma}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable" data-attr="fuerza">
-            <label>Fuerza</label>
-            <input type="number"
-                   name="system.atributos.fuerza"
-                   value="{{system.atributos.fuerza}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable" data-attr="inteligencia">
-            <label>Inteligencia</label>
-            <input type="number"
-                   name="system.atributos.inteligencia"
-                   value="{{system.atributos.inteligencia}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable" data-attr="voluntad">
-            <label>Voluntad</label>
-            <input type="number"
-                   name="system.atributos.voluntad"
-                   value="{{system.atributos.voluntad}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable" data-attr="aura">
-            <label>Aura</label>
-            <input type="number"
-                   name="system.atributos.aura"
-                   value="{{system.atributos.aura}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable" data-attr="percepcion">
-            <label>Percepción</label>
-            <input type="number"
-                   name="system.atributos.percepcion"
-                   value="{{system.atributos.percepcion}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable" data-attr="destreza">
-            <label>Destreza</label>
-            <input type="number"
-                   name="system.atributos.destreza"
-                   value="{{system.atributos.destreza}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable" data-attr="suerte">
-            <label>Suerte</label>
-            <input type="number"
-                   name="system.atributos.suerte"
-                   value="{{system.atributos.suerte}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-        </div>
-      </section>
-
+    <div class="atributo rollable mtrol-roll-atributo"
+         data-attr="resistencia"
+         data-atributo="resistencia">
+      <label>Resistencia</label>
+      <input type="number"
+             name="system.atributos.resistencia"
+             value="{{system.atributos.resistencia}}"
+             {{#unless esGM}}disabled{{/unless}}>
     </div>
+
+    <div class="atributo rollable mtrol-roll-atributo"
+         data-attr="carisma"
+         data-atributo="carisma">
+      <label>Carisma</label>
+      <input type="number"
+             name="system.atributos.carisma"
+             value="{{system.atributos.carisma}}"
+             {{#unless esGM}}disabled{{/unless}}>
+    </div>
+
+    <div class="atributo rollable mtrol-roll-atributo"
+         data-attr="fuerza"
+         data-atributo="fuerza">
+      <label>Fuerza</label>
+      <input type="number"
+             name="system.atributos.fuerza"
+             value="{{system.atributos.fuerza}}"
+             {{#unless esGM}}disabled{{/unless}}>
+    </div>
+
+    <div class="atributo rollable mtrol-roll-atributo"
+         data-attr="inteligencia"
+         data-atributo="inteligencia">
+      <label>Inteligencia</label>
+      <input type="number"
+             name="system.atributos.inteligencia"
+             value="{{system.atributos.inteligencia}}"
+             {{#unless esGM}}disabled{{/unless}}>
+    </div>
+
+    <div class="atributo rollable mtrol-roll-atributo"
+         data-attr="voluntad"
+         data-atributo="voluntad">
+      <label>Voluntad</label>
+      <input type="number"
+             name="system.atributos.voluntad"
+             value="{{system.atributos.voluntad}}"
+             {{#unless esGM}}disabled{{/unless}}>
+    </div>
+
+    <div class="atributo rollable mtrol-roll-atributo"
+         data-attr="aura"
+         data-atributo="aura">
+      <label>Aura</label>
+      <input type="number"
+             name="system.atributos.aura"
+             value="{{system.atributos.aura}}"
+             {{#unless esGM}}disabled{{/unless}}>
+    </div>
+
+    <div class="atributo rollable mtrol-roll-atributo"
+         data-attr="percepcion"
+         data-atributo="percepcion">
+      <label>Percepción</label>
+      <input type="number"
+             name="system.atributos.percepcion"
+             value="{{system.atributos.percepcion}}"
+             {{#unless esGM}}disabled{{/unless}}>
+    </div>
+
+    <div class="atributo rollable mtrol-roll-atributo"
+         data-attr="destreza"
+         data-atributo="destreza">
+      <label>Destreza</label>
+      <input type="number"
+             name="system.atributos.destreza"
+             value="{{system.atributos.destreza}}"
+             {{#unless esGM}}disabled{{/unless}}>
+    </div>
+
+    <div class="atributo rollable mtrol-roll-atributo"
+         data-attr="suerte"
+         data-atributo="suerte">
+      <label>Suerte</label>
+      <input type="number"
+             name="system.atributos.suerte"
+             value="{{system.atributos.suerte}}"
+             {{#unless esGM}}disabled{{/unless}}>
+    </div>
+
+  </div>
+</section>
 
    <!-- TAB COMPETENCIAS -->
 <div class="tab" data-group="primary" data-tab="competencias">

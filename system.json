@@ -11,11 +11,12 @@
 
 "media": [
   {
-    "type": "setup",
+    "type": "cover",
     "url": "systems/mtrol/assets/ui/mtrol-banner.png",
     "thumbnail": "systems/mtrol/assets/ui/mtrol-banner.png",
     "caption": "MtRol Dev"
   }
+],
 ],
   "manifest": "https://raw.githubusercontent.com/juanbidart10/Mt-Dev/main/system.json",
 

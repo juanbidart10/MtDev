@@ -5,7 +5,8 @@
 
   "compatibility": {
     "minimum": "13",
-    "verified": "13"
+    "verified": "14",
+    "maximum": "14"
   },
 
   "manifest": "https://raw.githubusercontent.com/juanbidart10/Mt-Dev/main/system.json",
@@ -23,16 +24,17 @@
   "packs": [],
 
   "documentTypes": {
-  "Actor": {
-    "personaje": {},
-    "character": {}
+    "Actor": {
+      "personaje": {},
+      "character": {}
+    },
+
+    "Item": {
+      "objeto": {},
+      "competencia": {},
+      "item": {}
+    }
   },
-  "Item": {
-    "objeto": {},
-    "competencia": {},
-    "item": {}
-  }
-},
 
   "languages": [
     {

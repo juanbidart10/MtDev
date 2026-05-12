@@ -25,12 +25,37 @@ export async function aplicarDanioLocalizado(actorObjetivo, danio) {
 
   const danioFinal = Math.max(0, toNumber(danio));
 
-  const localizacionRoll = await new Roll("1d10").evaluate({ async: true });
-  const numeroLocalizacion = localizacionRoll.total;
-  const slotObjetivo = MTROL_BODY_SLOTS[numeroLocalizacion] ?? "pecho";
+  // =========================
+  // TIRADA VISIBLE DE LOCALIZACIÓN
+  // =========================
 
-  const itemId = actorObjetivo.system?.equipamiento?.[slotObjetivo];
-  const item = itemId ? actorObjetivo.items.get(itemId) : null;
+  const localizacionRoll = await new Roll("1d10").evaluate({ async: true });
+
+  await localizacionRoll.toMessage({
+    speaker: ChatMessage.getSpeaker({ actor: actorObjetivo }),
+    flavor: "🎯 Localización del impacto"
+  });
+
+  const numeroLocalizacion = localizacionRoll.total;
+
+  const slotObjetivo =
+    MTROL_BODY_SLOTS[numeroLocalizacion] ?? "pecho";
+
+  // =========================
+  // BUSCAR ITEM EQUIPADO
+  // =========================
+
+  const itemId =
+    actorObjetivo.system?.equipamiento?.[slotObjetivo];
+
+  const item =
+    itemId
+      ? actorObjetivo.items.get(itemId)
+      : null;
+
+  // =========================
+  // RESULTADO BASE
+  // =========================
 
   const resultado = {
     slot: slotObjetivo,
@@ -42,6 +67,10 @@ export async function aplicarDanioLocalizado(actorObjetivo, danio) {
     itemDestruido: false
   };
 
+  // =========================
+  // SIN ITEM EQUIPADO
+  // =========================
+
   if (!item) {
     const hpActual = toNumber(actorObjetivo.system?.vitales?.hp?.value ?? 0);
     const hpNuevo = Math.max(0, hpActual - danioFinal);
@@ -51,13 +80,23 @@ export async function aplicarDanioLocalizado(actorObjetivo, danio) {
     });
 
     resultado.hpPerdido = danioFinal;
+
     return resultado;
   }
 
+  // =========================
+  // ITEM EQUIPADO
+  // =========================
+
   const defensaActual = toNumber(item.system?.defensa ?? 0);
+
   resultado.defensaInicial = defensaActual;
 
   const defensaNueva = defensaActual - danioFinal;
+
+  // =========================
+  // ITEM DESTRUIDO
+  // =========================
 
   if (defensaNueva <= 0) {
     const sobrante = Math.abs(defensaNueva);
@@ -84,6 +123,10 @@ export async function aplicarDanioLocalizado(actorObjetivo, danio) {
 
     return resultado;
   }
+
+  // =========================
+  // ITEM SOBREVIVE
+  // =========================
 
   await item.update({
     "system.defensa": defensaNueva

@@ -650,3 +650,118 @@ a {
 
   box-shadow: 0 0 8px rgba(255,255,255,0.15);
 }
+
+
+.mtrol-personaje .window-content {
+  background: url("../assets/ui/sheet-bg.webp") center center / cover no-repeat !important;
+  font-family: "Morpheus", serif !important;
+  color: #e8e0c8 !important;
+}
+
+.mtrol-personaje-sheet {
+  font-family: "Morpheus", serif !important;
+  color: #e8e0c8 !important;
+}
+
+.mtrol-personaje-sheet input {
+  font-family: "Morpheus", serif !important;
+}
+
+.mtrol-personaje-sheet .sheet-header,
+.mtrol-personaje-sheet .vitales-bar,
+.mtrol-personaje-sheet .stats-bar,
+.mtrol-personaje-sheet .identidad,
+.mtrol-personaje-sheet .atributos,
+.mtrol-personaje-sheet .sheet-section,
+.mtrol-personaje-sheet .inventario-tab,
+.mtrol-personaje-sheet .equipamiento-tab {
+  background: rgba(20, 20, 20, 0.55) !important;
+  border-radius: 8px;
+  border: 1px solid rgba(180, 160, 90, 0.35);
+}
+
+.mtrol-personaje-sheet h2 {
+  color: #d8c27a !important;
+  border-bottom: 1px solid #8b2b1f;
+}
+
+.mtrol-personaje-sheet .sheet-tabs .item {
+  color: #d8c27a !important;
+}
+
+.mtrol-personaje-sheet .sheet-tabs .item.active {
+  color: #ffffff !important;
+  text-shadow: 0 0 6px #d8c27a;
+}
+
+.mtrol-personaje-sheet input[type="text"],
+.mtrol-personaje-sheet input[type="number"] {
+  color: #f2e6c9 !important;
+  background: rgba(5, 5, 5, 0.55) !important;
+  border: 1px solid rgba(210, 190, 120, 0.55) !important;
+  font-family: "Morpheus", serif !important;
+  font-size: 18px !important;
+  text-align: center;
+}
+
+.mtrol-personaje-sheet .stats-bar span,
+.mtrol-personaje-sheet .vital input,
+.mtrol-personaje-sheet .recursos-grid input,
+.mtrol-personaje-sheet .atributos input,
+.mtrol-personaje-sheet .identidad input {
+  color: #f7ead0 !important;
+  text-shadow: 0 0 4px #000;
+}
+
+.mtrol-personaje-sheet label,
+.mtrol-personaje-sheet .stat label,
+.mtrol-personaje-sheet .vital label {
+  color: #e8d28a !important;
+  text-shadow: 0 0 4px #000;
+}
+
+.mtrol-personaje-sheet .vital input {
+  width: 55px !important;
+  height: 28px !important;
+  padding: 2px 4px !important;
+}
+
+.mtrol-personaje-sheet .stats-bar span {
+  font-size: 18px !important;
+  font-weight: bold;
+}
+
+.mtrol-personaje-sheet h2,
+.mtrol-personaje-sheet .sheet-section h2,
+.mtrol-personaje-sheet .identidad h2,
+.mtrol-personaje-sheet .atributos h2,
+.mtrol-personaje-sheet .inventario-tab h2,
+.mtrol-personaje-sheet .equipamiento-tab h2 {
+  border-bottom: 1px solid rgba(212, 180, 84, 0.65) !important;
+  color: #d8c27a !important;
+}
+
+.mtrol-personaje-sheet .atributo {
+  transition: all 0.2s ease;
+}
+
+.mtrol-personaje-sheet .atributo:hover {
+  background: rgba(212, 180, 84, 0.08) !important;
+  border-color: rgba(255, 220, 120, 0.65) !important;
+  box-shadow:
+    0 0 8px rgba(212, 180, 84, 0.35),
+    inset 0 0 6px rgba(212, 180, 84, 0.15);
+}
+
+.mtrol-personaje-sheet .atributo:hover label {
+  color: #ffe9a8 !important;
+  text-shadow:
+    0 0 4px rgba(255, 220, 120, 0.8),
+    0 0 8px rgba(212, 180, 84, 0.45);
+}
+
+.mtrol-personaje-sheet .atributo:hover input {
+  border-color: rgba(255, 220, 120, 0.75) !important;
+  box-shadow:
+    0 0 6px rgba(212, 180, 84, 0.35);
+}

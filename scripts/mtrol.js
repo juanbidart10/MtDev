@@ -118,3 +118,68 @@ Hooks.on("renderItemPileInventoryApp", async (app, html, data) => {
 
   app.render(true);
 });
+
+Hooks.on("createChatMessage", async (message) => {
+  if (!game.user.isGM) return;
+
+  const rolls = message.rolls ?? [];
+  if (!rolls.length) return;
+
+  const speaker = message.speaker;
+  if (!speaker?.actor) return;
+
+  const actor = game.actors.get(speaker.actor);
+  if (!actor) return;
+
+  let resultadoEncontrado = null;
+
+  for (const roll of rolls) {
+    for (const term of roll.terms) {
+      if (!term.results) continue;
+
+      for (const result of term.results) {
+        const valor = result.result;
+
+        if (valor === 1) {
+          resultadoEncontrado = "dharma";
+          break;
+        }
+
+        if (valor === 2) {
+          resultadoEncontrado = "karma";
+          break;
+        }
+      }
+
+      if (resultadoEncontrado) break;
+    }
+
+    if (resultadoEncontrado) break;
+  }
+
+  if (!resultadoEncontrado) return;
+
+  const path = `system.recursos.${resultadoEncontrado}`;
+  const actual = Number(foundry.utils.getProperty(actor, path) ?? 0);
+  const nuevoValor = actual + 1;
+
+  await actor.update({
+    [path]: nuevoValor
+  });
+
+  if (resultadoEncontrado === "dharma") {
+    console.log(`🏆 Carta de Dharma | ${actor.name}`);
+
+    if (nuevoValor >= 5) {
+      console.log(`🏆 Carta de Dharma | ${actor.name} llegó a 5 puntos de Dharma.`);
+    }
+  }
+
+  if (resultadoEncontrado === "karma") {
+    console.log(`💀 Carta de Karma | ${actor.name}`);
+
+    if (nuevoValor >= 5) {
+      console.log(`💀 Carta de Karma | ${actor.name} llegó a 5 puntos de Karma.`);
+    }
+  }
+});

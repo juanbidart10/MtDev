@@ -50,26 +50,29 @@ const FX_ATRIBUTOS = {
 export class PersonajeSheet extends ActorSheet {
 
   static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["mtrol", "sheet", "actor", "personaje-sheet", "mtrol-personaje"],
-      template: "systems/mtrol/templates/actors/personaje-sheet.html",
-      width: 900,
-      height: 700,
-      tabs: [{
-        navSelector: ".tabs",
-        contentSelector: ".sheet-body",
-        initial: "personaje"
-      }],
-      dragDrop: [
-        {
-          dragSelector: ".item",
-          dropSelector: null
-        }
-      ],
-      submitOnChange: true,
-      closeOnSubmit: false
-    });
-  }
+  return foundry.utils.mergeObject(super.defaultOptions, {
+    classes: ["mtrol", "sheet", "actor", "personaje-sheet", "mtrol-personaje"],
+    template: "systems/mtrol/templates/actors/personaje-sheet.html",
+    width: 900,
+    height: 700,
+
+    tabs: [{
+      navSelector: ".sheet-tabs",
+      contentSelector: ".sheet-body",
+      initial: "personaje"
+    }],
+
+    dragDrop: [
+      {
+        dragSelector: ".item",
+        dropSelector: null
+      }
+    ],
+
+    submitOnChange: true,
+    closeOnSubmit: false
+  });
+}
 
   getData(options) {
     const context = super.getData(options);
@@ -258,32 +261,37 @@ export class PersonajeSheet extends ActorSheet {
   }
 
   async _playAtributoFX(attr, fxData) {
-    if (!game.modules.get("sequencer")?.active) {
-      console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX.");
-      return;
+    try {
+      if (!game.modules.get("sequencer")?.active) {
+        console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX.");
+        return;
+      }
+
+      if (!fxData?.file) {
+        console.warn(`MtRol | No hay FX configurado para el atributo: ${attr}`);
+        return;
+      }
+
+      const token = this.actor.getActiveTokens()[0];
+
+      if (!token) {
+        ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
+        return;
+      }
+
+      await new Sequence()
+        .effect()
+        .file(fxData.file)
+        .atLocation(token)
+        .scale(0.8)
+        .fadeIn(500)
+        .fadeOut(500)
+        .duration(5000)
+        .play();
+
+    } catch (error) {
+      console.error("MtRol | Error ejecutando FX de atributo:", error);
     }
-
-    if (!fxData?.file) {
-      console.warn(`MtRol | No hay FX configurado para el atributo: ${attr}`);
-      return;
-    }
-
-    const token = this.actor.getActiveTokens()[0];
-
-    if (!token) {
-      ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
-      return;
-    }
-
-    new Sequence()
-  .effect()
-  .file(fxData.file)
-  .atLocation(token)
-  .scale(0.8)
-  .fadeIn(500)
-  .fadeOut(500)
-  .duration(5000)
-  .play();
   }
 
   async _onAddCompetencia(event) {

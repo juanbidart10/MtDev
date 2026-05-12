@@ -45,7 +45,7 @@
       </div>
 
       <div>
-        <label>Slots usados</label>
+        <label>peso</label>
 
         <input type="number"
                name="system.slots"
@@ -71,16 +71,16 @@
       </div>
 
       <div>
-        <label>Slot corporal</label>
+  <label>Slot Corporal</label>
 
-        <select name="system.slot">
-          {{#each slotsCorporales as |slot|}}
-            <option value="{{slot.value}}" {{#if slot.selected}}selected{{/if}}>
-              {{slot.label}}
-            </option>
-          {{/each}}
-        </select>
-      </div>
+  <select name="system.slot">
+    {{#each slotsCorporales as |slot|}}
+      <option value="{{slot.value}}" {{#if slot.selected}}selected{{/if}}>
+        {{slot.label}}
+      </option>
+    {{/each}}
+  </select>
+</div>
 
       <div>
         <label>Defensa actual</label>
@@ -92,7 +92,7 @@
              value="{{system.defensa}}"
              min="0"
              max="20">
-             
+
       </div>
 
       <div>

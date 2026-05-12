@@ -1,7 +1,7 @@
 {
   "id": "mtrol",
   "title": "MtRol Dev",
-  "version": "1.0.3",
+  "version": "1.0.4",
 
   "compatibility": {
     "minimum": "13",
@@ -11,8 +11,9 @@
 
 "media": [
   {
-    "type": "cover",
-    "url": "assets/ui/mtrol-banner.png",
+    "type": "setup",
+    "url": "systems/mtrol/assets/ui/mtrol-banner.png",
+    "thumbnail": "systems/mtrol/assets/ui/mtrol-banner.png",
     "caption": "MtRol Dev"
   }
 ],
@@ -20,9 +21,9 @@
 
   "download": "https://github.com/juanbidart10/Mt-Dev/releases/latest/download/mtrol.zip",
 
-  "esmodules": [
-    "scripts/mtrol.js"
-  ],
+ "esmodules": [
+  "scripts/mtrol.js"
+],
 
   "styles": [
     "styles/mtrol.css"

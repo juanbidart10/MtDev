@@ -57,7 +57,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
 
   const formulaVisual = mtrolCrearFormulaVisual(formula, etiquetas);
 
-  const roll = await new Roll(formula, data).evaluate({ async: true });
+  const roll = await new Roll(formula, data).evaluate();
   const todosLosRolls = [roll];
 
   if (game.dice3d) {
@@ -83,8 +83,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
       if (valor === 2) {
         await ChatMessage.create({
           speaker: ChatMessage.getSpeaker({ actor }),
-          rolls: todosLosRolls,
-          content: `
+              content: `
             <div class="mtrol-chat-card mtrol-chat-pifia">
               <h2>💀 PIFIA 💀</h2>
               <p>El dado mostró un 2.</p>
@@ -106,7 +105,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
       detalles.push(`🎯 Crítico en d${caras}`);
 
       while (true) {
-        const extraRoll = await new Roll(`1d${caras}`).evaluate({ async: true });
+        const extraRoll = await new Roll(`1d${caras}`).evaluate();
         todosLosRolls.push(extraRoll);
 
         if (game.dice3d) {
@@ -120,8 +119,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
         if (extraValor === 2) {
           await ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor }),
-            rolls: todosLosRolls,
-            content: `
+              content: `
               <div class="mtrol-chat-card mtrol-chat-pifia">
                 <h2>💀 PIFIA 💀</h2>
                 <p>La tirada fue cancelada durante la cadena crítica.</p>
@@ -164,8 +162,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
-    rolls: todosLosRolls,
-    content: `
+       content: `
       <div class="mtrol-chat-card mtrol-chat-success">
 
         <h2>${flavor}</h2>
@@ -176,7 +173,9 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
 
         <hr>
 
-        ${rollHTMLLimpio}
+       <div class="mtrol-simple-result">
+  ${roll.total}
+</div>
 
         <hr>
 

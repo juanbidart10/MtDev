@@ -208,7 +208,9 @@ export class PersonajeSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find(".mtrol-roll-atributo").click(this._onRollAtributo.bind(this));
+    html.find(".mtrol-roll-atributo")
+  .off("click")
+  .on("click", this._onRollAtributo.bind(this));
 
    html.find(".add-competencia").click(this._onAddCompetencia.bind(this));
 html.find(".competencia-up").click(this._onCompetenciaUp.bind(this));
@@ -247,61 +249,62 @@ html.find(".competencia-roll")
     this.render(true);
   }
 
-  async _onRollAtributo(event) {
-    event.preventDefault();
+ async _onRollAtributo(event) {
+  event.preventDefault();
 
-    const attr = event.currentTarget.dataset.atributo || event.currentTarget.dataset.attr;
-    if (!attr) return;
+  const attr = event.currentTarget.dataset.atributo || event.currentTarget.dataset.attr;
+  if (!attr) return;
 
-    const fxData = FX_ATRIBUTOS[attr] ?? {
-      label: this._capitalizar(attr),
-      file: null
-    };
+  const fxData = FX_ATRIBUTOS[attr] ?? {
+    label: this._capitalizar(attr),
+    file: null
+  };
 
-    const valor = Number(this.actor.system.atributos?.[attr] ?? 0);
-    const roll = await new Roll(`1d10 + ${valor}`).evaluate({ async: true });
+  const valor = Number(this.actor.system.atributos?.[attr] ?? 0);
+  const formula = `1d10 + ${valor}`;
 
-    await roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `⚔️ Tirada de ${fxData.label}: 1d10 + ${valor}`
-    });
+  await mtrolRoll(
+    formula,
+    this.actor,
+    `⚔️ Tirada de ${fxData.label}: ${formula}`
+  );
 
-    await this._playAtributoFX(attr, fxData);
-  }
+  await this._playAtributoFX(attr, fxData);
+}
 
-  async _playAtributoFX(attr, fxData) {
-    try {
-      if (!game.modules.get("sequencer")?.active) {
-        console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX.");
-        return;
-      }
-
-      if (!fxData?.file) {
-        console.warn(`MtRol | No hay FX configurado para el atributo: ${attr}`);
-        return;
-      }
-
-      const token = this.actor.getActiveTokens()[0];
-
-      if (!token) {
-        ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
-        return;
-      }
-
-      await new Sequence()
-        .effect()
-        .file(fxData.file)
-        .atLocation(token)
-        .scale(0.8)
-        .fadeIn(500)
-        .fadeOut(500)
-        .duration(5000)
-        .play();
-
-    } catch (error) {
-      console.error("MtRol | Error ejecutando FX de atributo:", error);
+async _playAtributoFX(attr, fxData) {
+  try {
+    if (!game.modules.get("sequencer")?.active) {
+      console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX.");
+      return;
     }
+
+    if (!fxData?.file) {
+      console.warn(`MtRol | No hay FX configurado para el atributo: ${attr}`);
+      return;
+    }
+
+    const token = this.actor.getActiveTokens()[0];
+
+    if (!token) {
+      ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
+      return;
+    }
+
+    await new Sequence()
+      .effect()
+      .file(fxData.file)
+      .atLocation(token)
+      .scale(0.8)
+      .fadeIn(500)
+      .fadeOut(500)
+      .duration(5000)
+      .play();
+
+  } catch (error) {
+    console.error("MtRol | Error ejecutando FX de atributo:", error);
   }
+}
 
   async _onAddCompetencia(event) {
     event.preventDefault();
@@ -368,12 +371,62 @@ async _onCompetenciaRoll(event) {
     return;
   }
 
+  const actor = this.actor;
   const nivel = Number(item.system?.nivel ?? 1);
   const formula = this._formulaCompetenciaPorNivel(nivel);
 
+  // =========================
+  // CONSUMO DE MP + STACKING
+  // =========================
+
+  const mpActual = Number(actor.system.vitales?.mp?.value ?? 0);
+
+  const stacks = foundry.utils.duplicate(
+    actor.getFlag("mtrol", "mpStacks") ?? {}
+  );
+
+  const stackKey = item.id;
+  const usosPrevios = Number(stacks[stackKey] ?? 0);
+
+  const costoBasico = 1;
+  const costoCompetencia = usosPrevios + 1;
+  const costoTotal = costoBasico + costoCompetencia;
+
+  if (mpActual < costoTotal) {
+    ui.notifications.warn(`${actor.name} no tiene suficiente MP. Necesita ${costoTotal} MP.`);
+    return;
+  }
+
+  stacks[stackKey] = usosPrevios + 1;
+
+  await actor.update({
+    "system.vitales.mp.value": mpActual - costoTotal
+  });
+
+  await actor.setFlag("mtrol", "mpStacks", stacks);
+
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `
+      <div class="mtrol-chat-card">
+        <h2>🔷 Consumo de MP</h2>
+        <p><strong>${actor.name}</strong> usa <strong>${item.name}</strong>.</p>
+        <p>Coste básico: <strong>${costoBasico}</strong> MP</p>
+        <p>Coste por competencia: <strong>${costoCompetencia}</strong> MP</p>
+        <hr>
+        <p>Total consumido: <strong>${costoTotal}</strong> MP</p>
+        <p>MP restante: <strong>${mpActual - costoTotal}</strong></p>
+      </div>
+    `
+  });
+
+  // =========================
+  // TIRADA DE COMPETENCIA
+  // =========================
+
   await mtrolRoll(
     formula,
-    this.actor,
+    actor,
     `⚔️ Competencia: ${item.name} | Nivel ${nivel}`
   );
 }

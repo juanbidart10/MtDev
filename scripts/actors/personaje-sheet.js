@@ -1,3 +1,5 @@
+import { mtrolRoll } from "../core/mtrol-rolls.js";
+
 const { ActorSheet } = foundry.appv1.sheets;
 
 const FX_ATRIBUTOS = {
@@ -208,10 +210,13 @@ export class PersonajeSheet extends ActorSheet {
 
     html.find(".mtrol-roll-atributo").click(this._onRollAtributo.bind(this));
 
-    html.find(".add-competencia").click(this._onAddCompetencia.bind(this));
-    html.find(".competencia-up").click(this._onCompetenciaUp.bind(this));
-    html.find(".competencia-down").click(this._onCompetenciaDown.bind(this));
-    html.find(".competencia-roll").click(this._onCompetenciaRoll.bind(this));
+   html.find(".add-competencia").click(this._onAddCompetencia.bind(this));
+html.find(".competencia-up").click(this._onCompetenciaUp.bind(this));
+html.find(".competencia-down").click(this._onCompetenciaDown.bind(this));
+
+html.find(".competencia-roll")
+  .off("click")
+  .on("click", this._onCompetenciaRoll.bind(this));
 
     html.find(".mtrol-restaurar-dia").click(this._onRestaurarDia.bind(this));
 
@@ -347,22 +352,31 @@ export class PersonajeSheet extends ActorSheet {
     await item.update({ "system.nivel": nivelNuevo });
   }
 
-  async _onCompetenciaRoll(event) {
-    event.preventDefault();
+async _onCompetenciaRoll(event) {
+  event.preventDefault();
+  event.stopPropagation();
 
-    const item = this._getItemFromEvent(event);
-    if (!item) return;
+  const item = this._getItemFromEvent(event);
 
-    const nivel = Number(item.system.nivel || 1);
-    const formula = this._formulaCompetenciaPorNivel(nivel);
-
-    const roll = await new Roll(formula).evaluate({ async: true });
-
-    roll.toMessage({
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `Competencia: ${item.name} (Nivel ${nivel})`
-    });
+  if (!item) {
+    ui.notifications.warn("No se encontró la competencia.");
+    return;
   }
+
+  if (item.type !== "competencia") {
+    console.warn("MtRol | El botón de competencia no pertenece a una competencia:", item);
+    return;
+  }
+
+  const nivel = Number(item.system?.nivel ?? 1);
+  const formula = this._formulaCompetenciaPorNivel(nivel);
+
+  await mtrolRoll(
+    formula,
+    this.actor,
+    `⚔️ Competencia: ${item.name} | Nivel ${nivel}`
+  );
+}
 
   async _onCreateObjeto(event) {
     event.preventDefault();
@@ -489,14 +503,23 @@ export class PersonajeSheet extends ActorSheet {
   }
 
   _getItemFromEvent(event) {
-    const li = event.currentTarget.closest(".item");
-    if (!li) return null;
 
-    const itemId = li.dataset.itemId;
-    if (!itemId) return null;
+  const directId = event.currentTarget?.dataset?.itemId;
 
-    return this.actor.items.get(itemId) ?? null;
+  if (directId) {
+    return this.actor.items.get(directId) ?? null;
   }
+
+  const parent = event.currentTarget.closest("[data-item-id]");
+
+  if (!parent) return null;
+
+  const itemId = parent.dataset.itemId;
+
+  if (!itemId) return null;
+
+  return this.actor.items.get(itemId) ?? null;
+}
 
   _formulaCompetenciaPorNivel(nivel) {
     switch (nivel) {

@@ -244,85 +244,95 @@
     </div>
 
     <!-- TAB COMPETENCIAS -->
-    <div class="tab" data-group="primary" data-tab="competencias">
+<div class="tab" data-group="primary" data-tab="competencias">
 
-      <section class="sheet-section">
+  <section class="sheet-section">
 
-        <h2>
-          Competencias
+    <h2>
+      Competencias
 
-          {{#if esGM}}
-            <a class="add-competencia" title="Agregar competencia">
-              <i class="fas fa-plus"></i>
-            </a>
-          {{/if}}
-        </h2>
+      {{#if esGM}}
+        <a class="add-competencia" title="Agregar competencia">
+          <i class="fas fa-plus"></i>
+        </a>
+      {{/if}}
+    </h2>
 
-        <div class="competencias-list">
+    <div class="competencias-list">
 
-          {{#if competencias.length}}
+      {{#if competencias.length}}
 
-            {{#each competencias}}
+        {{#each competencias}}
 
-              <div class="competencia-row item" data-item-id="{{this.id}}">
+          <div class="competencia-row mtrol-item" data-item-id="{{this.id}}">
 
-                <span class="competencia-nombre">
-                  {{this.name}}
-                </span>
+            <span class="competencia-nombre">
+              {{this.name}}
+            </span>
 
-                <span class="competencia-controles">
+            <span class="competencia-controles">
 
-                  {{#if ../esGM}}
-                    <a class="competencia-down" title="Bajar nivel">
-                      <i class="fas fa-minus"></i>
-                    </a>
-                  {{/if}}
+              {{#if ../esGM}}
+                <a class="competencia-down"
+                   data-item-id="{{this.id}}"
+                   title="Bajar nivel">
+                  <i class="fas fa-minus"></i>
+                </a>
+              {{/if}}
 
-                  <span class="competencia-nivel">
-                    {{this.system.nivel}}
-                  </span>
+              <span class="competencia-nivel">
+                {{this.system.nivel}}
+              </span>
 
-                  {{#if ../esGM}}
-                    <a class="competencia-up" title="Subir nivel">
-                      <i class="fas fa-plus"></i>
-                    </a>
-                  {{/if}}
+              {{#if ../esGM}}
+                <a class="competencia-up"
+                   data-item-id="{{this.id}}"
+                   title="Subir nivel">
+                  <i class="fas fa-plus"></i>
+                </a>
+              {{/if}}
 
-                  <a class="competencia-roll" title="Tirar competencia">
-                    <i class="fas fa-dice"></i>
-                  </a>
+              <a class="competencia-roll"
+                 data-item-id="{{this.id}}"
+                 title="Tirar competencia">
+                <i class="fas fa-dice"></i>
+              </a>
 
-                  {{#if ../esGM}}
-                    <a class="item-edit" title="Editar">
-                      <i class="fas fa-edit"></i>
-                    </a>
-                  {{/if}}
+              {{#if ../esGM}}
+                <a class="item-edit"
+                   data-item-id="{{this.id}}"
+                   title="Editar">
+                  <i class="fas fa-edit"></i>
+                </a>
+              {{/if}}
 
-                  {{#if ../esGM}}
-                    <a class="item-delete" title="Eliminar">
-                      <i class="fas fa-trash"></i>
-                    </a>
-                  {{/if}}
+              {{#if ../esGM}}
+                <a class="item-delete"
+                   data-item-id="{{this.id}}"
+                   title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </a>
+              {{/if}}
 
-                </span>
+            </span>
 
-              </div>
+          </div>
 
-            {{/each}}
+        {{/each}}
 
-          {{else}}
+      {{else}}
 
-            <p class="hint">
-              No tienes competencias aún.
-            </p>
+        <p class="hint">
+          No tienes competencias aún.
+        </p>
 
-          {{/if}}
-
-        </div>
-
-      </section>
+      {{/if}}
 
     </div>
+
+  </section>
+
+</div>
 
     <!-- TAB EQUIPAMIENTO -->
     <div class="tab" data-group="primary" data-tab="equipamiento">

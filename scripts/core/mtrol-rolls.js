@@ -1,3 +1,23 @@
+function mtrolSlug(texto) {
+  return String(texto ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function mtrolCrearFormulaVisual(formula, etiquetas = {}) {
+  let visual = formula;
+
+  for (const [clave, etiqueta] of Object.entries(etiquetas)) {
+    visual = visual.replaceAll(`@${clave}`, etiqueta);
+  }
+
+  return visual;
+}
+
 export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
   if (!actor) {
     ui.notifications.warn("MtRol | No hay actor para la tirada.");
@@ -9,14 +29,46 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
   data.atributos = actor.system?.atributos ?? {};
   data.recursos = actor.system?.recursos ?? {};
   data.vitales = actor.system?.vitales ?? {};
+  data.competencias = data.competencias ?? {};
+
+  const etiquetas = {
+    "atributos.aura": "AURA",
+    "atributos.percepcion": "PERCEPCIÓN",
+    "atributos.fuerza": "FUERZA",
+    "atributos.destreza": "DESTREZA",
+    "atributos.inteligencia": "INTELIGENCIA",
+    "atributos.voluntad": "VOLUNTAD",
+    "atributos.resistencia": "RESISTENCIA",
+    "atributos.carisma": "CARISMA",
+    "atributos.suerte": "SUERTE"
+  };
+
+  for (const item of actor.items ?? []) {
+    if (item.type !== "competencia") continue;
+
+    const slug = mtrolSlug(item.name);
+    if (!slug) continue;
+
+    const nivel = Number(item.system?.nivel ?? 0);
+
+    data.competencias[slug] = nivel;
+    etiquetas[`competencias.${slug}`] = item.name.toUpperCase();
+  }
+
+  const formulaVisual = mtrolCrearFormulaVisual(formula, etiquetas);
 
   const roll = await new Roll(formula, data).evaluate({ async: true });
+  const todosLosRolls = [roll];
 
   if (game.dice3d) {
     await game.dice3d.showForRoll(roll, game.user, true);
   }
 
   const rollHTML = await roll.render();
+  const rollHTMLLimpio = rollHTML.replace(
+    /<div class="dice-formula">[\s\S]*?<\/div>/,
+    ""
+  );
 
   let totalExtra = 0;
   const detalles = [];
@@ -31,13 +83,13 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
       if (valor === 2) {
         await ChatMessage.create({
           speaker: ChatMessage.getSpeaker({ actor }),
+          rolls: todosLosRolls,
           content: `
-            <div style="text-align:center; font-size:18px; padding:10px;">
-              💀 <strong>PIFIA</strong> 💀
-              <br>
-              El dado mostró un 2.
+            <div class="mtrol-chat-card mtrol-chat-pifia">
+              <h2>💀 PIFIA 💀</h2>
+              <p>El dado mostró un 2.</p>
+              ${rollHTMLLimpio}
             </div>
-            ${rollHTML}
           `
         });
 
@@ -55,6 +107,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
 
       while (true) {
         const extraRoll = await new Roll(`1d${caras}`).evaluate({ async: true });
+        todosLosRolls.push(extraRoll);
 
         if (game.dice3d) {
           await game.dice3d.showForRoll(extraRoll, game.user, true);
@@ -67,13 +120,13 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
         if (extraValor === 2) {
           await ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor }),
+            rolls: todosLosRolls,
             content: `
-              <div style="text-align:center; font-size:18px; padding:10px;">
-                💀 <strong>PIFIA</strong> 💀
-                <br>
-                La tirada fue cancelada durante la cadena crítica.
+              <div class="mtrol-chat-card mtrol-chat-pifia">
+                <h2>💀 PIFIA 💀</h2>
+                <p>La tirada fue cancelada durante la cadena crítica.</p>
+                ${rollHTMLLimpio}
               </div>
-              ${rollHTML}
             `
           });
 
@@ -111,18 +164,45 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
+    rolls: todosLosRolls,
     content: `
-      <div>
-        <strong>${flavor}</strong>
-        <br>
-        Fórmula: <code>${formulaVisual}</code>
+      <div class="mtrol-chat-card mtrol-chat-success">
+
+        <h2>${flavor}</h2>
+
+        <div class="mtrol-formula-box">
+          ⚔️ ${formulaVisual}
+        </div>
+
         <hr>
-        ${rollHTML}
+
+        ${rollHTMLLimpio}
+
         <hr>
-        Resultado base ajustado: <strong>${totalBase}</strong>
-        ${detalles.length ? `<hr>${detalles.join("<br>")}` : ""}
+
+        <div class="mtrol-result-line">
+          Resultado base ajustado:
+          <strong>${totalBase}</strong>
+        </div>
+
+        ${
+          detalles.length
+            ? `
+              <hr>
+              <div class="mtrol-details">
+                ${detalles.join("<br>")}
+              </div>
+            `
+            : ""
+        }
+
         <hr>
-        Total final: <strong>${totalFinal}</strong>
+
+        <div class="mtrol-total">
+          Total final:
+          <strong>${totalFinal}</strong>
+        </div>
+
       </div>
     `
   });

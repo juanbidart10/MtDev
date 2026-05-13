@@ -72,17 +72,23 @@ Hooks.once("ready", function () {
 // ITEM PILES - LIMPIAR COMPETENCIAS
 // =========================
 
-Hooks.on("updateActor", async (actor) => {
+Hooks.on("updateActor", async (actor, changes) => {
+
   if (!game.user.isGM) return;
 
-  const tieneFlagItemPiles =
-    actor.getFlag("item-piles", "data") ||
-    actor.flags?.["item-piles"];
+  // SOLO ejecutar cuando el actor
+  // realmente se convierte en Item Pile / Loot
+  const seConvirtioEnLoot =
+    changes?.flags?.["item-piles"];
 
-  if (!tieneFlagItemPiles) return;
+  if (!seConvirtioEnLoot) return;
 
   setTimeout(async () => {
-    const competencias = actor.items.filter(i => i.type === "competencia");
+
+    const competencias = actor.items.filter(
+      i => i.type === "competencia"
+    );
+
     if (!competencias.length) return;
 
     await actor.deleteEmbeddedDocuments(
@@ -90,25 +96,12 @@ Hooks.on("updateActor", async (actor) => {
       competencias.map(i => i.id)
     );
 
-    console.log(`MtRol | Competencias removidas del botín: ${actor.name}`);
+    console.log(
+      `MtRol | Competencias removidas del loot: ${actor.name}`
+    );
+
   }, 500);
-});
 
-Hooks.on("renderItemPileInventoryApp", async (app) => {
-  if (!game.user.isGM) return;
-
-  const actor = app.actor;
-  if (!actor) return;
-
-  const competencias = actor.items.filter(i => i.type === "competencia");
-  if (!competencias.length) return;
-
-  await actor.deleteEmbeddedDocuments(
-    "Item",
-    competencias.map(i => i.id)
-  );
-
-  app.render(true);
 });
 
 // =========================

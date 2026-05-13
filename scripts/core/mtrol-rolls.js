@@ -61,8 +61,8 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
   const todosLosRolls = [roll];
 
   if (game.dice3d) {
-    await game.dice3d.showForRoll(roll, game.user, true);
-  }
+  game.dice3d.showForRoll(roll, game.user, false);
+}
 
   const rollHTML = await roll.render();
   const rollHTMLLimpio = rollHTML.replace(
@@ -108,9 +108,9 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
         const extraRoll = await new Roll(`1d${caras}`).evaluate();
         todosLosRolls.push(extraRoll);
 
-        if (game.dice3d) {
-          await game.dice3d.showForRoll(extraRoll, game.user, true);
-        }
+       if (game.dice3d) {
+  game.dice3d.showForRoll(roll, game.user, false);
+}
 
         const extraValor = Number(extraRoll.total);
 

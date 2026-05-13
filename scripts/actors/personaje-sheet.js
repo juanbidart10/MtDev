@@ -64,9 +64,9 @@ export class PersonajeSheet extends ActorSheet {
       initial: "personaje"
     }],
 
-   dragDrop: game.user?.isGM ? [
+dragDrop: game.user?.isGM ? [
   {
-    dragSelector: ".item",
+    dragSelector: ".mtrol-draggable-objeto",
     dropSelector: null
   }
 ] : [],
@@ -208,7 +208,7 @@ export class PersonajeSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find(".mtrol-roll-atributo")
+ html.find(".mtrol-roll-atributo")
   .off("click")
   .on("click", this._onRollAtributo.bind(this));
 
@@ -249,7 +249,7 @@ html.find(".competencia-roll")
     this.render(true);
   }
 
- async _onRollAtributo(event) {
+async _onRollAtributo(event) {
   event.preventDefault();
 
   const attr = event.currentTarget.dataset.atributo || event.currentTarget.dataset.attr;

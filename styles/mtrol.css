@@ -919,3 +919,8 @@ a {
   font-size: 16px;
   font-weight: bold;
 }
+
+/* Permite que los jugadores tiren atributos aunque el input esté bloqueado */
+.mtrol-personaje-sheet .atributo input:disabled {
+  pointer-events: none;
+}

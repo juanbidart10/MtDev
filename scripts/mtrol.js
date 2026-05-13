@@ -111,14 +111,16 @@ Hooks.on("updateActor", async (actor, changes) => {
 Hooks.on("createChatMessage", async (message) => {
   try {
     const rolls = message.rolls ?? [];
-if (!rolls.length) return;
+    if (!rolls.length) return;
 
-// Cualquier jugador puede tirar.
-// Solo el GM actualiza Dharma/Karma automáticamente.
-if (!game.user.isGM) return;
+    if (!game.user.isGM) return;
 
-const actor = _mtrolObtenerActorDesdeMensaje(message);
-if (!actor) return;
+    const actor = _mtrolObtenerActorDesdeMensaje(message);
+
+    if (!actor) {
+      console.warn("MtRol | No se pudo detectar actor para Dharma/Karma:", message);
+      return;
+    }
 
     let sumaDharma = false;
     let sumaKarma = false;
@@ -161,8 +163,6 @@ if (!actor) return;
             </div>
           `
         });
-
-        console.log(`🏆 Carta de Dharma | ${actor.name}`);
       }
     }
 
@@ -187,8 +187,6 @@ if (!actor) return;
             </div>
           `
         });
-
-        console.log(`💀 Carta de Karma | ${actor.name}`);
       }
     }
 
@@ -217,6 +215,13 @@ function _mtrolObtenerActorDesdeMensaje(message) {
   if (canvas?.tokens?.controlled?.length) {
     const actor = canvas.tokens.controlled[0]?.actor;
     if (actor) return actor;
+  }
+
+  const userId = message.user?.id ?? message.user;
+  const user = game.users.get(userId);
+
+  if (user?.character) {
+    return user.character;
   }
 
   return null;

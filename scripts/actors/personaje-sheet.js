@@ -266,7 +266,7 @@ async _onRollAtributo(event) {
   await mtrolRoll(
     formula,
     this.actor,
-    `⚔️ Tirada de ${fxData.label}: ${formula}`
+    `⚔️ Tirada de ${fxData.label}: ${formula.replaceAll("d", "D")}`
   );
 
   await this._playAtributoFX(attr, fxData);

@@ -585,10 +585,120 @@ Hooks.once("ready", () => {
 
   game.mtrol = game.mtrol ?? {};
 
+  // ==========================================
+  // MTROL - INICIATIVA COMPLETA
+  // Dado plano + Destreza MtRol
+  // ==========================================
+
+  game.mtrol.rollInitiative = async function({
+    actor = null,
+    combatant = null,
+    token = null
+  } = {}) {
+
+    if (!combatant && game.combat && actor) {
+      combatant = game.combat.combatants.find(c => c.actor?.id === actor.id);
+    }
+
+    if (!actor && combatant) actor = combatant.actor;
+    if (!token && combatant) token = combatant.token;
+
+    if (!actor) {
+      ui.notifications.error("MtRol | No se encontró actor para iniciativa.");
+      return null;
+    }
+
+    // ==============================
+    // 1D10 PLANO
+    // No Dharma, no Karma, no crit, no pifia
+    // ==============================
+
+    const rollPlano = new Roll("1d10");
+    await rollPlano.evaluate();
+
+    if (game.dice3d) {
+      await game.dice3d.showForRoll(rollPlano, game.user, true);
+    }
+
+    // ==============================
+    // DESTREZA MTROL
+    // Usa motor MtRol completo
+    // Crit, pifia, Dharma, Karma
+    // ==============================
+
+    const rollDestreza = await game.mtrol.roll(
+      "1d10 + @atributos.destreza",
+      actor,
+      "Destreza para Iniciativa"
+    );
+
+    if (!rollDestreza) {
+      ui.notifications.error("MtRol | No se pudo resolver Destreza para Iniciativa.");
+      return null;
+    }
+
+    const total =
+      Number(rollPlano.total ?? 0) +
+      Number(rollDestreza.total ?? 0);
+
+    // Guardado interno en actor
+    await actor.update({
+      "system.recursos.iniciativa": total
+    });
+
+    // Guardado REAL en Combat Tracker
+    if (combatant) {
+      await combatant.update({
+        initiative: total
+      });
+    }
+
+    // Chat final SIN rolls para no duplicar Dice So Nice
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor, token }),
+      content: `
+        <div class="mtrol-chat-card mtrol-chat-success">
+          <h2>⚡ Iniciativa</h2>
+
+          <div class="mtrol-formula-box">
+            ⚔️ 1D10 Plano + Destreza MtRol
+          </div>
+
+          <hr>
+
+          <div class="mtrol-result-line">
+            1D10 plano:
+            <strong>${rollPlano.total}</strong>
+          </div>
+
+          <div class="mtrol-result-line">
+            Destreza MtRol:
+            <strong>${rollDestreza.total}</strong>
+          </div>
+
+          <hr>
+
+          <div class="mtrol-total">
+            Total final:
+            <strong>${total}</strong>
+          </div>
+        </div>
+      `
+    });
+
+    return total;
+  };
+
+
+  // ==========================================
+  // USE SKILL
+  // ==========================================
+
   game.mtrol.useSkill = async function({
     actor,
     target = null,
-    skill
+    skill,
+    combatant = null
   }) {
 
     const skillData = MTROL_SKILLS[skill];
@@ -599,77 +709,53 @@ Hooks.once("ready", () => {
     }
 
     if (skill === "iniciativa") {
-
-      const rollPlano = new Roll("1d10");
-      await rollPlano.evaluate();
-
-      if (game.dice3d) {
-        await game.dice3d.showForRoll(rollPlano, game.user, false);
-      }
-
-      const rollDestreza = await game.mtrol.roll(
-        "1d10 + @atributos.destreza",
+      return await game.mtrol.rollInitiative({
         actor,
-        "Destreza para Iniciativa"
-      );
-
-      if (!rollDestreza) {
-        ui.notifications.error(
-          "MtRol | No se pudo resolver Destreza para Iniciativa."
-        );
-        return null;
-      }
-
-      const total =
-        Number(rollPlano.total ?? 0) +
-        Number(rollDestreza.total ?? 0);
-
-      await actor.update({
-        "system.recursos.iniciativa": total
+        combatant
       });
-
-      await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        rolls: [
-          rollPlano,
-          rollDestreza.roll
-        ],
-        content: `
-          <div class="mtrol-chat-card mtrol-chat-success">
-
-            <h2>⚡ Iniciativa</h2>
-
-            <div class="mtrol-formula-box">
-              ⚔️ 1D10 Plano + 1D10 + DESTREZA
-            </div>
-
-            <hr>
-
-            <div class="mtrol-result-line">
-              1D10 plano:
-              <strong>${rollPlano.total}</strong>
-            </div>
-
-            <div class="mtrol-result-line">
-              Destreza MtRol:
-              <strong>${rollDestreza.total}</strong>
-            </div>
-
-            <hr>
-
-            <div class="mtrol-total">
-              Total final:
-              <strong>${total}</strong>
-            </div>
-
-          </div>
-        `
-      });
-
-      return total;
     }
 
     console.log(`Skill ejecutada: ${skill}`);
   };
+
+
+  // ==========================================
+  // CONECTAR DADO DEL COMBAT TRACKER
+  // ==========================================
+
+  if (!game.mtrol._initiativePatched) {
+
+    game.mtrol._initiativePatched = true;
+
+    Combat.prototype.rollInitiative = async function(ids, options = {}) {
+
+      ids = typeof ids === "string" ? [ids] : ids;
+
+      if (!Array.isArray(ids)) {
+        ids = this.combatants.map(c => c.id);
+      }
+
+      const results = [];
+
+      for (const id of ids) {
+
+        const combatant = this.combatants.get(id);
+
+        if (!combatant) continue;
+
+        const total = await game.mtrol.rollInitiative({
+          combatant,
+          actor: combatant.actor,
+          token: combatant.token
+        });
+
+        if (total !== null) results.push(total);
+      }
+
+      await this.setupTurns();
+
+      return results;
+    };
+  }
 
 });

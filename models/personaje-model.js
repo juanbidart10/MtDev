@@ -31,25 +31,92 @@ export class PersonajeDataModel extends foundry.abstract.TypeDataModel {
         suerte: new fields.NumberField({ initial: 0 })
       }),
 
-      identidad: new fields.SchemaField({
-        titulo: new fields.StringField({ initial: "" }),
-        clase: new fields.StringField({ initial: "" }),
-        raza: new fields.StringField({ initial: "" }),
-        profesion: new fields.StringField({ initial: "" }),
-        maestria: new fields.StringField({ initial: "" })
-      }),
+     identidad: new fields.SchemaField({
+
+  titulo: new fields.StringField({
+    initial: ""
+  }),
+
+  clase: new fields.StringField({
+    initial: ""
+  }),
+
+  raza: new fields.StringField({
+    initial: ""
+  }),
+
+  profesion: new fields.StringField({
+    initial: ""
+  }),
+
+  maestria: new fields.StringField({
+    initial: ""
+  }),
+
+  edad: new fields.NumberField({
+    initial: 0,
+    integer: true,
+    min: 0
+  })
+
+}),
 
       recursos: new fields.SchemaField({
-        nivel: new fields.NumberField({ initial: 1 }),
-        exp: new fields.NumberField({ initial: 0 }),
-        doblones: new fields.NumberField({ initial: 0 }),
-        dharma: new fields.NumberField({ initial: 0 }),
-        karma: new fields.NumberField({ initial: 0 }),
-        mvp: new fields.NumberField({ initial: 0 }),
-        estres: new fields.NumberField({ initial: 0 }),
-        corrupcion: new fields.NumberField({ initial: 0 }),
-        iniciativa: new fields.NumberField({  initial: 0,  integer: true}),
-      }),
+
+    nivel: new fields.NumberField({
+        initial: 1
+    }),
+
+    exp: new fields.NumberField({
+        initial: 0
+    }),
+
+    doblones: new fields.NumberField({
+        initial: 0
+    }),
+
+    dharma: new fields.NumberField({
+        initial: 0
+    }),
+
+    karma: new fields.NumberField({
+        initial: 0
+    }),
+
+    mvp: new fields.NumberField({
+        initial: 0
+    }),
+
+    estres: new fields.NumberField({
+        initial: 0
+    }),
+
+    corrupcion: new fields.NumberField({
+        initial: 0
+    }),
+
+    iniciativa: new fields.NumberField({
+        initial: 0,
+        integer: true
+    }),
+
+    pasiva: new fields.StringField({
+        initial: ""
+    }),
+
+    despertar: new fields.StringField({
+        initial: ""
+    }),
+
+    habilidadEspecial1: new fields.StringField({
+        initial: ""
+    }),
+
+    habilidadEspecial2: new fields.StringField({
+        initial: ""
+    })
+
+}),
 
       inventarioMaxSlots: new fields.NumberField({
         initial: 20,

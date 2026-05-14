@@ -140,6 +140,16 @@
                    value="{{system.identidad.maestria}}">
           </div>
 
+
+     <div class="campo">
+  <label>Edad</label>
+
+  <input
+    type="number"
+    name="system.identidad.edad"
+    value="{{system.identidad.edad}}"
+    min="0">
+</div>
         </div>
       </section>
 
@@ -553,99 +563,131 @@
 
     </div>
 
-    <!-- TAB PROGRESIÓN -->
-    <div class="tab" data-group="primary" data-tab="progresion">
+   <!-- TAB PROGRESIÓN -->
+<div class="tab" data-group="primary" data-tab="progresion">
 
-      <section class="sheet-section">
+  <section class="sheet-section">
 
-        <div class="progresion-header">
+    <div class="progresion-header">
 
-          <h2>Progresión</h2>
+      <h2>Progresión</h2>
 
-          {{#if esGM}}
-            <button type="button" class="mtrol-restaurar-dia">
-              🌙 Restaurar día
-            </button>
-          {{/if}}
+      {{#if esGM}}
+        <button type="button" class="mtrol-restaurar-dia">
+          🌙 Restaurar día
+        </button>
+      {{/if}}
 
-        </div>
+    </div>
 
-        <div class="recursos-grid">
+    <div class="recursos-grid">
 
-          <div>
-            <label>Nivel</label>
-            <input type="number"
-                   name="system.recursos.nivel"
-                   value="{{system.recursos.nivel}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
+      <div>
+        <label>Nivel</label>
+        <input type="number"
+               name="system.recursos.nivel"
+               value="{{system.recursos.nivel}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-          <div>
-            <label>EXP</label>
-            <input type="number"
-                   name="system.recursos.exp"
-                   value="{{system.recursos.exp}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
+      <div>
+        <label>EXP</label>
+        <input type="number"
+               name="system.recursos.exp"
+               value="{{system.recursos.exp}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-          <div>
-            <label>Doblones</label>
-            <input type="number"
-                   name="system.recursos.doblones"
-                   value="{{system.recursos.doblones}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
+      <div>
+        <label>Doblones</label>
+        <input type="number"
+               name="system.recursos.doblones"
+               value="{{system.recursos.doblones}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-          <div>
-  <label>Dharma</label>
-  <input type="number"
-         name="system.recursos.dharma"
-         value="{{system.recursos.dharma}}"
-         min="0"
-         max="5"
-         {{#unless esGM}}disabled{{/unless}}>
-</div>
+      <div>
+        <label>Dharma</label>
+        <input type="number"
+               name="system.recursos.dharma"
+               value="{{system.recursos.dharma}}"
+               min="0"
+               max="5"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-<div>
-  <label>Karma</label>
-  <input type="number"
-         name="system.recursos.karma"
-         value="{{system.recursos.karma}}"
-         min="0"
-         max="5"
-         {{#unless esGM}}disabled{{/unless}}>
-</div>
+      <div>
+        <label>Karma</label>
+        <input type="number"
+               name="system.recursos.karma"
+               value="{{system.recursos.karma}}"
+               min="0"
+               max="5"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-          <div>
-            <label>MVP</label>
-            <input type="number"
-                   name="system.recursos.mvp"
-                   value="{{system.recursos.mvp}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
+      <div>
+        <label>MVP</label>
+        <input type="number"
+               name="system.recursos.mvp"
+               value="{{system.recursos.mvp}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-          <div>
-            <label>Estrés</label>
-            <input type="number"
-                   name="system.recursos.estres"
-                   value="{{system.recursos.estres}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
+      <div>
+        <label>Estrés</label>
+        <input type="number"
+               name="system.recursos.estres"
+               value="{{system.recursos.estres}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-          <div>
-            <label>Corrupción</label>
-            <input type="number"
-                   name="system.recursos.corrupcion"
-                   value="{{system.recursos.corrupcion}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
+      <div>
+        <label>Corrupción</label>
+        <input type="number"
+               name="system.recursos.corrupcion"
+               value="{{system.recursos.corrupcion}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-        </div>
+      <div>
+        <label>Pasiva</label>
+        <input type="text"
+               name="system.recursos.pasiva"
+               value="{{system.recursos.pasiva}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-      </section>
+      <div>
+        <label>Despertar</label>
+        <input type="text"
+               name="system.recursos.despertar"
+               value="{{system.recursos.despertar}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
+
+      <div>
+        <label>Habilidad Especial I</label>
+        <input type="text"
+               name="system.recursos.habilidadEspecial1"
+               value="{{system.recursos.habilidadEspecial1}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
+
+      <div>
+        <label>Habilidad Especial II</label>
+        <input type="text"
+               name="system.recursos.habilidadEspecial2"
+               value="{{system.recursos.habilidadEspecial2}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
     </div>
 
   </section>
 
-</form>
+</div>
+
+  </section>
+
+</form> 

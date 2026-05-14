@@ -18,6 +18,61 @@ function mtrolCrearFormulaVisual(formula, etiquetas = {}) {
   return visual;
 }
 
+async function mtrolAplicarDharmaKarma(actor, sumaDharma, sumaKarma) {
+  if (!actor) return;
+  if (!sumaDharma && !sumaKarma) return;
+
+  const updates = {};
+
+  if (sumaDharma) {
+    const actual = Number(actor.system.recursos?.dharma ?? 0);
+    const nuevo = Math.min(5, actual + 1);
+
+    updates["system.recursos.dharma"] = nuevo;
+
+    if (actual === 4 && nuevo === 5) {
+      ui.notifications.info(`🏆 ${actor.name} obtuvo una Carta de Dharma`);
+
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `
+          <div style="text-align:center; font-size:18px; padding:10px;">
+            🏆 <strong>Carta de Dharma</strong> 🏆
+            <br><br>
+            ${actor.name} alcanzó 5 puntos de Dharma.
+          </div>
+        `
+      });
+    }
+  }
+
+  if (sumaKarma) {
+    const actual = Number(actor.system.recursos?.karma ?? 0);
+    const nuevo = Math.min(5, actual + 1);
+
+    updates["system.recursos.karma"] = nuevo;
+
+    if (actual === 4 && nuevo === 5) {
+      ui.notifications.info(`💀 ${actor.name} obtuvo una Carta de Karma`);
+
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `
+          <div style="text-align:center; font-size:18px; padding:10px;">
+            💀 <strong>Carta de Karma</strong> 💀
+            <br><br>
+            ${actor.name} alcanzó 5 puntos de Karma.
+          </div>
+        `
+      });
+    }
+  }
+
+  if (Object.keys(updates).length) {
+    await actor.update(updates);
+  }
+}
+
 export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
   if (!actor) {
     ui.notifications.warn("MtRol | No hay actor para la tirada.");
@@ -56,23 +111,26 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
   }
 
   const formulaVisual = mtrolCrearFormulaVisual(formula, etiquetas);
-const formulaVisualFinal = formulaVisual.replaceAll("d", "D");
+  const formulaVisualFinal = formulaVisual.replaceAll("d", "D");
 
   const roll = await new Roll(formula, data).evaluate();
   const todosLosRolls = [roll];
 
   if (game.dice3d) {
-  game.dice3d.showForRoll(roll, game.user, false);
-}
+    game.dice3d.showForRoll(roll, game.user, false);
+  }
 
-  const rollHTML = await roll.render();
-  const rollHTMLLimpio = rollHTML.replace(
-    /<div class="dice-formula">[\s\S]*?<\/div>/,
-    ""
-  );
+  const rollHTMLLimpio = `
+    <div class="mtrol-simple-result">
+      ${roll.total}
+    </div>
+  `;
 
   let totalExtra = 0;
   const detalles = [];
+
+  let sumaDharma = false;
+  let sumaKarma = false;
 
   for (const die of roll.dice ?? []) {
     for (const result of die.results ?? []) {
@@ -81,10 +139,15 @@ const formulaVisualFinal = formulaVisual.replaceAll("d", "D");
       const caras = die.faces;
       const valor = Number(result.result);
 
+      if (valor === 1) sumaDharma = true;
+      if (valor === 2) sumaKarma = true;
+
       if (valor === 2) {
+        await mtrolAplicarDharmaKarma(actor, sumaDharma, sumaKarma);
+
         await ChatMessage.create({
           speaker: ChatMessage.getSpeaker({ actor }),
-              content: `
+          content: `
             <div class="mtrol-chat-card mtrol-chat-pifia">
               <h2>💀 PIFIA 💀</h2>
               <p>El dado mostró un 2.</p>
@@ -103,24 +166,29 @@ const formulaVisualFinal = formulaVisual.replaceAll("d", "D");
       if (valor !== 1) continue;
 
       let multiplicador = 2;
-      detalles.push(`🎯 Crítico en d${caras}`);
+      detalles.push(`🎯 Crítico en D${caras}`);
 
       while (true) {
         const extraRoll = await new Roll(`1d${caras}`).evaluate();
         todosLosRolls.push(extraRoll);
 
         if (game.dice3d) {
-          await game.dice3d.showForRoll(extraRoll, game.user, true);
+          game.dice3d.showForRoll(extraRoll, game.user, false);
         }
 
         const extraValor = Number(extraRoll.total);
 
-        detalles.push(`↳ d${caras}: ${extraValor} x${multiplicador}`);
+        if (extraValor === 1) sumaDharma = true;
+        if (extraValor === 2) sumaKarma = true;
+
+        detalles.push(`↳ D${caras}: ${extraValor} x${multiplicador}`);
 
         if (extraValor === 2) {
+          await mtrolAplicarDharmaKarma(actor, sumaDharma, sumaKarma);
+
           await ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor }),
-              content: `
+            content: `
               <div class="mtrol-chat-card mtrol-chat-pifia">
                 <h2>💀 PIFIA 💀</h2>
                 <p>La tirada fue cancelada durante la cadena crítica.</p>
@@ -161,9 +229,11 @@ const formulaVisualFinal = formulaVisual.replaceAll("d", "D");
 
   const totalFinal = totalBase + totalExtra;
 
+  await mtrolAplicarDharmaKarma(actor, sumaDharma, sumaKarma);
+
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
-       content: `
+    content: `
       <div class="mtrol-chat-card mtrol-chat-success">
 
         <h2>${flavor}</h2>
@@ -174,9 +244,7 @@ const formulaVisualFinal = formulaVisual.replaceAll("d", "D");
 
         <hr>
 
-       <div class="mtrol-simple-result">
-  ${roll.total}
-</div>
+        ${rollHTMLLimpio}
 
         <hr>
 

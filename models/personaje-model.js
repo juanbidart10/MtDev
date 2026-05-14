@@ -1,3 +1,4 @@
+console.log("✅ CARGÓ PERSONAJE-MODEL CON INICIATIVA");
 const fields = foundry.data.fields;
 
 export class PersonajeDataModel extends foundry.abstract.TypeDataModel {
@@ -46,7 +47,8 @@ export class PersonajeDataModel extends foundry.abstract.TypeDataModel {
         karma: new fields.NumberField({ initial: 0 }),
         mvp: new fields.NumberField({ initial: 0 }),
         estres: new fields.NumberField({ initial: 0 }),
-        corrupcion: new fields.NumberField({ initial: 0 })
+        corrupcion: new fields.NumberField({ initial: 0 }),
+        iniciativa: new fields.NumberField({  initial: 0,  integer: true}),
       }),
 
       inventarioMaxSlots: new fields.NumberField({

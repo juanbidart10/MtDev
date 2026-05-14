@@ -7,6 +7,7 @@ import { ObjetoSheet } from "./items/objeto-sheet.js";
 
 import { aplicarDanioLocalizado } from "./utils/combat.js";
 import { mtrolRoll } from "./core/mtrol-rolls.js";
+import "./core/mtrol-skills.js";
 
 Hooks.once("init", function () {
   console.log("MtRol | INIT");

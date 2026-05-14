@@ -399,11 +399,11 @@ async _onCompetenciaRoll(event) {
 
   stacks[stackKey] = usosPrevios + 1;
 
-  await actor.update({
-    "system.vitales.mp.value": mpActual - costoTotal
-  });
+await actor.update({
+  "system.vitales.mp.value": mpActual - costoTotal
+});
 
-  await actor.setFlag("mtrol", "mpStacks", stacks);
+await actor.setFlag("mtrol", "mpStacks", stacks);
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),

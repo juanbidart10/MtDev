@@ -4,6 +4,7 @@ import { ObjetoDataModel } from "../models/objeto-model.js";
 
 import { PersonajeSheet } from "./actors/personaje-sheet.js";
 import { ObjetoSheet } from "./items/objeto-sheet.js";
+import { CompetenciaSheet } from "./items/competencia-sheet.js";
 
 import { aplicarDanioLocalizado } from "./utils/combat.js";
 import { mtrolRoll } from "./core/mtrol-rolls.js";
@@ -50,6 +51,15 @@ Hooks.once("init", function () {
       makeDefault: true
     }
   );
+
+  foundry.documents.collections.Items.registerSheet(
+    "mtrol",
+    CompetenciaSheet,
+    {
+      types: ["competencia"],
+      makeDefault: true
+    }
+  );
 });
 
 Hooks.once("ready", function () {
@@ -74,18 +84,13 @@ Hooks.once("ready", function () {
 // =========================
 
 Hooks.on("updateActor", async (actor, changes) => {
-
   if (!game.user.isGM) return;
 
-  // SOLO ejecutar cuando el actor
-  // realmente se convierte en Item Pile / Loot
-  const seConvirtioEnLoot =
-    changes?.flags?.["item-piles"];
+  const seConvirtioEnLoot = changes?.flags?.["item-piles"];
 
   if (!seConvirtioEnLoot) return;
 
   setTimeout(async () => {
-
     const competencias = actor.items.filter(
       i => i.type === "competencia"
     );
@@ -100,9 +105,7 @@ Hooks.on("updateActor", async (actor, changes) => {
     console.log(
       `MtRol | Competencias removidas del loot: ${actor.name}`
     );
-
   }, 500);
-
 });
 
 // =========================

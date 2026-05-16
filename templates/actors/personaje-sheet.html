@@ -1,17 +1,19 @@
 <form class="{{cssClass}} mtrol-personaje-sheet" autocomplete="off">
 
-  <header class="sheet-header">
+ <header class="sheet-header mtrol-header-premium">
 
-    <div class="header-left">
-      <img class="profile-img"
-           src="{{actor.img}}"
-           data-edit="img"
-           title="{{actor.name}}"
-           height="100"
-           width="100"/>
-    </div>
+  <div class="header-left mtrol-portrait-frame">
+    <img class="profile-img"
+         src="{{actor.img}}"
+         data-edit="img"
+         title="{{actor.name}}"
+         height="100"
+         width="100" />
+  </div>
 
-    <div class="header-center">
+  <div class="header-center mtrol-header-identity">
+
+    <div class="mtrol-name-frame">
       <input class="mtrol-char-name"
              name="name"
              type="text"
@@ -19,52 +21,91 @@
              placeholder="Nombre del personaje" />
     </div>
 
-  </header>
+    <div class="mtrol-header-subtitle">
+      <span>{{system.identidad.titulo}}</span>
+      <span class="mtrol-dot">◆</span>
+      <span>{{system.identidad.raza}}</span>
+      <span class="mtrol-dot">◆</span>
+      <span>{{system.identidad.clase}}</span>
+    </div>
 
-  <section class="vitales-bar">
+  </div>
 
-    <div class="vital hp">
-      <img class="vital-icon"
-           src="systems/mtrol/assets/ui/potion-red.webp"
-           title="HP">
+</header>
 
+<section class="vitales-bar">
+
+  <!-- HP -->
+  <div class="vital hp mtrol-vital-card">
+
+    <div class="vital-title">
       <label>HP</label>
+    </div>
+
+    <div class="mtrol-vital-bar hp-bar">
+
+      <div class="mtrol-vital-fill"
+           style="width: calc(({{system.vitales.hp.value}} / {{system.vitales.hp.max}}) * 100%);">
+      </div>
+
+    </div>
+
+    <div class="vital-inputs">
 
       <input type="number"
              name="system.vitales.hp.value"
-             value="{{system.vitales.hp.value}}">
+             value="{{system.vitales.hp.value}}"
+             min="0" />
 
-      <span>/</span>
+      <span class="sep">/</span>
 
       <input type="number"
              name="system.vitales.hp.max"
-             value="{{system.vitales.hp.max}}">
+             value="{{system.vitales.hp.max}}"
+             min="1" />
+
     </div>
 
-    <div class="vital mp">
-      <img class="vital-icon"
-           src="systems/mtrol/assets/ui/potion-blue.webp"
-           title="MP">
+  </div>
 
+  <!-- MP -->
+  <div class="vital mp mtrol-vital-card">
+
+    <div class="vital-title">
       <label>MP</label>
+    </div>
+
+    <div class="mtrol-vital-bar mp-bar">
+
+      <div class="mtrol-vital-fill"
+           style="width: calc(({{system.vitales.mp.value}} / {{system.vitales.mp.max}}) * 100%);">
+      </div>
+
+    </div>
+
+    <div class="vital-inputs">
 
       <input type="number"
              name="system.vitales.mp.value"
              value="{{system.vitales.mp.value}}"
-             min="0">
+             min="0" />
 
       <span class="sep">/</span>
 
       <input type="number"
              name="system.vitales.mp.max"
              value="{{system.vitales.mp.max}}"
-             min="0">
+             min="1" />
+
     </div>
 
-  </section>
+  </div>
+
+</section>
 
   <nav class="sheet-tabs tabs" data-group="primary">
     <a class="item" data-tab="personaje">Personaje</a>
+    <a class="item" data-tab="combate">Combate</a>
     <a class="item" data-tab="competencias">Competencias</a>
     <a class="item" data-tab="equipamiento">Equipamiento</a>
     <a class="item" data-tab="inventario">Inventario</a>
@@ -74,184 +115,309 @@
   <section class="sheet-body">
 
     <!-- TAB PERSONAJE -->
-    <div class="tab" data-group="primary" data-tab="personaje">
+<div class="tab mtrol-tab-personaje" data-group="primary" data-tab="personaje">
 
-      <section class="stats-bar">
+  <!-- RESUMEN SUPERIOR -->
+  <section class="mtrol-panel mtrol-resumen-personaje">
 
-        <div class="stat">
-          <label>Nivel</label>
-          <span>{{system.recursos.nivel}}</span>
-        </div>
+    <div class="mtrol-resumen-card">
+      <label>Nivel</label>
+      <span>{{system.recursos.nivel}}</span>
+    </div>
 
-        <div class="stat">
-          <label>EXP</label>
-          <span>{{system.recursos.exp}}</span>
-        </div>
+    <div class="mtrol-resumen-card">
+      <label>EXP</label>
+      <span>{{system.recursos.exp}}</span>
+    </div>
 
-        <div class="stat">
-          <label>Karma</label>
-          <span>{{system.recursos.karma}}</span>
-        </div>
+    <div class="mtrol-resumen-card karma-card">
+      <label>Karma</label>
+      <span>{{system.recursos.karma}}</span>
+    </div>
 
-        <div class="stat">
-          <label>Dharma</label>
-          <span>{{system.recursos.dharma}}</span>
-        </div>
+    <div class="mtrol-resumen-card dharma-card">
+      <label>Dharma</label>
+      <span>{{system.recursos.dharma}}</span>
+    </div>
 
-      </section>
+  </section>
 
-      <section class="identidad">
-        <h2>Identidad</h2>
+  
 
-        <div class="identidad-grid">
+  <!-- ATRIBUTOS -->
+  <section class="mtrol-panel atributos">
+    <div class="mtrol-section-title">
+      <h2>Atributos</h2>
+      <span>Click para realizar una tirada</span>
+    </div>
 
-          <div>
-            <label>Título</label>
-            <input type="text"
-                   name="system.identidad.titulo"
-                   value="{{system.identidad.titulo}}">
-          </div>
+    <div class="atributos-grid mtrol-atributos-premium">
 
-          <div>
-            <label>Clase</label>
-            <input type="text"
-                   name="system.identidad.clase"
-                   value="{{system.identidad.clase}}">
-          </div>
+      <div class="atributo rollable mtrol-roll-atributo mtrol-attribute-card"
+           data-attr="resistencia"
+           data-atributo="resistencia">
+        <label>Resistencia</label>
+        <input type="number"
+               name="system.atributos.resistencia"
+               value="{{system.atributos.resistencia}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-          <div>
-            <label>Raza</label>
-            <input type="text"
-                   name="system.identidad.raza"
-                   value="{{system.identidad.raza}}">
-          </div>
+      <div class="atributo rollable mtrol-roll-atributo mtrol-attribute-card"
+           data-attr="carisma"
+           data-atributo="carisma">
+        <label>Carisma</label>
+        <input type="number"
+               name="system.atributos.carisma"
+               value="{{system.atributos.carisma}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-          <div>
-            <label>Profesión</label>
-            <input type="text"
-                   name="system.identidad.profesion"
-                   value="{{system.identidad.profesion}}">
-          </div>
+      <div class="atributo rollable mtrol-roll-atributo mtrol-attribute-card"
+           data-attr="fuerza"
+           data-atributo="fuerza">
+        <label>Fuerza</label>
+        <input type="number"
+               name="system.atributos.fuerza"
+               value="{{system.atributos.fuerza}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-          <div>
-            <label>Maestría</label>
-            <input type="text"
-                   name="system.identidad.maestria"
-                   value="{{system.identidad.maestria}}">
-          </div>
+      <div class="atributo rollable mtrol-roll-atributo mtrol-attribute-card"
+           data-attr="inteligencia"
+           data-atributo="inteligencia">
+        <label>Inteligencia</label>
+        <input type="number"
+               name="system.atributos.inteligencia"
+               value="{{system.atributos.inteligencia}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
+      <div class="atributo rollable mtrol-roll-atributo mtrol-attribute-card"
+           data-attr="voluntad"
+           data-atributo="voluntad">
+        <label>Voluntad</label>
+        <input type="number"
+               name="system.atributos.voluntad"
+               value="{{system.atributos.voluntad}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-     <div class="campo">
-  <label>Edad</label>
+      <div class="atributo rollable mtrol-roll-atributo mtrol-attribute-card"
+           data-attr="aura"
+           data-atributo="aura">
+        <label>Aura</label>
+        <input type="number"
+               name="system.atributos.aura"
+               value="{{system.atributos.aura}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-  <input
-    type="number"
-    name="system.identidad.edad"
-    value="{{system.identidad.edad}}"
-    min="0">
-</div>
-        </div>
-      </section>
+      <div class="atributo rollable mtrol-roll-atributo mtrol-attribute-card"
+           data-attr="percepcion"
+           data-atributo="percepcion">
+        <label>Percepción</label>
+        <input type="number"
+               name="system.atributos.percepcion"
+               value="{{system.atributos.percepcion}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-      <section class="atributos">
-        <h2>Atributos</h2>
+      <div class="atributo rollable mtrol-roll-atributo mtrol-attribute-card"
+           data-attr="destreza"
+           data-atributo="destreza">
+        <label>Destreza</label>
+        <input type="number"
+               name="system.atributos.destreza"
+               value="{{system.atributos.destreza}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
-        <div class="atributos-grid">
-
-          <div class="atributo rollable mtrol-roll-atributo"
-               data-attr="resistencia"
-               data-atributo="resistencia">
-            <label>Resistencia</label>
-            <input type="number"
-                   name="system.atributos.resistencia"
-                   value="{{system.atributos.resistencia}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable mtrol-roll-atributo"
-               data-attr="carisma"
-               data-atributo="carisma">
-            <label>Carisma</label>
-            <input type="number"
-                   name="system.atributos.carisma"
-                   value="{{system.atributos.carisma}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable mtrol-roll-atributo"
-               data-attr="fuerza"
-               data-atributo="fuerza">
-            <label>Fuerza</label>
-            <input type="number"
-                   name="system.atributos.fuerza"
-                   value="{{system.atributos.fuerza}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable mtrol-roll-atributo"
-               data-attr="inteligencia"
-               data-atributo="inteligencia">
-            <label>Inteligencia</label>
-            <input type="number"
-                   name="system.atributos.inteligencia"
-                   value="{{system.atributos.inteligencia}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable mtrol-roll-atributo"
-               data-attr="voluntad"
-               data-atributo="voluntad">
-            <label>Voluntad</label>
-            <input type="number"
-                   name="system.atributos.voluntad"
-                   value="{{system.atributos.voluntad}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable mtrol-roll-atributo"
-               data-attr="aura"
-               data-atributo="aura">
-            <label>Aura</label>
-            <input type="number"
-                   name="system.atributos.aura"
-                   value="{{system.atributos.aura}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable mtrol-roll-atributo"
-               data-attr="percepcion"
-               data-atributo="percepcion">
-            <label>Percepción</label>
-            <input type="number"
-                   name="system.atributos.percepcion"
-                   value="{{system.atributos.percepcion}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable mtrol-roll-atributo"
-               data-attr="destreza"
-               data-atributo="destreza">
-            <label>Destreza</label>
-            <input type="number"
-                   name="system.atributos.destreza"
-                   value="{{system.atributos.destreza}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-          <div class="atributo rollable mtrol-roll-atributo"
-               data-attr="suerte"
-               data-atributo="suerte">
-            <label>Suerte</label>
-            <input type="number"
-                   name="system.atributos.suerte"
-                   value="{{system.atributos.suerte}}"
-                   {{#unless esGM}}disabled{{/unless}}>
-          </div>
-
-        </div>
-      </section>
+      <div class="atributo rollable mtrol-roll-atributo mtrol-attribute-card"
+           data-attr="suerte"
+           data-atributo="suerte">
+        <label>Suerte</label>
+        <input type="number"
+               name="system.atributos.suerte"
+               value="{{system.atributos.suerte}}"
+               {{#unless esGM}}disabled{{/unless}}>
+      </div>
 
     </div>
+  </section>
+<!-- IDENTIDAD -->
+  <section class="mtrol-panel identidad">
+    <div class="mtrol-section-title">
+      <h2>Identidad</h2>
+      <span>Registro del personaje</span>
+    </div>
+
+    <div class="identidad-grid mtrol-identidad-premium">
+
+      <div class="mtrol-field wide">
+        <label>Título</label>
+        <input type="text"
+               name="system.identidad.titulo"
+               value="{{system.identidad.titulo}}">
+      </div>
+
+      <div class="mtrol-field">
+        <label>Clase</label>
+        <input type="text"
+               name="system.identidad.clase"
+               value="{{system.identidad.clase}}">
+      </div>
+
+      <div class="mtrol-field">
+        <label>Raza</label>
+        <input type="text"
+               name="system.identidad.raza"
+               value="{{system.identidad.raza}}">
+      </div>
+
+      <div class="mtrol-field">
+        <label>Profesión</label>
+        <input type="text"
+               name="system.identidad.profesion"
+               value="{{system.identidad.profesion}}">
+      </div>
+
+      <div class="mtrol-field">
+        <label>Maestría</label>
+        <input type="text"
+               name="system.identidad.maestria"
+               value="{{system.identidad.maestria}}">
+      </div>
+
+      <div class="mtrol-field">
+        <label>Edad</label>
+        <input type="number"
+               name="system.identidad.edad"
+               value="{{system.identidad.edad}}"
+               min="0">
+      </div>
+
+    </div>
+  </section>
+</div>
+
+       <!-- TAB COMBATE -->
+<div class="tab" data-group="primary" data-tab="combate">
+
+  <section class="combate-section">
+
+    <div class="combate-header">
+      <h2>Combate</h2>
+      <p class="combate-subtitle">Centro táctico del personaje</p>
+    </div>
+
+    <div class="combate-layout">
+
+      <div class="combate-panel">
+        <h3>Estado</h3>
+
+        <div class="combate-info-grid">
+          <div>
+            <label>Iniciativa</label>
+            <span>{{system.recursos.iniciativa}}</span>
+          </div>
+
+          <div>
+            <label>HP</label>
+            <span>{{system.vitales.hp.value}} / {{system.vitales.hp.max}}</span>
+          </div>
+
+          <div>
+            <label>MP</label>
+            <span>{{system.vitales.mp.value}} / {{system.vitales.mp.max}}</span>
+          </div>
+
+          <div>
+            <label>Objetivo</label>
+            <span>Seleccionar token</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="combate-panel">
+        <h3>Acciones rápidas</h3>
+
+        <div class="combate-actions-grid">
+          <button type="button" class="combate-action-btn" data-skill="iniciativa">🎲 Iniciativa</button>
+          <button type="button" class="combate-action-btn" data-skill="ataque">⚔️ Ataque</button>
+          <button type="button" class="combate-action-btn" data-skill="defensa">🛡️ Defensa</button>
+          <button type="button" class="combate-action-btn" data-skill="esquivar">💨 Esquivar</button>
+          <button type="button" class="combate-action-btn" data-skill="ataque-magico">🔥 Ataque Mágico</button>
+          <button type="button" class="combate-action-btn" data-skill="contraataque">🗡️ Contraataque</button>
+        </div>
+      </div>
+
+      <div class="combate-panel combate-panel-wide">
+        <h3>Competencias activas</h3>
+
+        <div class="combate-skills-grid">
+
+  {{#if competencias.length}}
+
+    {{#each competencias}}
+
+      <div class="combat-skill-card mtrol-item"
+           data-item-id="{{this.id}}">
+
+        <div class="combat-skill-header">
+
+          <div class="combat-skill-name">
+            {{this.name}}
+          </div>
+
+          <div class="combat-skill-level">
+            Nv. {{this.system.nivel}}
+          </div>
+
+        </div>
+
+        <div class="combat-skill-body">
+
+          <div class="combat-skill-resource">
+            MP: —
+          </div>
+
+          <div class="combat-skill-cooldown">
+            CD: —
+          </div>
+
+        </div>
+
+        <div class="combat-skill-actions">
+
+          <button type="button"
+                  class="combat-skill-use competencia-roll"
+                  data-item-id="{{this.id}}">
+            Usar
+          </button>
+
+        </div>
+
+      </div>
+
+    {{/each}}
+
+  {{else}}
+
+    <div class="combate-skills-placeholder">
+      No hay competencias activas.
+    </div>
+
+  {{/if}}
+
+</div>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
 
     <!-- TAB COMPETENCIAS -->
 <div class="tab" data-group="primary" data-tab="competencias">

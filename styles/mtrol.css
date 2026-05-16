@@ -1,6 +1,11 @@
-/* =========================
-   FUENTE
-========================= */
+/* =========================================================
+   MTROL CSS
+   Estructura visual oficial del sistema
+========================================================= */
+
+/* =========================================================
+   01. FUENTES
+========================================================= */
 
 @font-face {
   font-family: "Morpheus";
@@ -9,25 +14,78 @@
   font-style: normal;
 }
 
-/* =========================
-   BASE GENERAL
-========================= */
+/* =========================================================
+   02. VARIABLES VISUALES
+========================================================= */
+
+:root {
+  --mtrol-bg-dark: rgba(8, 8, 8, 0.72);
+  --mtrol-bg-panel: rgba(18, 16, 12, 0.72);
+  --mtrol-bg-panel-soft: rgba(25, 22, 16, 0.58);
+
+  --mtrol-gold: #d8c27a;
+  --mtrol-gold-soft: rgba(216, 194, 122, 0.55);
+  --mtrol-gold-bright: #fff0b8;
+
+  --mtrol-silver: #e8e2d2;
+  --mtrol-silver-soft: #cfc6aa;
+
+  --mtrol-red: #8b2b1f;
+  --mtrol-red-bright: #ff4d4d;
+
+  --mtrol-border: rgba(216, 194, 122, 0.35);
+  --mtrol-border-soft: rgba(230, 220, 192, 0.14);
+
+  --mtrol-shadow-dark: 0 0 18px rgba(0, 0, 0, 0.65);
+  --mtrol-shadow-gold: 0 0 12px rgba(216, 194, 122, 0.25);
+
+  --mtrol-radius-sm: 6px;
+  --mtrol-radius-md: 10px;
+  --mtrol-radius-lg: 14px;
+
+  --mtrol-font-main: "Morpheus", serif;
+}
+/* =========================================================
+   03. BASE GENERAL
+========================================================= */
 
 .mtrol.sheet.personaje,
 .mtrol.sheet.objeto {
+
   background: none;
-  background-image: url("../assets/ui/sheet-bg.webp");
+
+  background-image:
+    linear-gradient(
+      rgba(0,0,0,0.35),
+      rgba(0,0,0,0.35)
+    ),
+    url("../assets/ui/sheet-bg.webp");
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  color: #e8e2d2;
-  font-family: "Morpheus", serif;
+
+  color: var(--mtrol-silver);
+
+  font-family: var(--mtrol-font-main);
 }
+
+/* ---------- WINDOW CONTENT ---------- */
 
 .mtrol.sheet.personaje .window-content,
 .mtrol.sheet.objeto .window-content {
-  background: rgba(0, 0, 0, 0.15);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10,10,10,0.45),
+      rgba(0,0,0,0.25)
+    );
+
+  backdrop-filter: blur(2px);
 }
+
+/* ---------- FUENTES GLOBALES ---------- */
 
 .mtrol.sheet.personaje,
 .mtrol.sheet.personaje h1,
@@ -41,6 +99,7 @@
 .mtrol.sheet.personaje textarea,
 .mtrol.sheet.personaje th,
 .mtrol.sheet.personaje td,
+
 .mtrol.sheet.objeto,
 .mtrol.sheet.objeto h1,
 .mtrol.sheet.objeto h2,
@@ -53,219 +112,713 @@
 .mtrol.sheet.objeto textarea,
 .mtrol.sheet.objeto th,
 .mtrol.sheet.objeto td {
-  font-family: "Morpheus", serif !important;
+
+  font-family: var(--mtrol-font-main) !important;
 }
+
+/* ---------- TITULOS ---------- */
 
 .mtrol.sheet.personaje h2,
 .mtrol.sheet.objeto h2 {
-  color: #e6dcc0;
-  border-bottom: 1px solid rgba(230, 220, 192, 0.55);
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
-  margin-bottom: 10px;
-  padding-bottom: 4px;
+
+  color: var(--mtrol-gold);
+
+  border-bottom:
+    1px solid rgba(216,194,122,0.45);
+
+  padding-bottom: 6px;
+
+  margin-bottom: 12px;
+
+  text-shadow:
+    0 0 6px rgba(0,0,0,0.9);
 }
+
+/* ---------- LABELS ---------- */
 
 .mtrol.sheet.personaje label,
 .mtrol.sheet.objeto label {
-  color: #f0ead8;
+
+  color: var(--mtrol-gold);
+
   font-weight: bold;
+
+  letter-spacing: 0.4px;
 }
+
+/* ---------- INPUTS ---------- */
 
 .mtrol.sheet.personaje input,
 .mtrol.sheet.personaje select,
 .mtrol.sheet.personaje textarea,
+
 .mtrol.sheet.objeto input,
 .mtrol.sheet.objeto select,
 .mtrol.sheet.objeto textarea {
-  border: 1px solid rgba(220, 220, 220, 0.45) !important;
-  color: #f5f1e8 !important;
-  background: rgba(0, 0, 0, 0.68);
-  border-radius: 4px;
-  box-shadow: none;
+
+  border:
+    1px solid var(--mtrol-border) !important;
+
+  color:
+    var(--mtrol-silver) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.82),
+      rgba(6,6,6,0.82)
+    );
+
+  border-radius: var(--mtrol-radius-sm);
+
+  box-shadow:
+    inset 0 0 6px rgba(255,255,255,0.02);
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
+
+/* ---------- INPUT HOVER ---------- */
+
+.mtrol.sheet.personaje input:hover,
+.mtrol.sheet.personaje select:hover,
+.mtrol.sheet.personaje textarea:hover,
+
+.mtrol.sheet.objeto input:hover,
+.mtrol.sheet.objeto select:hover,
+.mtrol.sheet.objeto textarea:hover {
+
+  border-color:
+    rgba(255,220,120,0.55) !important;
+
+  box-shadow:
+    0 0 6px rgba(216,194,122,0.18);
+}
+
+/* ---------- INPUT FOCUS ---------- */
 
 .mtrol.sheet.personaje input:focus,
 .mtrol.sheet.personaje select:focus,
 .mtrol.sheet.personaje textarea:focus,
+
 .mtrol.sheet.objeto input:focus,
 .mtrol.sheet.objeto select:focus,
 .mtrol.sheet.objeto textarea:focus {
+
   outline: none;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.18);
+
+  border-color:
+    rgba(255,225,140,0.82) !important;
+
+  box-shadow:
+    0 0 10px rgba(216,194,122,0.28);
 }
 
+/* ---------- TEXTAREAS ---------- */
+
 .mtrol.sheet.objeto textarea {
+
   resize: vertical;
+
   min-height: 140px;
 }
+
+/* ---------- LINKS ---------- */
 
 a {
   text-decoration: none;
 }
 
-/* =========================
-   SECCIONES / PANELES
-========================= */
+/* =========================================================
+   04. SECCIONES / PANELES
+========================================================= */
 
+.mtrol-panel,
 .identidad,
 .atributos,
 .sheet-section,
 .equipamiento-tab,
 .inventario-tab {
-  background: rgba(0, 0, 0, 0.34);
-  border: 1px solid rgba(230, 220, 192, 0.12);
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 12px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(22, 20, 16, 0.74),
+      rgba(8, 8, 8, 0.68)
+    );
+
+  border: 1px solid var(--mtrol-border);
+  border-radius: var(--mtrol-radius-md);
+
+  padding: 12px;
+  margin-bottom: 14px;
+
+  box-shadow:
+    var(--mtrol-shadow-dark),
+    inset 0 0 14px rgba(255, 220, 120, 0.035);
 }
+
+/* ---------- TITULO INTERNO DE SECCIÓN ---------- */
+
+.mtrol-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+
+  gap: 12px;
+
+  border-bottom: 1px solid rgba(216, 194, 122, 0.42);
+
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+}
+
+.mtrol-section-title h2 {
+  margin: 0;
+  border-bottom: none !important;
+
+  color: var(--mtrol-gold);
+  font-size: 22px;
+  letter-spacing: 0.6px;
+
+  text-shadow:
+    0 0 6px rgba(0, 0, 0, 0.95),
+    0 0 8px rgba(216, 194, 122, 0.18);
+}
+
+.mtrol-section-title span {
+  color: var(--mtrol-silver-soft);
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* ---------- CAMPOS PREMIUM ---------- */
+
+.mtrol-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mtrol-field label {
+  font-size: 13px;
+  color: var(--mtrol-gold);
+  text-shadow: 0 0 4px rgba(0,0,0,0.8);
+}
+
+.mtrol-field input,
+.mtrol-field select,
+.mtrol-field textarea {
+  width: 100%;
+  min-height: 30px;
+}
+
+/* ---------- CAMPO ANCHO ---------- */
+
+.mtrol-field.wide {
+  grid-column: span 2;
+}
+
+/* ---------- HINTS / AVISOS ---------- */
 
 .hint {
-  color: #e8dec2;
-  background: rgba(0, 0, 0, 0.45);
+  color: var(--mtrol-silver);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.82),
+      rgba(5,5,5,0.82)
+    );
+
   padding: 10px 12px;
-  border: 1px solid rgba(220, 210, 180, 0.35);
-  border-radius: 6px;
+
+  border: 1px solid var(--mtrol-border);
+  border-radius: var(--mtrol-radius-sm);
+
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,0.025);
 }
 
-/* =========================
-   HEADER
-========================= */
+/* =========================================================
+   05. HEADER
+========================================================= */
 
 .sheet-header {
   display: flex;
-  gap: 15px;
+  gap: 16px;
   align-items: center;
-  margin-bottom: 10px;
+
+  padding: 12px;
+
+  margin-bottom: 12px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(22, 20, 16, 0.74),
+      rgba(8, 8, 8, 0.68)
+    );
+
+  border: 1px solid var(--mtrol-border);
+  border-radius: var(--mtrol-radius-md);
+
+  box-shadow:
+    var(--mtrol-shadow-dark),
+    inset 0 0 14px rgba(255, 220, 120, 0.035);
 }
 
+/* ---------- RETRATO ---------- */
+
 .profile-img {
-  border: 2px solid #e6e6e6;
-  border-radius: 6px;
+  width: 76px;
+  height: 76px;
+
+  border: 2px solid rgba(216, 194, 122, 0.65);
+  border-radius: var(--mtrol-radius-sm);
+
   object-fit: cover;
+
+  background: rgba(0,0,0,0.55);
+
+  box-shadow:
+    0 0 10px rgba(0,0,0,0.75),
+    0 0 8px rgba(216,194,122,0.18);
 }
+
+/* ---------- HEADER RIGHT ---------- */
 
 .header-right {
   flex: 1;
 }
 
+/* ---------- NOMBRE LEGACY ---------- */
+
 .charname input {
-  font-size: 22px;
-  font-weight: bold;
   width: 100%;
+
+  font-size: 24px;
+  font-weight: bold;
+
+  text-align: center;
+
+  color: var(--mtrol-gold-bright) !important;
+
+  border: 1px solid rgba(216,194,122,0.55) !important;
+  border-radius: var(--mtrol-radius-md);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.82),
+      rgba(5,5,5,0.82)
+    ) !important;
+
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,0.025),
+    0 0 10px rgba(216,194,122,0.12);
 }
 
-/* =========================
-   VITALES
-========================= */
+/* ---------- HEADER CENTER NUEVO ---------- */
+
+.header-center {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 10px;
+}
+
+.mtrol-char-name {
+  width: 100%;
+  max-width: 420px;
+
+  font-family: var(--mtrol-font-main);
+  font-size: 28px;
+  font-weight: bold;
+
+  text-align: center;
+
+  color: var(--mtrol-gold-bright) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.88),
+      rgba(5,5,5,0.88)
+    ) !important;
+
+  border: 1px solid rgba(216,194,122,0.65) !important;
+  border-radius: var(--mtrol-radius-md);
+
+  padding: 8px 12px;
+
+  box-shadow:
+    0 0 12px rgba(216,194,122,0.16),
+    inset 0 0 10px rgba(255,255,255,0.025);
+}
+
+/* =========================================================
+   06. VITALES - BARRAS PREMIUM
+========================================================= */
 
 .vitales-bar {
-  display: flex;
-  gap: 25px;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+
   margin-top: 8px;
-  margin-bottom: 12px;
-  padding: 8px 10px;
-  background: rgba(0, 0, 0, 0.34);
-  border: 1px solid rgba(230, 220, 192, 0.12);
-  border-radius: 8px;
+  margin-bottom: 14px;
+
+  padding: 12px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(22, 20, 16, 0.78),
+      rgba(8, 8, 8, 0.72)
+    );
+
+  border: 1px solid var(--mtrol-border);
+  border-radius: var(--mtrol-radius-md);
+
+  box-shadow:
+    var(--mtrol-shadow-dark),
+    inset 0 0 14px rgba(255, 220, 120, 0.035);
 }
 
 .vital {
-  display: flex;
+  display: grid;
+  grid-template-columns: 28px 42px 58px 12px 58px 12px 58px;
   align-items: center;
   gap: 6px;
+
+  padding: 8px 10px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.82),
+      rgba(5,5,5,0.82)
+    );
+
+  border: 1px solid rgba(216,194,122,0.28);
+  border-radius: var(--mtrol-radius-sm);
+
+  box-shadow:
+    inset 0 0 10px rgba(255,255,255,0.025);
+}
+
+.vital label {
+  color: var(--mtrol-gold) !important;
+  font-size: 15px;
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(0,0,0,0.9);
 }
 
 .vital-icon {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.25));
+
+  filter:
+    drop-shadow(0 0 5px rgba(216,194,122,0.28));
 }
 
 .vital input {
-  width: 55px;
-}
+  width: 58px !important;
+  height: 30px !important;
 
-.sep {
-  opacity: 0.8;
-}
-
-/* =========================
-   BARRA DE STATS
-========================= */
-
-.stats-bar {
-  display: flex;
-  justify-content: space-around;
-  border-top: 1px solid rgba(230, 220, 192, 0.35);
-  border-bottom: 1px solid rgba(230, 220, 192, 0.35);
-  padding: 10px 8px;
-  margin-bottom: 12px;
-  background: rgba(0, 0, 0, 0.28);
-  border-radius: 6px;
-}
-
-.stat {
   text-align: center;
+
+  color: var(--mtrol-silver) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10,10,10,0.88),
+      rgba(0,0,0,0.88)
+    ) !important;
+
+  border: 1px solid rgba(216,194,122,0.35) !important;
+  border-radius: var(--mtrol-radius-sm);
 }
 
-.stat label {
+.vital .sep {
+  color: var(--mtrol-silver-soft);
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* ---------- HOVER VITAL ---------- */
+
+.vital:hover {
+  border-color: rgba(255,220,120,0.55);
+
+  box-shadow:
+    0 0 10px rgba(216,194,122,0.18),
+    inset 0 0 10px rgba(255,220,120,0.035);
+}
+
+.vital:hover label {
+  color: var(--mtrol-gold-bright) !important;
+}
+/* ---------- BARRAS REALES HP / MP ---------- */
+
+.mtrol-vital-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vital-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mtrol-vital-bar {
+  position: relative;
+  width: 100%;
+  height: 14px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(216,194,122,0.35);
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,0.85),
+      rgba(20,20,20,0.85)
+    );
+
+  box-shadow:
+    inset 0 0 8px rgba(0,0,0,0.85);
+}
+
+.mtrol-vital-fill {
+  height: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  border-radius: 999px;
+
+  transition: width 0.25s ease;
+}
+
+.hp-bar .mtrol-vital-fill {
+  background:
+    linear-gradient(
+      90deg,
+      #5c0909,
+      #c22b2b,
+      #ff6b4a
+    );
+
+  box-shadow:
+    0 0 10px rgba(255,60,40,0.45);
+}
+
+.mp-bar .mtrol-vital-fill {
+  background:
+    linear-gradient(
+      90deg,
+      #08204f,
+      #1d65c9,
+      #6ab8ff
+    );
+
+  box-shadow:
+    0 0 10px rgba(80,150,255,0.45);
+}
+
+.vital-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+/* =========================================================
+   07. BARRA DE STATS
+========================================================= */
+
+.stats-bar,
+.mtrol-resumen-personaje {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+
+  padding: 10px;
+  margin-bottom: 14px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(22, 20, 16, 0.72),
+      rgba(8, 8, 8, 0.66)
+    );
+
+  border: 1px solid var(--mtrol-border);
+  border-radius: var(--mtrol-radius-md);
+
+  box-shadow:
+    var(--mtrol-shadow-dark),
+    inset 0 0 12px rgba(255, 220, 120, 0.03);
+}
+
+.stat,
+.mtrol-resumen-card {
+  text-align: center;
+
+  padding: 8px 10px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.82),
+      rgba(5,5,5,0.82)
+    );
+
+  border: 1px solid rgba(216,194,122,0.28);
+  border-radius: var(--mtrol-radius-sm);
+
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,0.025);
+}
+
+.stat label,
+.mtrol-resumen-card label {
   display: block;
+
   font-size: 12px;
-  color: #f0ead8;
+
+  color: var(--mtrol-gold) !important;
+
+  text-shadow: 0 0 4px rgba(0,0,0,0.9);
 }
 
-.mtrol.sheet.personaje .stats-bar span {
-  color: #d8d0b8;
+.mtrol.sheet.personaje .stats-bar span,
+.mtrol-resumen-card span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: var(--mtrol-silver) !important;
+
+  font-size: 19px;
   font-weight: bold;
+
+  text-shadow:
+    0 0 4px rgba(0,0,0,0.95);
 }
 
-/* =========================
-   TABS
-========================= */
+.karma-card span {
+  color: #ffb36a !important;
+}
+
+.dharma-card span {
+  color: #9fd8ff !important;
+}
+
+/* =========================================================
+   08. TABS
+========================================================= */
 
 .sheet-tabs {
   display: flex;
-  gap: 10px;
-  margin: 10px 0 14px 0;
-  border-bottom: 1px solid rgba(230, 220, 192, 0.45);
-  padding-bottom: 4px;
+  gap: 8px;
+
+  margin: 10px 0 16px 0;
+  padding: 6px;
+
+  border-bottom: 1px solid rgba(216,194,122,0.42);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20, 18, 14, 0.58),
+      rgba(6, 6, 6, 0.46)
+    );
+
+  border-radius: var(--mtrol-radius-md) var(--mtrol-radius-md) 0 0;
 }
 
 .sheet-tabs .item {
-  padding: 6px 14px;
+  flex: 1;
+
+  padding: 8px 10px;
+
   cursor: pointer;
-  color: #d2c8ac;
+
+  color: var(--mtrol-gold) !important;
+
+  text-align: center;
   text-decoration: none;
-  transition: 0.2s;
+
+  border: 1px solid transparent;
+  border-radius: var(--mtrol-radius-sm);
+
+  background: rgba(0,0,0,0.18);
+
+  transition:
+    color 0.15s ease,
+    text-shadow 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .sheet-tabs .item:hover {
-  color: #ffffff;
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+  color: var(--mtrol-gold-bright) !important;
+
+  background: rgba(216,194,122,0.07);
+
+  border-color: rgba(216,194,122,0.28);
+
+  text-shadow:
+    0 0 6px rgba(216,194,122,0.35);
 }
 
 .sheet-tabs .item.active {
-  color: #fff5da;
-  border-bottom: 2px solid #e6dcc0;
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+  color: #ffffff !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(95, 36, 26, 0.78),
+      rgba(18, 10, 8, 0.82)
+    );
+
+  border-color: rgba(216,194,122,0.58);
+
+  box-shadow:
+    0 0 10px rgba(216,194,122,0.18),
+    inset 0 0 8px rgba(255,255,255,0.035);
+
+  text-shadow:
+    0 0 6px rgba(216,194,122,0.45);
 }
+/* =========================================================
+   09. GRIDS
+========================================================= */
 
-/* =========================
-   GRIDS
-========================= */
-
-.identidad-grid {
+.identidad-grid,
+.mtrol-identidad-premium {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
-.atributos-grid {
+.atributos-grid,
+.mtrol-atributos-premium {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
 .recursos-grid {
@@ -274,33 +827,192 @@ a {
   gap: 10px;
 }
 
-.atributo {
+/* =========================================================
+   10. TAB PERSONAJE - ATRIBUTOS
+========================================================= */
+
+.atributo,
+.mtrol-attribute-card {
   display: flex;
   flex-direction: column;
+  gap: 6px;
+
+  padding: 10px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.76),
+      rgba(5,5,5,0.76)
+    );
+
+  border: 1px solid rgba(216,194,122,0.28);
+  border-radius: var(--mtrol-radius-sm);
+
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,0.025);
+
+  transition:
+    transform 0.12s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 
-/* =========================
-   ATRIBUTOS ROLLABLE
-========================= */
+.atributo label,
+.mtrol-attribute-card label {
+  text-align: center;
+  font-size: 14px;
+  color: var(--mtrol-gold) !important;
+}
+
+.atributo input,
+.mtrol-attribute-card input {
+  height: 34px;
+  text-align: center;
+
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.atributo:hover,
+.mtrol-attribute-card:hover {
+  transform: translateY(-1px);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(35, 29, 17, 0.82),
+      rgba(8, 8, 8, 0.82)
+    );
+
+  border-color: rgba(255,220,120,0.68);
+
+  box-shadow:
+    0 0 10px rgba(216,194,122,0.25),
+    inset 0 0 10px rgba(255,220,120,0.045);
+}
+
+.atributo:hover label,
+.mtrol-attribute-card:hover label {
+  color: var(--mtrol-gold-bright) !important;
+
+  text-shadow:
+    0 0 6px rgba(216,194,122,0.45);
+}
+
+/* ---------- IDENTIDAD PREMIUM ---------- */
+
+.mtrol-identidad-premium .mtrol-field,
+.identidad-grid > div {
+  padding: 8px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.64),
+      rgba(5,5,5,0.64)
+    );
+
+  border: 1px solid rgba(216,194,122,0.20);
+  border-radius: var(--mtrol-radius-sm);
+}
+
+.mtrol-identidad-premium input,
+.identidad-grid input {
+  text-align: center;
+}
+
+/* =========================================================
+   11. ELEMENTOS ROLLABLE
+========================================================= */
 
 .rollable {
   cursor: pointer;
-  transition: 0.2s;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
 }
+
+/* ---------- HOVER GENERAL ---------- */
 
 .rollable:hover {
-  color: #ffd700;
-  text-shadow: 0 0 6px #ffd700;
+
+  color: var(--mtrol-gold-bright);
+
+  text-shadow:
+    0 0 6px rgba(255,220,120,0.35);
 }
 
-/* =========================
-   COMPETENCIAS
-========================= */
+/* ---------- ATRIBUTOS ---------- */
+
+.mtrol-roll-atributo:hover {
+
+  border-color:
+    rgba(255,220,120,0.72);
+
+  box-shadow:
+    0 0 12px rgba(216,194,122,0.28),
+    inset 0 0 10px rgba(255,220,120,0.04);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(40,32,18,0.82),
+      rgba(10,10,10,0.82)
+    );
+}
+
+/* ---------- LABEL ATRIBUTO ---------- */
+
+.mtrol-roll-atributo:hover label {
+
+  color:
+    var(--mtrol-gold-bright) !important;
+
+  text-shadow:
+    0 0 8px rgba(255,220,120,0.45);
+}
+
+/* ---------- INPUT ATRIBUTO ---------- */
+
+.mtrol-roll-atributo:hover input {
+
+  border-color:
+    rgba(255,220,120,0.72) !important;
+
+  box-shadow:
+    0 0 8px rgba(216,194,122,0.25);
+}
+
+/* ---------- CLICK ---------- */
+
+.rollable:active {
+
+  transform: translateY(1px);
+
+  box-shadow:
+    inset 0 0 14px rgba(0,0,0,0.65);
+}
+
+/* ---------- INPUTS DISABLED ---------- */
+
+.mtrol-personaje-sheet .atributo input:disabled {
+  pointer-events: none;
+}
+
+/* =========================================================
+   12. COMPETENCIAS
+========================================================= */
 
 .competencias-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   margin-top: 10px;
 }
 
@@ -308,21 +1020,62 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 8px;
-  color: #ded8c8;
-  background: rgba(0, 0, 0, 0.32);
-  border: 1px solid rgba(230, 220, 192, 0.08);
-  border-radius: 6px;
+  gap: 10px;
+
+  padding: 8px 10px;
+
+  color: var(--mtrol-silver);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.72),
+      rgba(5,5,5,0.72)
+    );
+
+  border: 1px solid rgba(216,194,122,0.22);
+  border-radius: var(--mtrol-radius-sm);
+
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,0.025);
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    transform 0.12s ease;
+}
+
+.competencia-row:hover {
+  transform: translateY(-1px);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(35, 29, 17, 0.82),
+      rgba(8, 8, 8, 0.82)
+    );
+
+  border-color: rgba(255,220,120,0.55);
+
+  box-shadow:
+    0 0 10px rgba(216,194,122,0.20),
+    inset 0 0 10px rgba(255,220,120,0.035);
 }
 
 .competencia-row:hover .competencia-nombre {
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+  color: var(--mtrol-gold-bright);
+
+  text-shadow:
+    0 0 6px rgba(216,194,122,0.35);
 }
 
 .competencia-nombre {
-  color: #f2ede0;
-  font-weight: 500;
+  color: var(--mtrol-silver);
+  font-weight: 600;
+
   flex: 1;
+
   overflow: visible;
   white-space: normal;
   text-overflow: unset;
@@ -331,30 +1084,51 @@ a {
 .competencia-controles {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
 }
 
 .competencia-nivel {
+  min-width: 28px;
+
   color: #ffffff;
   font-weight: bold;
-  padding: 0 4px;
+  text-align: center;
+
+  padding: 2px 6px;
+
+  background: rgba(216,194,122,0.10);
+
+  border: 1px solid rgba(216,194,122,0.28);
+  border-radius: 999px;
+
+  box-shadow:
+    inset 0 0 6px rgba(255,255,255,0.025);
 }
 
 .competencia-controles a {
-  color: #d8d0b8;
+  color: var(--mtrol-gold);
   cursor: pointer;
-  transition: 0.2s;
+
   text-decoration: none;
+
+  transition:
+    color 0.15s ease,
+    text-shadow 0.15s ease,
+    transform 0.12s ease;
 }
 
 .competencia-controles a:hover {
   color: #ffffff;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.55);
+
+  transform: translateY(-1px);
+
+  text-shadow:
+    0 0 6px rgba(216,194,122,0.5);
 }
 
-/* =========================
-   ACCIONES GENERALES
-========================= */
+/* =========================================================
+   13. ACCIONES GENERALES
+========================================================= */
 
 .item-create-objeto,
 .item-edit,
@@ -362,172 +1136,287 @@ a {
 .item-equip,
 .item-unequip {
   cursor: pointer;
+  text-decoration: none;
+
+  transition:
+    color 0.15s ease,
+    text-shadow 0.15s ease,
+    transform 0.12s ease;
 }
 
 .item-edit,
-.item-delete,
 .item-equip,
 .item-unequip {
-  color: #e7dcc0;
+  color: var(--mtrol-gold);
   margin-right: 8px;
-  text-decoration: none;
-  transition: 0.2s;
+}
+
+.item-create-objeto {
+  color: var(--mtrol-gold-bright);
+  font-weight: bold;
+}
+
+.item-delete {
+  color: #d8a0a0;
+  margin-right: 8px;
 }
 
 .item-edit:hover,
 .item-equip:hover,
-.item-unequip:hover {
+.item-unequip:hover,
+.item-create-objeto:hover {
   color: #ffffff;
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
+
+  transform: translateY(-1px);
+
+  text-shadow:
+    0 0 7px rgba(216,194,122,0.55);
 }
 
 .item-delete:hover {
-  color: #ff8080;
-  text-shadow: 0 0 6px rgba(255, 100, 100, 0.35);
-}
+  color: var(--mtrol-red-bright);
 
-/* =========================
-   INVENTARIO Y EQUIPAMIENTO
-========================= */
+  transform: translateY(-1px);
+
+  text-shadow:
+    0 0 8px rgba(255, 80, 80, 0.55);
+}
+/* =========================================================
+   14. INVENTARIO Y EQUIPAMIENTO
+========================================================= */
 
 .equipamiento-tab h2,
 .inventario-tab h2 {
-  color: #e8e2cf;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
-  margin-bottom: 10px;
+  color: var(--mtrol-gold);
+
+  text-shadow:
+    0 0 6px rgba(0,0,0,0.9);
+
+  margin-bottom: 12px;
 }
+
+/* ---------- HEADER INVENTARIO ---------- */
 
 .inventario-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+
+  margin-bottom: 12px;
 }
 
-.inventario-header .item-create-objeto {
-  color: #e6dcc0;
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.2s;
-}
-
-.inventario-header .item-create-objeto:hover {
-  color: #ffffff;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
-}
+/* ---------- RESUMEN ---------- */
 
 .slots-resumen {
   display: flex;
   gap: 24px;
-  padding: 10px 14px;
-  margin-bottom: 12px;
-  border: 1px solid rgba(220, 210, 180, 0.35);
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.52);
-  color: #e8e2cf;
+
+  padding: 12px 14px;
+  margin-bottom: 14px;
+
+  border: 1px solid rgba(216,194,122,0.32);
+  border-radius: var(--mtrol-radius-md);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.82),
+      rgba(5,5,5,0.82)
+    );
+
+  color: var(--mtrol-silver);
+
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,0.025);
 }
 
 .slots-resumen strong {
-  color: #f5f0dc;
+  color: var(--mtrol-gold-bright);
 }
+
+/* ---------- TABLAS ---------- */
 
 .tabla-equipamiento,
 .tabla-inventario {
   width: 100%;
-  border-collapse: collapse;
-  color: #f2ecda;
-  background: rgba(0, 0, 0, 0.38);
+
+  border-collapse: separate;
+  border-spacing: 0 6px;
+
+  color: var(--mtrol-silver);
+
+  background: transparent;
 }
+
+/* ---------- HEAD ---------- */
 
 .tabla-equipamiento thead,
 .tabla-inventario thead {
-  background: rgba(25, 25, 25, 0.82);
+  background: transparent;
 }
 
 .tabla-equipamiento th,
 .tabla-inventario th {
-  color: #f0e6c8;
+
+  color: var(--mtrol-gold);
+
   padding: 10px;
+
   text-align: left;
-  border: 1px solid rgba(220, 220, 220, 0.16);
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.95);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(32,28,22,0.88),
+      rgba(10,10,10,0.88)
+    );
+
+  border-top: 1px solid rgba(216,194,122,0.35);
+  border-bottom: 1px solid rgba(216,194,122,0.35);
+
+  text-shadow:
+    0 0 6px rgba(0,0,0,0.95);
 }
+
+/* ---------- BODY ---------- */
 
 .tabla-equipamiento td,
 .tabla-inventario td {
-  color: #f5f1e6;
+
+  color: var(--mtrol-silver);
+
   padding: 10px;
-  border: 1px solid rgba(220, 220, 220, 0.12);
-  background: rgba(0, 0, 0, 0.56);
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.95);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.74),
+      rgba(5,5,5,0.74)
+    );
+
+  border-top: 1px solid rgba(216,194,122,0.10);
+  border-bottom: 1px solid rgba(216,194,122,0.10);
+
+  text-shadow:
+    0 0 4px rgba(0,0,0,0.95);
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.tabla-equipamiento tbody tr:nth-child(even) td,
-.tabla-inventario tbody tr:nth-child(even) td {
-  background: rgba(255, 255, 255, 0.08);
-}
+/* ---------- HOVER ROW ---------- */
 
 .tabla-equipamiento tbody tr:hover td,
 .tabla-inventario tbody tr:hover td {
-  background: rgba(255, 255, 255, 0.12);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(40,32,18,0.82),
+      rgba(8,8,8,0.82)
+    );
+
+  border-top: 1px solid rgba(255,220,120,0.32);
+  border-bottom: 1px solid rgba(255,220,120,0.32);
+
+  box-shadow:
+    inset 0 0 10px rgba(255,220,120,0.03);
 }
+
+/* ---------- LINKS ---------- */
 
 .tabla-equipamiento a,
 .tabla-inventario a {
-  color: #e7dcc0;
+  color: var(--mtrol-gold);
+
   margin-right: 8px;
+
   text-decoration: none;
+
+  transition:
+    color 0.15s ease,
+    text-shadow 0.15s ease,
+    transform 0.12s ease;
 }
 
 .tabla-equipamiento a:hover,
 .tabla-inventario a:hover {
+
   color: #ffffff;
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
+
+  transform: translateY(-1px);
+
+  text-shadow:
+    0 0 6px rgba(216,194,122,0.45);
 }
+
+/* ---------- ITEM NAME ---------- */
 
 .tabla-equipamiento td:first-child,
 .tabla-inventario td:first-child {
-  color: #ece3c8;
+  color: var(--mtrol-gold-bright);
+
   font-weight: 600;
 }
-
-/* =========================
-   LISTAS LEGACY
-========================= */
+/* =========================================================
+   15. LISTAS LEGACY
+========================================================= */
 
 .inventario-list .objeto-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+  padding: 7px 8px;
+
+  border-bottom: 1px solid rgba(216,194,122,0.16);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.58),
+      rgba(5,5,5,0.58)
+    );
 }
 
 .objeto-nombre {
-  color: #e0e0e0;
+  color: var(--mtrol-silver);
 }
 
 .objeto-controles a {
-  color: #c0c0c0;
-  margin-left: 6px;
+  color: var(--mtrol-gold);
+  margin-left: 7px;
   text-decoration: none;
 }
 
 .objeto-controles a:hover {
   color: #ffffff;
-  text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+  text-shadow: 0 0 6px rgba(216,194,122,0.45);
 }
 
-/* =========================
-   SHEET DE OBJETO
-========================= */
+/* =========================================================
+   16. SHEET DE OBJETO
+========================================================= */
 
 .mtrol.sheet.objeto .sheet-section {
-  margin-bottom: 12px;
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.34);
-  border: 1px solid rgba(230, 220, 192, 0.12);
-  border-radius: 8px;
+  margin-bottom: 14px;
+  padding: 12px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(22,20,16,0.74),
+      rgba(8,8,8,0.68)
+    );
+
+  border: 1px solid var(--mtrol-border);
+  border-radius: var(--mtrol-radius-md);
+
+  box-shadow:
+    var(--mtrol-shadow-dark),
+    inset 0 0 14px rgba(255,220,120,0.035);
 }
 
 .mtrol.sheet.objeto input,
@@ -536,17 +1425,18 @@ a {
   width: 100%;
 }
 
-/* =========================
-   AJUSTES MENORES
-========================= */
+/* =========================================================
+   17. AJUSTES MENORES
+========================================================= */
 
 .sep {
-  opacity: 0.8;
+  color: var(--mtrol-silver-soft);
+  opacity: 0.85;
 }
 
-/* =========================
-   MINIATURAS DE ITEMS
-========================= */
+/* =========================================================
+   18. MINIATURAS DE ITEMS
+========================================================= */
 
 .item-nombre-col {
   min-width: 220px;
@@ -559,313 +1449,214 @@ a {
 }
 
 .item-miniatura img {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
+
   object-fit: cover;
-  border: 1px solid rgba(230, 220, 192, 0.45);
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.45);
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.45);
+
+  border: 1px solid rgba(216,194,122,0.48);
+  border-radius: var(--mtrol-radius-sm);
+
+  background: rgba(0,0,0,0.55);
+
+  box-shadow:
+    0 0 6px rgba(0,0,0,0.55),
+    0 0 6px rgba(216,194,122,0.12);
 }
 
 .item-miniatura span {
-  color: #f5f1e6;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.95);
+  color: var(--mtrol-gold-bright);
+
+  text-shadow:
+    0 0 4px rgba(0,0,0,0.95);
 }
 
 
-/* =========================
-   SELECTS Y OPCIONES
-========================= */
+/* =========================================================
+   19. SELECTS Y OPCIONES
+========================================================= */
 
 .mtrol.sheet.personaje select,
 .mtrol.sheet.objeto select {
-  background: rgba(10, 10, 10, 0.95) !important;
-  color: #f5e6c8 !important;
-  border: 1px solid rgba(230, 220, 192, 0.45) !important;
-  border-radius: 6px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.45);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.92),
+      rgba(5,5,5,0.92)
+    ) !important;
+
+  color:
+    var(--mtrol-gold-bright) !important;
+
+  border:
+    1px solid rgba(216,194,122,0.42) !important;
+
+  border-radius:
+    var(--mtrol-radius-sm);
+
+  box-shadow:
+    inset 0 0 6px rgba(255,255,255,0.02);
 }
 
-/* OPCIONES INTERNAS DEL DESPLEGABLE */
+/* ---------- OPCIONES ---------- */
 
 .mtrol.sheet.personaje select option,
 .mtrol.sheet.objeto select option {
+
   background: #111111 !important;
-  color: #f5e6c8 !important;
+
+  color:
+    var(--mtrol-gold-bright) !important;
+
   padding: 6px;
 }
 
-/* OPCIÓN SELECCIONADA */
+/* ---------- OPCIÓN SELECCIONADA ---------- */
 
 .mtrol.sheet.personaje select option:checked,
 .mtrol.sheet.objeto select option:checked {
+
   background: #4a2f12 !important;
-  color: #ffd27a !important;
+
+  color: #ffffff !important;
 }
 
-/* HOVER */
+/* ---------- HOVER ---------- */
 
 .mtrol.sheet.personaje select option:hover,
 .mtrol.sheet.objeto select option:hover {
+
   background: #2a1a0c !important;
+
   color: #ffffff !important;
 }
 
+/* =========================================================
+   20. BOTÓN RESTAURAR DÍA
+========================================================= */
+
 .mtrol-restaurar-dia {
-  font-family: "Morpheus", serif !important;
-  color: #d8d1b0 !important;
+
+  font-family: var(--mtrol-font-main) !important;
+
+  color:
+    var(--mtrol-gold-bright) !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(60,45,20,0.92),
+      rgba(20,12,8,0.92)
+    );
+
+  border:
+    1px solid rgba(216,194,122,0.55);
+
+  border-radius:
+    var(--mtrol-radius-sm);
+
+  padding: 6px 12px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .mtrol-restaurar-dia:hover {
-  color: #fff3c4 !important;
-}
 
-.header-center {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 10px;
-}
-
-.mtrol-char-name {
-  width: 100%;
-  max-width: 400px;
-
-  font-family: "Morpheus", serif;
-  font-size: 28px;
-  font-weight: bold;
-
-  text-align: center;
-
-  color: #d8d8d8;
-
-  background: rgba(15, 15, 15, 0.75);
-
-  border: 2px solid #8f8f8f;
-  border-radius: 10px;
-
-  padding: 8px 12px;
-
-  box-shadow: 0 0 8px rgba(255,255,255,0.15);
-}
-
-
-.mtrol-personaje .window-content {
-  background: url("../assets/ui/sheet-bg.webp") center center / cover no-repeat !important;
-  font-family: "Morpheus", serif !important;
-  color: #e8e0c8 !important;
-}
-
-.mtrol-personaje-sheet {
-  font-family: "Morpheus", serif !important;
-  color: #e8e0c8 !important;
-}
-
-.mtrol-personaje-sheet input {
-  font-family: "Morpheus", serif !important;
-}
-
-.mtrol-personaje-sheet .sheet-header,
-.mtrol-personaje-sheet .vitales-bar,
-.mtrol-personaje-sheet .stats-bar,
-.mtrol-personaje-sheet .identidad,
-.mtrol-personaje-sheet .atributos,
-.mtrol-personaje-sheet .sheet-section,
-.mtrol-personaje-sheet .inventario-tab,
-.mtrol-personaje-sheet .equipamiento-tab {
-  background: rgba(20, 20, 20, 0.55) !important;
-  border-radius: 8px;
-  border: 1px solid rgba(180, 160, 90, 0.35);
-}
-
-.mtrol-personaje-sheet h2 {
-  color: #d8c27a !important;
-  border-bottom: 1px solid #8b2b1f;
-}
-
-.mtrol-personaje-sheet .sheet-tabs .item {
-  color: #d8c27a !important;
-}
-
-.mtrol-personaje-sheet .sheet-tabs .item.active {
   color: #ffffff !important;
-  text-shadow: 0 0 6px #d8c27a;
-}
 
-.mtrol-personaje-sheet input[type="text"],
-.mtrol-personaje-sheet input[type="number"] {
-  color: #f2e6c9 !important;
-  background: rgba(5, 5, 5, 0.55) !important;
-  border: 1px solid rgba(210, 190, 120, 0.55) !important;
-  font-family: "Morpheus", serif !important;
-  font-size: 18px !important;
-  text-align: center;
-}
+  transform: translateY(-1px);
 
-.mtrol-personaje-sheet .stats-bar span,
-.mtrol-personaje-sheet .vital input,
-.mtrol-personaje-sheet .recursos-grid input,
-.mtrol-personaje-sheet .atributos input,
-.mtrol-personaje-sheet .identidad input {
-  color: #f7ead0 !important;
-  text-shadow: 0 0 4px #000;
-}
-
-.mtrol-personaje-sheet label,
-.mtrol-personaje-sheet .stat label,
-.mtrol-personaje-sheet .vital label {
-  color: #e8d28a !important;
-  text-shadow: 0 0 4px #000;
-}
-
-.mtrol-personaje-sheet .vital input {
-  width: 55px !important;
-  height: 28px !important;
-  padding: 2px 4px !important;
-}
-
-.mtrol-personaje-sheet .stats-bar span {
-  font-size: 18px !important;
-  font-weight: bold;
-}
-
-.mtrol-personaje-sheet h2,
-.mtrol-personaje-sheet .sheet-section h2,
-.mtrol-personaje-sheet .identidad h2,
-.mtrol-personaje-sheet .atributos h2,
-.mtrol-personaje-sheet .inventario-tab h2,
-.mtrol-personaje-sheet .equipamiento-tab h2 {
-  border-bottom: 1px solid rgba(212, 180, 84, 0.65) !important;
-  color: #d8c27a !important;
-}
-
-.mtrol-personaje-sheet .atributo {
-  transition: all 0.2s ease;
-}
-
-.mtrol-personaje-sheet .atributo:hover {
-  background: rgba(212, 180, 84, 0.08) !important;
-  border-color: rgba(255, 220, 120, 0.65) !important;
-  box-shadow:
-    0 0 8px rgba(212, 180, 84, 0.35),
-    inset 0 0 6px rgba(212, 180, 84, 0.15);
-}
-
-.mtrol-personaje-sheet .atributo:hover label {
-  color: #ffe9a8 !important;
-  text-shadow:
-    0 0 4px rgba(255, 220, 120, 0.8),
-    0 0 8px rgba(212, 180, 84, 0.45);
-}
-
-.mtrol-personaje-sheet .atributo:hover input {
-  border-color: rgba(255, 220, 120, 0.75) !important;
-  box-shadow:
-    0 0 6px rgba(212, 180, 84, 0.35);
-}
-
-.mtrol-formula-box {
-  margin-top: 6px;
-  margin-bottom: 6px;
-  padding: 8px 12px;
-
-  background: linear-gradient(
-    180deg,
-    rgba(25,25,25,0.95),
-    rgba(10,10,10,0.95)
-  );
-
-  border: 1px solid #7a1f1f;
-  border-left: 4px solid #c52b2b;
-
-  border-radius: 8px;
-
-  color: #e6d3b0;
-  font-family: "Signika", serif;
-  font-size: 16px;
-  font-weight: bold;
-  letter-spacing: 1px;
+  border-color:
+    rgba(255,220,120,0.75);
 
   box-shadow:
-    0 0 8px rgba(197,43,43,0.25),
-    inset 0 0 6px rgba(255,255,255,0.03);
+    0 0 10px rgba(216,194,122,0.28);
 }
+/* =========================================================
+   21. CHAT MTROL - TIRADAS
+========================================================= */
 
 .mtrol-chat-card {
-  padding: 12px;
-  border-radius: 10px;
-  font-family: "Signika", serif;
-}
+  padding: 14px;
 
-.mtrol-chat-card h2 {
-  margin: 0 0 8px 0;
-  text-align: center;
-  font-size: 20px;
-  letter-spacing: 1px;
-}
+  border-radius: 14px;
 
-.mtrol-chat-success {
-  background: linear-gradient(180deg, #1b1512, #0b0b0b);
-  border: 1px solid #8a5a22;
-  color: #f2f2f2;
-  box-shadow: inset 0 0 12px rgba(255, 180, 80, 0.12);
-}
+  font-family: var(--mtrol-font-main);
 
-.mtrol-chat-success strong {
-  color: #ffffff;
-  font-size: 18px;
-}
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20, 15, 12, 0.98),
+      rgba(5, 5, 5, 0.98)
+    );
 
-/* =========================
-   CHAT MTROL - TIRADAS
-========================= */
+  border: 1px solid rgba(216, 194, 122, 0.45);
 
-.mtrol-chat-card {
-  padding: 12px;
-  border-radius: 12px;
-  font-family: "Morpheus", "Signika", serif;
+  box-shadow:
+    0 0 14px rgba(0,0,0,0.75),
+    inset 0 0 14px rgba(255,220,120,0.035);
 }
 
 .mtrol-chat-card h2 {
   margin: 0 0 12px 0;
+
   text-align: center;
-  font-family: "Morpheus", serif;
+
+  font-family: var(--mtrol-font-main);
+
   font-size: 26px;
   letter-spacing: 1px;
-  color: #d6b36a;
-  text-shadow: 0 0 8px rgba(255, 215, 120, 0.25);
+
+  color: var(--mtrol-gold);
+
+  text-shadow:
+    0 0 8px rgba(216,194,122,0.28),
+    0 0 5px rgba(0,0,0,0.95);
 }
+
+/* ---------- ÉXITO / NORMAL ---------- */
 
 .mtrol-chat-success {
-  background: linear-gradient(180deg, #16110f, #080808);
-  border: 1px solid #8a6230;
+  background:
+    linear-gradient(
+      180deg,
+      #17110d,
+      #050505
+    );
+
+  border: 1px solid rgba(216,194,122,0.55);
+
   color: #f2f2f2;
-  box-shadow:
-    0 0 10px rgba(180, 130, 60, 0.12),
-    inset 0 0 18px rgba(255, 255, 255, 0.03);
 }
 
+/* ---------- FORMULA SUPERIOR ---------- */
+
 .mtrol-formula-box {
-  margin: 8px 0;
+  margin: 8px 0 10px 0;
+
   padding: 12px 16px;
 
-  background: linear-gradient(
-    180deg,
-    #1c1512,
-    #0f0b09
-  );
+  background:
+    linear-gradient(
+      180deg,
+      rgba(28,22,14,0.96),
+      rgba(8,8,8,0.96)
+    );
 
-  border: 1px solid #9b6a2f;
-  border-radius: 10px;
+  border: 1px solid rgba(216,194,122,0.55);
+  border-radius: 12px;
 
-  color: #f8edd2;
+  color: var(--mtrol-gold-bright);
 
-  font-family: "Morpheus", "Signika", serif;
+  font-family: var(--mtrol-font-main);
 
   font-size: 26px;
-
   font-weight: 900;
 
   letter-spacing: 1px;
@@ -873,54 +1664,1179 @@ a {
   text-align: center;
 
   text-shadow:
-    0 0 6px rgba(255,220,120,0.15);
+    0 0 7px rgba(216,194,122,0.25);
 
   box-shadow:
-    inset 0 0 8px rgba(255,255,255,0.03),
-    0 0 10px rgba(180,120,40,0.08);
+    inset 0 0 10px rgba(255,255,255,0.025),
+    0 0 10px rgba(216,194,122,0.12);
 }
+
+/* ---------- RESULTADOS ---------- */
 
 .mtrol-result-line,
 .mtrol-total,
 .mtrol-details {
   color: #f2f2f2;
+
   font-family: "Signika", serif;
+
   font-size: 15px;
 }
 
 .mtrol-chat-success strong {
   color: #ffffff;
+
   font-size: 18px;
 }
 
 .mtrol-total strong {
   color: #ffffff;
+
   font-size: 24px;
 }
 
+/* ---------- PIFIA ---------- */
+
 .mtrol-chat-pifia {
-  background: #000000;
+  background:
+    linear-gradient(
+      180deg,
+      #090000,
+      #000000
+    );
+
   border: 2px solid #b00000;
+
   color: #ff2b2b;
+
   text-align: center;
-  box-shadow: 0 0 18px rgba(255, 0, 0, 0.35);
+
+  box-shadow:
+    0 0 18px rgba(255,0,0,0.35),
+    inset 0 0 16px rgba(255,0,0,0.08);
 }
 
 .mtrol-chat-pifia h2 {
   color: #ff0000;
-  font-family: "Morpheus", serif;
+
+  font-family: var(--mtrol-font-main);
+
   font-size: 28px;
-  text-shadow: 0 0 12px rgba(255, 0, 0, 0.9);
+
+  text-shadow:
+    0 0 12px rgba(255,0,0,0.9);
 }
 
 .mtrol-chat-pifia p {
   color: #ff4d4d;
+
   font-family: "Signika", serif;
+
   font-size: 16px;
   font-weight: bold;
 }
 
-/* Permite que los jugadores tiren atributos aunque el input esté bloqueado */
-.mtrol-personaje-sheet .atributo input:disabled {
+/* =========================================================
+   22. TAB COMBATE PREMIUM
+========================================================= */
+
+.combate-section {
+
+  padding: 16px;
+
+  border:
+    1px solid rgba(216,194,122,0.55);
+
+  border-radius:
+    var(--mtrol-radius-lg);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(20,18,14,0.92),
+      rgba(45,35,18,0.78)
+    );
+
+  box-shadow:
+    inset 0 0 18px rgba(255,215,120,0.05),
+    0 0 18px rgba(0,0,0,0.55);
+}
+
+/* ---------- HEADER ---------- */
+
+.combate-header {
+
+  text-align: center;
+
+  margin-bottom: 16px;
+
+  padding-bottom: 12px;
+
+  border-bottom:
+    1px solid rgba(216,194,122,0.45);
+}
+
+.combate-header h2 {
+
+  margin: 0;
+
+  color:
+    var(--mtrol-gold-bright);
+
+  font-size: 28px;
+
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 0 8px rgba(255,215,120,0.28),
+    0 2px 4px rgba(0,0,0,0.85);
+}
+
+.combate-subtitle {
+
+  margin: 6px 0 0;
+
+  color:
+    var(--mtrol-silver-soft);
+
+  font-size: 13px;
+
+  font-style: italic;
+}
+
+/* ---------- GRID ---------- */
+
+.combate-actions-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+/* ---------- BOTONES ---------- */
+
+.combate-action-btn {
+
+  min-height: 48px;
+
+  border:
+    1px solid rgba(216,194,122,0.65);
+
+  border-radius:
+    var(--mtrol-radius-md);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(70,58,28,0.96),
+      rgba(22,18,12,0.96)
+    );
+
+  color:
+    var(--mtrol-gold-bright);
+
+  font-size: 15px;
+  font-weight: bold;
+
+  letter-spacing: 0.4px;
+
+  text-shadow:
+    0 1px 3px #000;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+/* ---------- HOVER ---------- */
+
+.combate-action-btn:hover {
+
+  transform: translateY(-1px);
+
+  border-color:
+    rgba(255,221,130,0.95);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(105,82,34,0.98),
+      rgba(38,30,18,0.98)
+    );
+
+  box-shadow:
+    0 0 12px rgba(255,210,90,0.35),
+    inset 0 0 10px rgba(255,220,120,0.08);
+}
+
+/* ---------- CLICK ---------- */
+
+.combate-action-btn:active {
+
+  transform: translateY(1px);
+
+  box-shadow:
+    inset 0 0 14px rgba(0,0,0,0.65);
+}
+
+/* ---------- INICIATIVA ---------- */
+
+.combate-action-btn[data-skill="iniciativa"] {
+
+  grid-column: span 2;
+
+  font-size: 17px;
+
+  color: #fff1b8;
+
+  border-color:
+    rgba(255,215,120,0.9);
+}
+
+/* ---------- ATAQUES ---------- */
+
+.combate-action-btn[data-skill="ataque"],
+.combate-action-btn[data-skill="contraataque"] {
+
+  color: #ffd1a1;
+}
+
+/* ---------- DEFENSAS ---------- */
+
+.combate-action-btn[data-skill="defensa"],
+.combate-action-btn[data-skill="defensa-magica"] {
+
+  color: #d7e8ff;
+}
+
+/* ---------- MAGIA ---------- */
+
+.combate-action-btn[data-skill="ataque-magico"],
+.combate-action-btn[data-skill="esquivar-magico"] {
+
+  color: #e7d2ff;
+}
+
+/* =========================================================
+   23. RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .atributos-grid,
+  .mtrol-atributos-premium {
+
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .recursos-grid {
+
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .combate-actions-grid {
+
+    grid-template-columns:
+      1fr;
+  }
+
+  .combate-action-btn[data-skill="iniciativa"] {
+
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .identidad-grid,
+  .mtrol-identidad-premium {
+
+    grid-template-columns:
+      1fr;
+  }
+
+  .atributos-grid,
+  .mtrol-atributos-premium {
+
+    grid-template-columns:
+      1fr;
+  }
+
+  .stats-bar,
+  .mtrol-resumen-personaje {
+
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .sheet-tabs {
+
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================================================
+   24. EFECTOS VISUALES PREMIUM
+========================================================= */
+
+/* ---------- SCROLL ---------- */
+
+.mtrol ::-webkit-scrollbar {
+  width: 10px;
+}
+
+.mtrol ::-webkit-scrollbar-track {
+  background: rgba(10,10,10,0.55);
+}
+
+.mtrol ::-webkit-scrollbar-thumb {
+  background: rgba(216,194,122,0.28);
+  border-radius: 999px;
+}
+
+.mtrol ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,220,120,0.45);
+}
+
+/* ---------- HOVER PANEL ---------- */
+
+.mtrol-panel:hover,
+.sheet-section:hover,
+.identidad:hover,
+.atributos:hover,
+.equipamiento-tab:hover,
+.inventario-tab:hover {
+
+  box-shadow:
+    0 0 16px rgba(216,194,122,0.08),
+    0 0 24px rgba(0,0,0,0.55),
+    inset 0 0 14px rgba(255,220,120,0.03);
+}
+
+/* ---------- TRANSICIONES ---------- */
+
+.mtrol * {
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease;
+}
+
+/* ---------- SELECCIÓN TEXTO ---------- */
+
+.mtrol ::selection {
+  background: rgba(216,194,122,0.35);
+  color: #ffffff;
+}
+
+/* ---------- GLOW SUAVE ---------- */
+
+.mtrol h1,
+.mtrol h2,
+.mtrol h3 {
+
+  text-shadow:
+    0 0 4px rgba(0,0,0,0.95),
+    0 0 6px rgba(216,194,122,0.08);
+}
+
+/* ---------- VENTANA ---------- */
+
+.mtrol.sheet.personaje .window-content,
+.mtrol.sheet.objeto .window-content {
+
+  border:
+    1px solid rgba(216,194,122,0.18);
+
+  box-shadow:
+    inset 0 0 30px rgba(255,220,120,0.015);
+}
+
+/* =========================================================
+   25. FIX LEGIBILIDAD TEXTO
+========================================================= */
+
+/* ---------- INPUTS ---------- */
+
+.mtrol input,
+.mtrol textarea,
+.mtrol select {
+
+  color:
+    #f4ead7 !important;
+
+  text-shadow:
+    0 0 4px rgba(0,0,0,0.95);
+
+  opacity: 1 !important;
+}
+
+/* ---------- PLACEHOLDER ---------- */
+
+.mtrol input::placeholder,
+.mtrol textarea::placeholder {
+
+  color:
+    rgba(255,255,255,0.45) !important;
+}
+
+/* ---------- LABELS ---------- */
+
+.mtrol label {
+
+  color:
+    #d8c27a !important;
+
+  text-shadow:
+    0 0 4px rgba(0,0,0,0.95);
+}
+
+/* ---------- INPUTS IDENTIDAD ---------- */
+
+.identidad input {
+
+  color:
+    #fff4dc !important;
+
+  font-size: 18px !important;
+
+  text-shadow:
+    0 0 5px rgba(0,0,0,1);
+}
+
+/* ---------- ATRIBUTOS ---------- */
+
+.atributo input {
+
+  color:
+    #ffffff !important;
+
+  font-size: 22px !important;
+
+  font-weight: bold;
+
+  text-shadow:
+    0 0 6px rgba(0,0,0,1);
+}
+
+/* ---------- RECURSOS ---------- */
+
+.recursos-grid input {
+
+  color:
+    #fff0cf !important;
+
+  font-weight: bold;
+}
+
+/* ---------- NOMBRE ---------- */
+
+.mtrol-char-name {
+
+  color:
+    #fff2cf !important;
+
+  text-shadow:
+    0 0 8px rgba(216,194,122,0.25),
+    0 0 6px rgba(0,0,0,1);
+}
+
+/* =========================================================
+   26. FIX TAB PROGRESIÓN
+========================================================= */
+
+.mtrol .sheet-section h2,
+.mtrol .progresion-header h2 {
+  color: var(--mtrol-gold) !important;
+
+  border-bottom: none !important;
+
+  text-shadow:
+    0 0 5px rgba(0,0,0,0.95),
+    0 0 8px rgba(216,194,122,0.20);
+}
+
+/* Línea premium correcta debajo del header */
+
+.mtrol .progresion-header {
+  border-bottom: 1px solid rgba(216,194,122,0.45) !important;
+
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+}
+
+/* Quita cualquier línea roja heredada */
+
+.mtrol .sheet-section {
+  border-color: rgba(216,194,122,0.35) !important;
+}
+
+/* Inputs de progresión más legibles */
+
+.mtrol .recursos-grid input {
+  color: #fff4dc !important;
+
+  font-size: 17px !important;
+  font-weight: bold;
+
+  text-shadow:
+    0 0 5px rgba(0,0,0,1);
+}
+
+/* Labels de progresión */
+
+.mtrol .recursos-grid label {
+  color: var(--mtrol-gold) !important;
+
+  text-shadow:
+    0 0 4px rgba(0,0,0,0.95);
+}
+
+/* =========================================================
+   27. HEADER CINEMÁTICO DEFINITIVO
+========================================================= */
+
+.mtrol-personaje-sheet .sheet-header.mtrol-header-premium {
+  display: grid !important;
+  grid-template-columns: 130px 1fr !important;
+  align-items: center !important;
+  gap: 26px !important;
+
+  min-height: 150px !important;
+  padding: 18px 28px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,16,0.92),
+      rgba(7,7,7,0.88)
+    ) !important;
+
+  border: 1px solid rgba(216,194,122,0.48) !important;
+  border-radius: 14px !important;
+
+  box-shadow:
+    0 0 22px rgba(0,0,0,0.75),
+    inset 0 0 18px rgba(255,220,120,0.035) !important;
+
+  overflow: hidden !important;
+}
+
+/* RETRATO */
+
+.mtrol-personaje-sheet .mtrol-portrait-frame {
+  width: 116px !important;
+  height: 116px !important;
+
+  padding: 5px !important;
+
+  border: 2px solid rgba(216,194,122,0.65) !important;
+  border-radius: 14px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(48,38,20,0.90),
+      rgba(5,5,5,0.92)
+    ) !important;
+
+  box-shadow:
+    0 0 14px rgba(0,0,0,0.85),
+    0 0 10px rgba(216,194,122,0.22),
+    inset 0 0 10px rgba(255,220,120,0.04) !important;
+
+  box-sizing: border-box !important;
+}
+
+.mtrol-personaje-sheet .mtrol-portrait-frame .profile-img {
+  width: 100% !important;
+  height: 100% !important;
+
+  object-fit: cover !important;
+  object-position: center center !important;
+
+  border-radius: 9px !important;
+  border: 1px solid rgba(255,235,170,0.38) !important;
+
+  display: block !important;
+}
+
+/* BLOQUE CENTRAL */
+
+.mtrol-personaje-sheet .mtrol-header-identity {
+  width: 100% !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 14px !important;
+}
+
+/* MARCO DEL NOMBRE */
+
+.mtrol-personaje-sheet .mtrol-name-frame {
+  width: 82% !important;
+  max-width: 760px !important;
+
+  padding: 8px 14px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(12,12,10,0.98),
+      rgba(0,0,0,0.96)
+    ) !important;
+
+  border: 2px solid rgba(216,194,122,0.58) !important;
+  border-radius: 16px !important;
+
+  box-shadow:
+    0 0 16px rgba(0,0,0,0.85),
+    0 0 10px rgba(216,194,122,0.18),
+    inset 0 0 12px rgba(255,220,120,0.035) !important;
+}
+
+/* NOMBRE */
+
+.mtrol-personaje-sheet .mtrol-name-frame .mtrol-char-name {
+  width: 100% !important;
+  height: 68px !important;
+
+  padding: 0 18px !important;
+
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  color: #fff4d6 !important;
+
+  font-size: 46px !important;
+  line-height: 68px !important;
+  font-weight: 900 !important;
+
+  text-align: center !important;
+  letter-spacing: 1px !important;
+
+  text-shadow:
+    0 0 8px rgba(0,0,0,1),
+    0 0 10px rgba(216,194,122,0.22) !important;
+}
+
+/* SUBTÍTULOS */
+
+.mtrol-personaje-sheet .mtrol-header-subtitle {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 16px !important;
+
+  width: 100% !important;
+
+  color: #f1e3c0 !important;
+
+  font-size: 20px !important;
+  font-weight: 700 !important;
+
+  text-align: center !important;
+
+  text-shadow:
+    0 0 7px rgba(0,0,0,1) !important;
+}
+
+.mtrol-personaje-sheet .mtrol-header-subtitle span:first-child {
+  color: #e6bf68 !important;
+}
+
+.mtrol-personaje-sheet .mtrol-header-subtitle span:nth-child(3) {
+  color: #f0ead8 !important;
+}
+
+.mtrol-personaje-sheet .mtrol-header-subtitle span:nth-child(5) {
+  color: #b9d3ff !important;
+}
+
+.mtrol-personaje-sheet .mtrol-dot {
+  color: rgba(216,194,122,0.70) !important;
+  font-size: 13px !important;
+}
+
+/* =========================================================
+   28. HEADER ORNAMENTAL - MARCO DE NOMBRE
+========================================================= */
+
+.mtrol-personaje-sheet .mtrol-name-frame {
+  position: relative !important;
+
+  width: 78% !important;
+  max-width: 720px !important;
+
+  padding: 10px 34px !important;
+
+  border: 1px solid rgba(216,194,122,0.75) !important;
+  border-radius: 8px !important;
+
+  background:
+    linear-gradient(180deg, rgba(5,5,5,0.98), rgba(0,0,0,0.95)) !important;
+
+  box-shadow:
+    0 0 16px rgba(0,0,0,0.85),
+    inset 0 0 16px rgba(255,220,120,0.04) !important;
+}
+
+/* línea ornamental superior/inferior */
+.mtrol-personaje-sheet .mtrol-name-frame::before,
+.mtrol-personaje-sheet .mtrol-name-frame::after {
+  content: "◆";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  color: rgba(216,194,122,0.85);
+  font-size: 16px;
+  line-height: 1;
+
+  text-shadow:
+    0 0 6px rgba(216,194,122,0.35),
+    0 0 6px rgba(0,0,0,1);
+}
+
+.mtrol-personaje-sheet .mtrol-name-frame::before {
+  top: -10px;
+}
+
+.mtrol-personaje-sheet .mtrol-name-frame::after {
+  bottom: -10px;
+}
+
+/* esquinas ornamentales */
+.mtrol-personaje-sheet .mtrol-name-frame .mtrol-char-name {
+  height: 58px !important;
+  line-height: 58px !important;
+  font-size: 42px !important;
+}
+
+.mtrol-personaje-sheet .mtrol-name-frame {
+  outline: 1px solid rgba(216,194,122,0.25) !important;
+  outline-offset: 4px !important;
+}
+
+/* reduce altura general del header */
+.mtrol-personaje-sheet .sheet-header.mtrol-header-premium {
+  min-height: 132px !important;
+  padding: 14px 26px !important;
+  grid-template-columns: 126px 1fr !important;
+}
+
+/* subtítulo más cercano y centrado */
+.mtrol-personaje-sheet .mtrol-header-subtitle {
+  margin-top: 2px !important;
+  font-size: 18px !important;
+  gap: 14px !important;
+}
+
+/* =========================================================
+   29. FIX FINAL NOMBRE HEADER
+========================================================= */
+
+.mtrol-personaje-sheet .mtrol-name-frame .mtrol-char-name {
+
+  font-size: 38px !important;
+
+  height: 54px !important;
+  line-height: 54px !important;
+
+  text-align: center !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0 !important;
+
+  margin: 0 auto !important;
+}
+
+/* =========================================================
+   30. ATRIBUTOS PREMIUM V2
+========================================================= */
+
+.mtrol-personaje-sheet .atributos {
+  padding: 16px !important;
+}
+
+.mtrol-personaje-sheet .mtrol-atributos-premium,
+.mtrol-personaje-sheet .atributos-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 14px !important;
+}
+
+.mtrol-personaje-sheet .atributo {
+  min-height: 92px !important;
+
+  justify-content: center !important;
+  align-items: center !important;
+
+  padding: 12px !important;
+
+  border: 1px solid rgba(216,194,122,0.34) !important;
+  border-radius: 12px !important;
+
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(216,194,122,0.08),
+      transparent 45%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(18,18,16,0.92),
+      rgba(3,3,3,0.90)
+    ) !important;
+
+  box-shadow:
+    0 0 12px rgba(0,0,0,0.55),
+    inset 0 0 12px rgba(255,220,120,0.035) !important;
+}
+
+.mtrol-personaje-sheet .atributo label {
+  font-size: 16px !important;
+  letter-spacing: 0.5px !important;
+
+  color: #e6cf82 !important;
+
+  text-align: center !important;
+
+  text-shadow:
+    0 0 6px rgba(0,0,0,1);
+}
+
+.mtrol-personaje-sheet .atributo input {
+  width: 92px !important;
+  height: 38px !important;
+
+  margin: 4px auto 0 auto !important;
+
+  font-size: 24px !important;
+  font-weight: 900 !important;
+
+  color: #fff4dc !important;
+
+  text-align: center !important;
+
+  border: 1px solid rgba(216,194,122,0.46) !important;
+  border-radius: 8px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8,8,8,0.96),
+      rgba(0,0,0,0.96)
+    ) !important;
+
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,0.025),
+    0 0 8px rgba(0,0,0,0.45) !important;
+}
+
+/* Hover de tirada */
+
+.mtrol-personaje-sheet .atributo:hover {
+  transform: translateY(-2px) !important;
+
+  border-color: rgba(255,220,120,0.72) !important;
+
+  box-shadow:
+    0 0 14px rgba(216,194,122,0.30),
+    0 0 18px rgba(0,0,0,0.70),
+    inset 0 0 14px rgba(255,220,120,0.06) !important;
+}
+
+.mtrol-personaje-sheet .atributo:hover label {
+  color: #fff0b8 !important;
+
+  text-shadow:
+    0 0 8px rgba(216,194,122,0.45),
+    0 0 6px rgba(0,0,0,1);
+}
+
+.mtrol-personaje-sheet .atributo:hover input {
+  border-color: rgba(255,220,120,0.78) !important;
+
+  box-shadow:
+    0 0 10px rgba(216,194,122,0.30),
+    inset 0 0 8px rgba(255,255,255,0.025) !important;
+}
+
+/* =========================================================
+   33. FONDO ARCANO GLOBAL DE SHEET
+========================================================= */
+
+.mtrol-personaje-sheet {
+  position: relative;
+  z-index: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,0.30),
+      rgba(0,0,0,0.50)
+    ),
+    url("../assets/ui/mtrol-arcane-bg.webp") center center / cover no-repeat !important;
+}
+
+.mtrol-personaje-sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(160, 0, 0, 0.16),
+      rgba(0, 0, 0, 0.58) 72%
+    );
+
   pointer-events: none;
+  z-index: -1;
+}
+
+.mtrol.sheet.personaje .window-content {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,0.25),
+      rgba(0,0,0,0.55)
+    ),
+    url("../assets/ui/mtrol-arcane-bg.webp") center center / cover no-repeat !important;
+}
+
+/* =========================================================
+   35. TAB COMBATE V1
+========================================================= */
+
+.combate-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.combate-panel {
+  padding: 14px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14,14,14,0.92),
+      rgba(2,2,2,0.90)
+    );
+
+  border: 1px solid rgba(216,194,122,0.34);
+  border-radius: 12px;
+
+  box-shadow:
+    0 0 14px rgba(0,0,0,0.55),
+    inset 0 0 12px rgba(255,220,120,0.035);
+}
+
+.combate-panel-wide {
+  grid-column: span 2;
+}
+
+.combate-panel h3 {
+  margin: 0 0 12px 0;
+
+  color: #e6cf82;
+
+  font-size: 20px;
+
+  border-bottom: 1px solid rgba(216,194,122,0.35);
+
+  padding-bottom: 6px;
+}
+
+.combate-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.combate-info-grid div {
+  padding: 10px;
+
+  background: rgba(0,0,0,0.55);
+
+  border: 1px solid rgba(216,194,122,0.24);
+  border-radius: 8px;
+
+  text-align: center;
+}
+
+.combate-info-grid label {
+  display: block;
+  color: #d8c27a !important;
+  font-size: 13px;
+}
+
+.combate-info-grid span {
+  display: block;
+  margin-top: 4px;
+
+  color: #fff4dc !important;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.combate-skills-placeholder {
+  padding: 18px;
+
+  text-align: center;
+
+  color: #d8c27a;
+
+  border: 1px dashed rgba(216,194,122,0.35);
+  border-radius: 10px;
+
+  background: rgba(0,0,0,0.35);
+}
+
+/* =========================================================
+   36. COMBAT SKILLS
+========================================================= */
+
+.combate-skills-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(240px, 1fr));
+
+  gap: 14px;
+}
+
+.combat-skill-card {
+  padding: 14px;
+
+  border: 1px solid rgba(216,194,122,0.35);
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(18,18,18,0.95),
+      rgba(5,5,5,0.92)
+    );
+
+  box-shadow:
+    0 0 14px rgba(0,0,0,0.55),
+    inset 0 0 10px rgba(255,220,120,0.035);
+
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.combat-skill-card:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(255,220,120,0.72);
+
+  box-shadow:
+    0 0 16px rgba(216,194,122,0.22),
+    inset 0 0 12px rgba(255,220,120,0.06);
+}
+
+.combat-skill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 12px;
+}
+
+.combat-skill-name {
+  color: #fff2cf;
+
+  font-size: 18px;
+  font-weight: bold;
+
+  text-shadow:
+    0 0 6px rgba(0,0,0,1);
+}
+
+.combat-skill-level {
+  padding: 4px 8px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(216,194,122,0.14);
+
+  border: 1px solid rgba(216,194,122,0.28);
+
+  color: #e6cf82;
+
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.combat-skill-body {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 14px;
+
+  color: #d8d8d8;
+  font-size: 14px;
+}
+
+.combat-skill-actions {
+  display: flex;
+}
+
+.combat-skill-use {
+  width: 100%;
+  height: 38px;
+
+  border: 1px solid rgba(216,194,122,0.48);
+  border-radius: 8px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(55,42,18,0.92),
+      rgba(12,12,12,0.92)
+    );
+
+  color: #fff0c8;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.12s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.combat-skill-use:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(255,220,120,0.75);
+
+  box-shadow:
+    0 0 10px rgba(216,194,122,0.28);
 }

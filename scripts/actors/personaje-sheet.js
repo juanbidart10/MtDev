@@ -52,29 +52,29 @@ const FX_ATRIBUTOS = {
 export class PersonajeSheet extends ActorSheet {
 
   static get defaultOptions() {
-  return foundry.utils.mergeObject(super.defaultOptions, {
-    classes: ["mtrol", "sheet", "actor", "personaje-sheet", "mtrol-personaje"],
-    template: "systems/mtrol/templates/actors/personaje-sheet.html",
-    width: 900,
-    height: 700,
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ["mtrol", "sheet", "actor", "personaje-sheet", "mtrol-personaje"],
+      template: "systems/mtrol/templates/actors/personaje-sheet.html",
+      width: 900,
+      height: 700,
 
-    tabs: [{
-      navSelector: ".sheet-tabs",
-      contentSelector: ".sheet-body",
-      initial: "personaje"
-    }],
+      tabs: [{
+        navSelector: ".sheet-tabs",
+        contentSelector: ".sheet-body",
+        initial: "personaje"
+      }],
 
-dragDrop: game.user?.isGM ? [
-  {
-    dragSelector: ".mtrol-draggable-objeto",
-    dropSelector: null
+      dragDrop: game.user?.isGM ? [
+        {
+          dragSelector: ".mtrol-draggable-objeto",
+          dropSelector: null
+        }
+      ] : [],
+
+      submitOnChange: true,
+      closeOnSubmit: false
+    });
   }
-] : [],
-
-    submitOnChange: true,
-    closeOnSubmit: false
-  });
-}
 
   getData(options) {
     const context = super.getData(options);
@@ -83,12 +83,21 @@ dragDrop: game.user?.isGM ? [
     context.system = this.actor.system;
     context.esGM = game.user.isGM;
 
-    context.competencias = this.actor.items.filter(i => i.type === "competencia");
+    context.competencias = this.actor.items.filter(
+      i => i.type === "competencia"
+    );
 
-    const objetos = this.actor.items.filter(i => i.type === "objeto" || i.type === "item");
+    const objetos = this.actor.items.filter(
+      i => i.type === "objeto" || i.type === "item"
+    );
 
-    context.objetosInventario = objetos.filter(o => !o.system.equipado);
-    context.objetosEquipados = objetos.filter(o => o.system.equipado);
+    context.objetosInventario = objetos.filter(
+      o => !o.system.equipado
+    );
+
+    context.objetosEquipados = objetos.filter(
+      o => o.system.equipado
+    );
 
     const slotsBase = [
       "cabeza",
@@ -120,6 +129,7 @@ dragDrop: game.user?.isGM ? [
     const slotsUsados = objetos.reduce((total, obj) => {
       const slots = Number(obj.system.slots || 0);
       const cantidad = Number(obj.system.cantidad || 1);
+
       return total + (slots * cantidad);
     }, 0);
 
@@ -136,10 +146,11 @@ dragDrop: game.user?.isGM ? [
 
   async _onDrop(event) {
     event.preventDefault();
+
     if (!game.user.isGM) {
-  ui.notifications.warn("Solo el GM puede mover o agregar objetos.");
-  return false;
-}
+      ui.notifications.warn("Solo el GM puede mover o agregar objetos.");
+      return false;
+    }
 
     let data;
 
@@ -173,6 +184,7 @@ dragDrop: game.user?.isGM ? [
       equipado: false,
       slot: itemData.system?.slot ?? "",
       defensa: itemData.system?.defensa ?? 0,
+      defensaBase: itemData.system?.defensaBase ?? itemData.system?.defensa ?? 0,
       danio: itemData.system?.danio ?? "",
       valor: itemData.system?.valor ?? 0,
       descripcion: itemData.system?.descripcion ?? itemData.system?.description ?? ""
@@ -181,6 +193,7 @@ dragDrop: game.user?.isGM ? [
     await this.actor.createEmbeddedDocuments("Item", [itemData]);
 
     ui.notifications.info(`Objeto agregado: ${item.name}`);
+
     this.render(true);
     return true;
   }
@@ -208,25 +221,49 @@ dragDrop: game.user?.isGM ? [
   activateListeners(html) {
     super.activateListeners(html);
 
- html.find(".mtrol-roll-atributo")
-  .off("click")
-  .on("click", this._onRollAtributo.bind(this));
+    html.find(".mtrol-roll-atributo")
+      .off("click")
+      .on("click", this._onRollAtributo.bind(this));
 
-   html.find(".add-competencia").click(this._onAddCompetencia.bind(this));
-html.find(".competencia-up").click(this._onCompetenciaUp.bind(this));
-html.find(".competencia-down").click(this._onCompetenciaDown.bind(this));
+    html.find(".add-competencia")
+      .off("click")
+      .on("click", this._onAddCompetencia.bind(this));
 
-html.find(".competencia-roll")
-  .off("click")
-  .on("click", this._onCompetenciaRoll.bind(this));
+    html.find(".competencia-up")
+      .off("click")
+      .on("click", this._onCompetenciaUp.bind(this));
 
-    html.find(".mtrol-restaurar-dia").click(this._onRestaurarDia.bind(this));
+    html.find(".competencia-down")
+      .off("click")
+      .on("click", this._onCompetenciaDown.bind(this));
 
-    html.find(".item-create-objeto").click(this._onCreateObjeto.bind(this));
-    html.find(".item-edit").click(this._onEditItem.bind(this));
-    html.find(".item-delete").click(this._onDeleteItem.bind(this));
-    html.find(".item-equip").click(this._onEquipItem.bind(this));
-    html.find(".item-unequip").click(this._onUnequipItem.bind(this));
+    html.find(".competencia-roll")
+      .off("click")
+      .on("click", this._onCompetenciaRoll.bind(this));
+
+    html.find(".mtrol-restaurar-dia")
+      .off("click")
+      .on("click", this._onRestaurarDia.bind(this));
+
+    html.find(".item-create-objeto")
+      .off("click")
+      .on("click", this._onCreateObjeto.bind(this));
+
+    html.find(".item-edit")
+      .off("click")
+      .on("click", this._onEditItem.bind(this));
+
+    html.find(".item-delete")
+      .off("click")
+      .on("click", this._onDeleteItem.bind(this));
+
+    html.find(".item-equip")
+      .off("click")
+      .on("click", this._onEquipItem.bind(this));
+
+    html.find(".item-unequip")
+      .off("click")
+      .on("click", this._onUnequipItem.bind(this));
   }
 
   async _onRestaurarDia(event) {
@@ -249,62 +286,62 @@ html.find(".competencia-roll")
     this.render(true);
   }
 
-async _onRollAtributo(event) {
-  event.preventDefault();
+  async _onRollAtributo(event) {
+    event.preventDefault();
 
-  const attr = event.currentTarget.dataset.atributo || event.currentTarget.dataset.attr;
-  if (!attr) return;
+    const attr = event.currentTarget.dataset.atributo || event.currentTarget.dataset.attr;
+    if (!attr) return;
 
-  const fxData = FX_ATRIBUTOS[attr] ?? {
-    label: this._capitalizar(attr),
-    file: null
-  };
+    const fxData = FX_ATRIBUTOS[attr] ?? {
+      label: this._capitalizar(attr),
+      file: null
+    };
 
-  const valor = Number(this.actor.system.atributos?.[attr] ?? 0);
-  const formula = `1d10 + ${valor}`;
+    const valor = Number(this.actor.system.atributos?.[attr] ?? 0);
+    const formula = `1d10 + ${valor}`;
 
-  await mtrolRoll(
-    formula,
-    this.actor,
-    `⚔️ Tirada de ${fxData.label}: ${formula.replaceAll("d", "D")}`
-  );
+    await mtrolRoll(
+      formula,
+      this.actor,
+      `⚔️ Tirada de ${fxData.label}: ${formula.replaceAll("d", "D")}`
+    );
 
-  await this._playAtributoFX(attr, fxData);
-}
-
-async _playAtributoFX(attr, fxData) {
-  try {
-    if (!game.modules.get("sequencer")?.active) {
-      console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX.");
-      return;
-    }
-
-    if (!fxData?.file) {
-      console.warn(`MtRol | No hay FX configurado para el atributo: ${attr}`);
-      return;
-    }
-
-    const token = this.actor.getActiveTokens()[0];
-
-    if (!token) {
-      ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
-      return;
-    }
-
-    await new Sequence()
-      .effect()
-      .file(fxData.file)
-      .atLocation(token)
-      .scale(0.8)
-      .fadeIn(500)
-      .fadeOut(500)
-      .duration(5000)
-      .play();
-
-  } catch (error) {
-    console.error("MtRol | Error ejecutando FX de atributo:", error);
+    await this._playAtributoFX(attr, fxData);
   }
-}
+
+  async _playAtributoFX(attr, fxData) {
+    try {
+      if (!game.modules.get("sequencer")?.active) {
+        console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX.");
+        return;
+      }
+
+      if (!fxData?.file) {
+        console.warn(`MtRol | No hay FX configurado para el atributo: ${attr}`);
+        return;
+      }
+
+      const token = this.actor.getActiveTokens()[0];
+
+      if (!token) {
+        ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
+        return;
+      }
+
+      await new Sequence()
+        .effect()
+        .file(fxData.file)
+        .atLocation(token)
+        .scale(0.8)
+        .fadeIn(500)
+        .fadeOut(500)
+        .duration(5000)
+        .play();
+
+    } catch (error) {
+      console.error("MtRol | Error ejecutando FX de atributo:", error);
+    }
+  }
 
   async _onAddCompetencia(event) {
     event.preventDefault();
@@ -317,8 +354,19 @@ async _playAtributoFX(attr, fxData) {
     await this.actor.createEmbeddedDocuments("Item", [{
       name: "Nueva competencia",
       type: "competencia",
-      system: { nivel: 1 }
+      system: {
+        nivel: 1,
+        fx: {
+          visual: "",
+          sonido: "",
+          duracion: 5000,
+          escala: 1
+        },
+        descripcion: ""
+      }
     }]);
+
+    this.render(true);
   }
 
   async _onCompetenciaUp(event) {
@@ -336,6 +384,8 @@ async _playAtributoFX(attr, fxData) {
     const nivelNuevo = Math.min(5, nivelActual + 1);
 
     await item.update({ "system.nivel": nivelNuevo });
+
+    this.render(true);
   }
 
   async _onCompetenciaDown(event) {
@@ -353,9 +403,11 @@ async _playAtributoFX(attr, fxData) {
     const nivelNuevo = Math.max(1, nivelActual - 1);
 
     await item.update({ "system.nivel": nivelNuevo });
+
+    this.render(true);
   }
 
-async _onCompetenciaRoll(event) {
+  async _onCompetenciaRoll(event) {
   event.preventDefault();
   event.stopPropagation();
 
@@ -373,63 +425,117 @@ async _onCompetenciaRoll(event) {
 
   const actor = this.actor;
   const nivel = Number(item.system?.nivel ?? 1);
-  const formula = this._formulaCompetenciaPorNivel(nivel);
 
-  // =========================
-  // CONSUMO DE MP + STACKING
-  // =========================
+  const formula = item.system?.formula?.trim()
+    ? item.system.formula.trim()
+    : this._formulaCompetenciaPorNivel(nivel);
+    // =========================
+    // CONSUMO DE MP + STACKING
+    // =========================
 
-  const mpActual = Number(actor.system.vitales?.mp?.value ?? 0);
+    const mpActual = Number(actor.system.vitales?.mp?.value ?? 0);
 
-  const stacks = foundry.utils.duplicate(
-    actor.getFlag("mtrol", "mpStacks") ?? {}
-  );
+    const stacks = foundry.utils.duplicate(
+      actor.getFlag("mtrol", "mpStacks") ?? {}
+    );
 
-  const stackKey = item.id;
-  const usosPrevios = Number(stacks[stackKey] ?? 0);
+    const stackKey = item.id;
+    const usosPrevios = Number(stacks[stackKey] ?? 0);
 
-  const costoBasico = 1;
-  const costoCompetencia = usosPrevios + 1;
-  const costoTotal = costoBasico + costoCompetencia;
+    const costoBasico = 1;
+    const costoCompetencia = usosPrevios + 1;
+    const costoTotal = costoBasico + costoCompetencia;
 
-  if (mpActual < costoTotal) {
-    ui.notifications.warn(`${actor.name} no tiene suficiente MP. Necesita ${costoTotal} MP.`);
-    return;
+    if (mpActual < costoTotal) {
+      ui.notifications.warn(`${actor.name} no tiene suficiente MP. Necesita ${costoTotal} MP.`);
+      return;
+    }
+
+    stacks[stackKey] = usosPrevios + 1;
+
+    await actor.update({
+      "system.vitales.mp.value": mpActual - costoTotal
+    });
+
+    await actor.setFlag("mtrol", "mpStacks", stacks);
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `
+        <div class="mtrol-chat-card">
+          <h2>🔷 Consumo de MP</h2>
+          <p><strong>${actor.name}</strong> usa <strong>${item.name}</strong>.</p>
+          <p>Coste básico: <strong>${costoBasico}</strong> MP</p>
+          <p>Coste por competencia: <strong>${costoCompetencia}</strong> MP</p>
+          <hr>
+          <p>Total consumido: <strong>${costoTotal}</strong> MP</p>
+          <p>MP restante: <strong>${mpActual - costoTotal}</strong></p>
+        </div>
+      `
+    });
+
+    // =========================
+    // FX DE COMPETENCIA
+    // =========================
+
+    await this._playCompetenciaFX(item);
+
+    // =========================
+    // TIRADA DE COMPETENCIA
+    // =========================
+
+    await mtrolRoll(
+      formula,
+      actor,
+      `⚔️ Competencia: ${item.name} | Nivel ${nivel}`
+    );
   }
 
-  stacks[stackKey] = usosPrevios + 1;
+  async _playCompetenciaFX(item) {
+    try {
+      if (!game.modules.get("sequencer")?.active) {
+        console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX de competencia.");
+        return;
+      }
 
-await actor.update({
-  "system.vitales.mp.value": mpActual - costoTotal
-});
+      const fx = item.system?.fx ?? {};
 
-await actor.setFlag("mtrol", "mpStacks", stacks);
+      const visual = fx.visual ?? "";
+      const sonido = fx.sonido ?? "";
+      const duracion = Number(fx.duracion ?? 5000);
+      const escala = Number(fx.escala ?? 1);
 
-  await ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    content: `
-      <div class="mtrol-chat-card">
-        <h2>🔷 Consumo de MP</h2>
-        <p><strong>${actor.name}</strong> usa <strong>${item.name}</strong>.</p>
-        <p>Coste básico: <strong>${costoBasico}</strong> MP</p>
-        <p>Coste por competencia: <strong>${costoCompetencia}</strong> MP</p>
-        <hr>
-        <p>Total consumido: <strong>${costoTotal}</strong> MP</p>
-        <p>MP restante: <strong>${mpActual - costoTotal}</strong></p>
-      </div>
-    `
-  });
+      const token = this.actor.getActiveTokens()[0];
 
-  // =========================
-  // TIRADA DE COMPETENCIA
-  // =========================
+      if (!token) {
+        ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
+        return;
+      }
 
-  await mtrolRoll(
-    formula,
-    actor,
-    `⚔️ Competencia: ${item.name} | Nivel ${nivel}`
-  );
-}
+      const seq = new Sequence();
+
+      if (visual) {
+        seq.effect()
+          .file(visual)
+          .atLocation(token)
+          .scale(escala)
+          .fadeIn(300)
+          .fadeOut(300)
+          .duration(duracion);
+      }
+
+      if (sonido) {
+        seq.sound()
+          .file(sonido)
+          .volume(0.6);
+      }
+
+      await seq.play();
+
+    } catch (error) {
+      console.error("MtRol | Error ejecutando FX de competencia:", error);
+    }
+  }
 
   async _onCreateObjeto(event) {
     event.preventDefault();
@@ -445,11 +551,14 @@ await actor.setFlag("mtrol", "mpStacks", stacks);
         equipado: false,
         slot: "",
         defensa: 0,
+        defensaBase: 0,
         danio: "",
         valor: 0,
         descripcion: ""
       }
     }]);
+
+    this.render(true);
   }
 
   async _onEditItem(event) {
@@ -479,6 +588,7 @@ await actor.setFlag("mtrol", "mpStacks", stacks);
     }
 
     await item.delete();
+
     this.render(true);
   }
 
@@ -495,6 +605,7 @@ await actor.setFlag("mtrol", "mpStacks", stacks);
     }
 
     const slot = item.system.slot;
+
     if (!slot) {
       ui.notifications.warn("Este objeto no tiene un slot asignado.");
       return;
@@ -522,8 +633,11 @@ await actor.setFlag("mtrol", "mpStacks", stacks);
 
     if (ocupadoId && ocupadoId !== item.id) {
       const itemOcupado = this.actor.items.get(ocupadoId);
+
       if (itemOcupado) {
-        await itemOcupado.update({ "system.equipado": false });
+        await itemOcupado.update({
+          "system.equipado": false
+        });
       }
     }
 
@@ -531,7 +645,9 @@ await actor.setFlag("mtrol", "mpStacks", stacks);
       [`system.equipamiento.${slot}`]: item.id
     });
 
-    await item.update({ "system.equipado": true });
+    await item.update({
+      "system.equipado": true
+    });
 
     this.render(true);
   }
@@ -544,35 +660,37 @@ await actor.setFlag("mtrol", "mpStacks", stacks);
     if (item.type !== "objeto" && item.type !== "item") return;
 
     const slot = item.system.slot;
+
     if (slot) {
       await this.actor.update({
         [`system.equipamiento.${slot}`]: ""
       });
     }
 
-    await item.update({ "system.equipado": false });
+    await item.update({
+      "system.equipado": false
+    });
 
     this.render(true);
   }
 
   _getItemFromEvent(event) {
+    const directId = event.currentTarget?.dataset?.itemId;
 
-  const directId = event.currentTarget?.dataset?.itemId;
+    if (directId) {
+      return this.actor.items.get(directId) ?? null;
+    }
 
-  if (directId) {
-    return this.actor.items.get(directId) ?? null;
+    const parent = event.currentTarget.closest("[data-item-id]");
+
+    if (!parent) return null;
+
+    const itemId = parent.dataset.itemId;
+
+    if (!itemId) return null;
+
+    return this.actor.items.get(itemId) ?? null;
   }
-
-  const parent = event.currentTarget.closest("[data-item-id]");
-
-  if (!parent) return null;
-
-  const itemId = parent.dataset.itemId;
-
-  if (!itemId) return null;
-
-  return this.actor.items.get(itemId) ?? null;
-}
 
   _formulaCompetenciaPorNivel(nivel) {
     switch (nivel) {

@@ -5,13 +5,13 @@
 const MTROL_SKILLS = {
 
   // ======================================
-  // ATAQUE BÁSICO
+  // Daño Fisico
   // Fuerza + Destreza
   // Consume MP fijo, NO stackea
   // Aplica daño localizado
   // ======================================
 
-  "ataque": {
+  "Daño Fisico": {
     nombre: "Ataque",
     tipo: "fisico",
     categoria: "danio",

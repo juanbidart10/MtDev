@@ -80,32 +80,38 @@ Hooks.once("ready", function () {
 });
 
 // =========================
-// ITEM PILES - LIMPIAR COMPETENCIAS
+// ITEM PILES - LIMPIAR COMPETENCIAS SOLO AL CONVERTIR EN BOTÍN
 // =========================
 
 Hooks.on("updateActor", async (actor, changes) => {
   if (!game.user.isGM) return;
 
-  const seConvirtioEnLoot = changes?.flags?.["item-piles"];
+  const cambioItemPiles =
+    changes?.flags?.["item-piles"] ||
+    changes?.flags?.itempiles;
 
-  if (!seConvirtioEnLoot) return;
+  if (!cambioItemPiles) return;
 
-  setTimeout(async () => {
-    const competencias = actor.items.filter(
-      i => i.type === "competencia"
-    );
+  const actorEsBotin =
+    actor.flags?.["item-piles"] ||
+    actor.flags?.itempiles;
 
-    if (!competencias.length) return;
+  if (!actorEsBotin) return;
 
-    await actor.deleteEmbeddedDocuments(
-      "Item",
-      competencias.map(i => i.id)
-    );
+  const competencias = actor.items.filter(i =>
+    i.type === "competencia"
+  );
 
-    console.log(
-      `MtRol | Competencias removidas del loot: ${actor.name}`
-    );
-  }, 500);
+  if (!competencias.length) return;
+
+  await actor.deleteEmbeddedDocuments(
+    "Item",
+    competencias.map(i => i.id)
+  );
+
+  console.log(
+    `MtRol | ${competencias.length} competencias eliminadas del botín ${actor.name}.`
+  );
 });
 
 // =========================
@@ -231,30 +237,3 @@ function _mtrolObtenerActorDesdeMensaje(message) {
   return null;
 }
 
-// =========================
-// MTROL | LIMPIAR COMPETENCIAS DE BOTÍN
-// =========================
-
-Hooks.on("updateActor", async (actor, changes) => {
-  const convertidoEnBotin =
-    changes?.flags?.["item-piles"] ||
-    changes?.flags?.itempiles ||
-    actor.flags?.["item-piles"];
-
-  if (!convertidoEnBotin) return;
-
-  const competencias = actor.items.filter(i =>
-    i.type === "competencia"
-  );
-
-  if (!competencias.length) return;
-
-  await actor.deleteEmbeddedDocuments(
-    "Item",
-    competencias.map(i => i.id)
-  );
-
-  console.log(
-    `MtRol | ${competencias.length} competencias eliminadas del botín ${actor.name}.`
-  );
-});

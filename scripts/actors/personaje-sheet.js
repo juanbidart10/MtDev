@@ -1,4 +1,5 @@
 import { mtrolRoll } from "../core/mtrol-rolls.js";
+import { aplicarDanioLocalizado } from "../utils/combat.js";
 
 const { ActorSheet } = foundry.appv1.sheets;
 
@@ -83,9 +84,21 @@ export class PersonajeSheet extends ActorSheet {
     context.system = this.actor.system;
     context.esGM = game.user.isGM;
 
-    context.competencias = this.actor.items.filter(
-      i => i.type === "competencia"
-    );
+  context.competencias = this.actor.items.filter(
+  i => i.type === "competencia"
+);
+
+context.competenciasGenerales = context.competencias.filter(
+  i => i.system?.categoria !== "combate"
+);
+
+context.habilidadesCombate = context.competencias.filter(
+  i => i.system?.categoria === "combate"
+);
+
+context.habilidadesEquipadasCombate = context.habilidadesCombate.filter(
+  i => i.system?.equipadaCombate === true || i.system?.equipadaCombate === "true"
+);
 
     const objetos = this.actor.items.filter(
       i => i.type === "objeto" || i.type === "item"
@@ -228,6 +241,18 @@ export class PersonajeSheet extends ActorSheet {
     html.find(".add-competencia")
       .off("click")
       .on("click", this._onAddCompetencia.bind(this));
+
+    html.find(".add-habilidad-combate")
+  .off("click")
+  .on("click", this._onAddHabilidadCombate.bind(this));
+
+    html.find(".habilidad-combate-equip")
+  .off("click")
+  .on("click", this._onEquiparHabilidadCombate.bind(this));
+
+      html.find(".habilidad-combate-unequip")
+  .off("click")
+  .on("click", this._onDesequiparHabilidadCombate.bind(this));
 
     html.find(".competencia-up")
       .off("click")
@@ -424,118 +449,590 @@ export class PersonajeSheet extends ActorSheet {
   }
 
   const actor = this.actor;
-  const nivel = Number(item.system?.nivel ?? 1);
+const nivel = Number(item.system?.nivel ?? 1);
+
+const targetToken = Array.from(game.user.targets)[0] ?? null;
+const targetActor = targetToken?.actor ?? null;
+
+const esHabilidadCombate =
+  item.system?.categoria === "combate" ||
+  item.system?.tipo === "habilidad-combate";
+
+if (esHabilidadCombate && !targetToken) {
+  ui.notifications.warn("Seleccioná un objetivo antes de usar una habilidad de combate.");
+  return;
+}
 
   const formula = item.system?.formula?.trim()
     ? item.system.formula.trim()
     : this._formulaCompetenciaPorNivel(nivel);
-    // =========================
-    // CONSUMO DE MP + STACKING
-    // =========================
+   // =========================
+// CONSUMO DE MP + STACKING
+// =========================
 
-    const mpActual = Number(actor.system.vitales?.mp?.value ?? 0);
+const esPasiva =
+  item.system?.categoria === "pasiva" ||
+  item.system?.tipo === "pasiva";
 
-    const stacks = foundry.utils.duplicate(
-      actor.getFlag("mtrol", "mpStacks") ?? {}
+const consumeMP =
+  !esPasiva;
+
+let costoTotal = 0;
+
+if (consumeMP) {
+
+  const mpActual = Number(actor.system.vitales?.mp?.value ?? 0);
+
+  const stacks = foundry.utils.duplicate(
+    actor.getFlag("mtrol", "mpStacks") ?? {}
+  );
+
+  const stackKey = item.id;
+  const usosPrevios = Number(stacks[stackKey] ?? 0);
+
+  const costoBasico = 1;
+
+  const costeBaseHabilidad =
+    Number(item.system?.costeMP ?? 1);
+
+  const costoCompetencia =
+    costeBaseHabilidad + usosPrevios;
+
+ costoTotal =
+  costoBasico + costoCompetencia;
+
+  if (mpActual < costoTotal) {
+    ui.notifications.warn(
+      `${actor.name} no tiene suficiente MP. Necesita ${costoTotal} MP.`
     );
+    return;
+  }
 
-    const stackKey = item.id;
-    const usosPrevios = Number(stacks[stackKey] ?? 0);
+  stacks[stackKey] = usosPrevios + 1;
 
-    const costoBasico = 1;
-    const costoCompetencia = usosPrevios + 1;
-    const costoTotal = costoBasico + costoCompetencia;
+  await actor.update({
+    "system.vitales.mp.value": mpActual - costoTotal
+  });
 
-    if (mpActual < costoTotal) {
-      ui.notifications.warn(`${actor.name} no tiene suficiente MP. Necesita ${costoTotal} MP.`);
-      return;
-    }
+  await actor.setFlag("mtrol", "mpStacks", stacks);
 
-    stacks[stackKey] = usosPrevios + 1;
+  const targetText = targetActor
+    ? ` contra <strong>${targetActor.name}</strong>`
+    : "";
 
-    await actor.update({
-      "system.vitales.mp.value": mpActual - costoTotal
-    });
 
-    await actor.setFlag("mtrol", "mpStacks", stacks);
 
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: `
-        <div class="mtrol-chat-card">
-          <h2>🔷 Consumo de MP</h2>
-          <p><strong>${actor.name}</strong> usa <strong>${item.name}</strong>.</p>
-          <p>Coste básico: <strong>${costoBasico}</strong> MP</p>
-          <p>Coste por competencia: <strong>${costoCompetencia}</strong> MP</p>
-          <hr>
-          <p>Total consumido: <strong>${costoTotal}</strong> MP</p>
-          <p>MP restante: <strong>${mpActual - costoTotal}</strong></p>
-        </div>
-      `
-    });
-
+}
     // =========================
     // FX DE COMPETENCIA
     // =========================
 
-    await this._playCompetenciaFX(item);
+  await this._playCompetenciaFX(item, targetToken);
 
-    // =========================
-    // TIRADA DE COMPETENCIA
-    // =========================
+// =========================
+// HABILIDAD DE BARRA
+// =========================
 
-    await mtrolRoll(
-      formula,
+const esSkillBar =
+  item.system?.tipo === "habilidad-combate";
+
+// =========================
+// TIRADA DE COMPETENCIA / DAÑO
+// =========================
+
+const danioFormula =
+  item.system?.danio?.trim() ?? "";
+
+// =========================
+// TIRADA PRINCIPAL
+// =========================
+
+let resultadoCompetencia = null;
+
+if (esSkillBar) {
+
+  console.log(
+    "MTROL | SkillBar item:",
+    item.name,
+    item.id,
+    item.system
+  );
+
+  const formulaManual =
+    item.system?.formula?.toString().trim() ||
+    item.system?.formulaTirada?.toString().trim() ||
+    item.getFlag("mtrol", "formulaManual") ||
+    "";
+
+  console.log("MTROL | formulaManual:", formulaManual);
+
+  if (formulaManual) {
+
+    resultadoCompetencia = await mtrolRoll(
+      formulaManual,
       actor,
-      `⚔️ Competencia: ${item.name} | Nivel ${nivel}`
+      `🔥 ${item.name}`
     );
+
+  } else if (danioFormula) {
+
+    resultadoCompetencia = {
+      pifia: false,
+      soloDanio: true
+    };
+
+  } else {
+
+    ui.notifications.warn(
+      `${item.name} no tiene Fórmula de Tirada ni Fórmula de Daño configurada.`
+    );
+    return;
+
   }
 
-  async _playCompetenciaFX(item) {
-    try {
-      if (!game.modules.get("sequencer")?.active) {
-        console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX de competencia.");
-        return;
-      }
+} else {
 
-      const fx = item.system?.fx ?? {};
+  resultadoCompetencia = await mtrolRoll(
+    formula,
+    actor,
+    `⚔️ Competencia: ${item.name} | Nivel ${nivel}`
+  );
 
-      const visual = fx.visual ?? "";
-      const sonido = fx.sonido ?? "";
-      const duracion = Number(fx.duracion ?? 5000);
-      const escala = Number(fx.escala ?? 1);
+}
 
-      const token = this.actor.getActiveTokens()[0];
+// =========================
+// TIRADA DE DAÑO
+// =========================
 
-      if (!token) {
-        ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
-        return;
-      }
+if (esHabilidadCombate && targetActor && danioFormula) {
 
-      const seq = new Sequence();
+  if (resultadoCompetencia?.pifia) {
+    ui.notifications.warn(
+      `${item.name} terminó en PIFIA. No se aplica daño.`
+    );
+    return;
+  }
 
-      if (visual) {
-        seq.effect()
-          .file(visual)
-          .atLocation(token)
-          .scale(escala)
-          .fadeIn(300)
-          .fadeOut(300)
-          .duration(duracion);
-      }
+  // =========================
+  // DATOS DE DAÑO DE ARMAS EQUIPADAS
+  // =========================
 
-      if (sonido) {
-        seq.sound()
-          .file(sonido)
-          .volume(0.6);
-      }
+  const rollData = actor.getRollData();
 
-      await seq.play();
+  rollData.danio = rollData.danio ?? {};
 
-    } catch (error) {
-      console.error("MtRol | Error ejecutando FX de competencia:", error);
+  const armaIzqId =
+    actor.system.equipamiento?.manoIzq ?? "";
+
+  const armaDerId =
+    actor.system.equipamiento?.manoDer ?? "";
+
+  const armaIzq =
+    armaIzqId ? actor.items.get(armaIzqId) : null;
+
+  const armaDer =
+    armaDerId ? actor.items.get(armaDerId) : null;
+
+  rollData.danio.mizq =
+    armaIzq?.system?.danio?.toString().trim()
+      ? armaIzq.system.danio.toString().trim()
+      : "0";
+
+  rollData.danio.mder =
+    armaDer?.system?.danio?.toString().trim()
+      ? armaDer.system.danio.toString().trim()
+      : "0";
+
+  rollData.manoIzquierda = rollData.danio.mizq;
+  rollData.manoDerecha = rollData.danio.mder;
+
+  rollData.mano =
+    Number(rollData.danio.mder || 0) > 0
+      ? rollData.danio.mder
+      : rollData.danio.mizq;
+
+  // =========================
+  // NORMALIZAR FÓRMULA DE DAÑO
+  // =========================
+
+  const formulaDanioFinal =
+    danioFormula
+      .replaceAll("x", "*")
+      .replaceAll("X", "*");
+
+  // =========================
+  // DEBUG TEMPORAL DAÑO
+  // =========================
+
+  console.log("MTROL | formulaDanioFinal:", formulaDanioFinal);
+  console.log("MTROL | armaIzq:", armaIzq?.name, armaIzq?.system?.danio);
+  console.log("MTROL | armaDer:", armaDer?.name, armaDer?.system?.danio);
+  console.log("MTROL | rollData.danio:", rollData.danio);
+  console.log("MTROL | rollData.mano:", rollData.mano);
+
+  // =========================
+  // TIRADA DE DAÑO
+  // =========================
+
+  const damageRoll = await new Roll(
+    formulaDanioFinal,
+    rollData
+  ).evaluate();
+
+  // =========================
+  // DICE SO NICE
+  // =========================
+
+
+  const damageTotal = Number(damageRoll.total ?? 0);
+
+  // =========================
+  // DAÑO LOCALIZADO CENTRALIZADO
+  // =========================
+
+  const resultadoDanio = await aplicarDanioLocalizado(
+    targetActor,
+    damageTotal
+  );
+
+  if (!resultadoDanio) return;
+
+  const damageFormulaVisual =
+    damageRoll.formula.replaceAll("d", "D");
+
+    const damageRollHTML =
+  await damageRoll.render({
+    flavor: "⚔️ Tirada de Daño"
+  });
+
+const localizacionRollHTML =
+  await resultadoDanio.localizacionRoll.render({
+    flavor: "🎯 Tirada de Localización"
+  });
+
+  // =========================
+  // MUERTE AUTOMÁTICA
+  // =========================
+
+  if (resultadoDanio.hpNuevo <= 0) {
+
+    if (targetToken?.document) {
+      await targetToken.document.update({
+        overlayEffect: "icons/svg/skull.svg"
+      });
     }
   }
+// =========================
+// CHAT CARD UNIFICADA
+// =========================
+
+const objetivoMuerto =
+  resultadoDanio.hpNuevo <= 0;
+
+const armaduraDestruida =
+  resultadoDanio.itemDestruido;
+
+const targetTextCombat =
+  targetActor
+    ? `<strong>${targetActor.name}</strong>`
+    : "Sin objetivo";
+
+await ChatMessage.create({
+  speaker: ChatMessage.getSpeaker({ actor }),
+  rolls: [
+    damageRoll,
+    resultadoDanio.localizacionRoll
+  ],
+  content: `
+
+          <div class="mtrol-combat-card">
+          <div class="mtrol-combat-header">
+
+      <div class="mtrol-combat-subheader">
+        <strong>${actor.name}</strong>
+        →
+        ${targetTextCombat}
+      </div>
+
+      <hr>
+
+      <div class="mtrol-combat-section">
+
+ <div class="mtrol-roll-block">
+  ${damageRollHTML}
+</div>
+
+<div class="mtrol-roll-block">
+  ${localizacionRollHTML}
+</div>
+
+<p>
+  🎲 Dado de localización:
+  <strong>D10 = ${resultadoDanio.numeroLocalizacion}</strong>
+</p>
+
+  <p>
+    🎯 Zona impactada:
+    <strong>${resultadoDanio.zona}</strong>
+  </p>
+
+        <p>
+          ⚔️ Daño original:
+          <strong>${resultadoDanio.danioOriginal}</strong>
+        </p>
+
+        <p>
+          🛡️ Armadura:
+          <strong>${resultadoDanio.item ?? "Sin armadura"}</strong>
+        </p>
+
+        <p>
+          🛡️ Defensa:
+          <strong>${resultadoDanio.defensaInicial}</strong>
+          →
+          <strong>${resultadoDanio.defensaFinal}</strong>
+        </p>
+
+        <p>
+          💥 Daño absorbido:
+          <strong>${resultadoDanio.danioAbsorbido}</strong>
+        </p>
+
+        <p>
+          ❤️ HP perdido:
+          <strong>${resultadoDanio.hpPerdido}</strong>
+        </p>
+
+        <p>
+          ❤️ HP:
+          <strong>${resultadoDanio.hpAnterior}</strong>
+          →
+          <strong>${resultadoDanio.hpNuevo}</strong>
+        </p>
+
+        <hr>
+
+        <p>
+          🔷 MP consumido:
+          <strong>${costoTotal}</strong>
+        </p>
+
+        ${
+          armaduraDestruida
+            ? `
+              <div class="mtrol-combat-alert destroy">
+                ☠️ ${resultadoDanio.item} fue destruido
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          objetivoMuerto
+            ? `
+              <div class="mtrol-combat-alert death">
+                ☠️ ${targetActor.name} ha muerto
+              </div>
+            `
+            : ""
+        }
+
+      </div>
+    </div>
+  `
+});
+}
+}
+
+
+
+  
+
+
+
+  async _onAddHabilidadCombate(event) {
+  event.preventDefault();
+
+  if (!game.user.isGM) {
+    ui.notifications.warn(
+      "Solo el Game Master puede crear habilidades de combate."
+    );
+    return;
+  }
+
+  await this.actor.createEmbeddedDocuments("Item", [{
+    name: "Nueva habilidad de combate",
+    type: "competencia",
+
+    system: {
+      nivel: 1,
+
+      categoria: "combate",
+
+      equipadaCombate: false,
+
+      formula: "",
+      danio: "",
+
+      atributo: "",
+
+      tipo: "habilidad-combate",
+
+      costeMP: 1,
+
+      usaDanioLocalizado: false,
+
+      fx: {
+  visual: "",
+  autocast: "",
+  proyectil: "",
+  target: "",
+  sonido: "",
+  duracion: 5000,
+  escala: 1
+},
+
+      descripcion: ""
+    }
+  }]);
+
+  this.render(true);
+}
+
+async _onEquiparHabilidadCombate(event) {
+  event.preventDefault();
+
+  if (!game.user.isGM) {
+    ui.notifications.warn(
+      "Solo el Game Master puede equipar habilidades."
+    );
+    return;
+  }
+
+  const item = this._getItemFromEvent(event);
+
+  if (!item) return;
+
+  await item.update({
+    "system.equipadaCombate": true
+  });
+
+  this.render(true);
+}
+
+async _onDesequiparHabilidadCombate(event) {
+  event.preventDefault();
+
+  if (!game.user.isGM) {
+    ui.notifications.warn(
+      "Solo el Game Master puede desequipar habilidades."
+    );
+    return;
+  }
+
+  const item = this._getItemFromEvent(event);
+
+  if (!item) return;
+
+  await item.update({
+    "system.equipadaCombate": false
+  });
+
+  this.render(true);
+}
+
+async _playCompetenciaFX(item, targetToken = null) {
+  try {
+    if (!game.modules.get("sequencer")?.active) {
+      console.warn("MtRol | Sequencer no está activo. No se puede ejecutar FX de competencia.");
+      return;
+    }
+
+    const fx = item.system?.fx ?? {};
+
+    const fxAutocast = fx.autocast ?? "";
+    const fxProyectil = fx.proyectil ?? "";
+    const fxTarget = fx.target ?? "";
+    const fxLegacy = fx.visual ?? "";
+    const fxSonido = fx.sonido ?? "";
+
+    const duracion = Number(fx.duracion ?? 5000);
+    const escala = Number(fx.escala ?? 1);
+
+    const casterToken = this.actor.getActiveTokens()[0];
+
+    if (!casterToken) {
+      ui.notifications.warn("Colocá un token de este actor en la escena para ver el FX.");
+      return;
+    }
+
+    const seq = new Sequence();
+
+    // =========================
+    // SONIDO
+    // =========================
+    if (fxSonido) {
+      seq.sound()
+        .file(fxSonido)
+        .volume(0.6);
+    }
+
+    // =========================
+    // FX SOBRE CASTER
+    // =========================
+    if (fxAutocast) {
+      seq.effect()
+        .file(fxAutocast)
+        .atLocation(casterToken)
+        .scale(escala)
+        .fadeIn(300)
+        .fadeOut(300)
+        .duration(duracion);
+    }
+
+    // =========================
+    // FX PROYECTIL / TRAYECTORIA
+    // =========================
+    if (fxProyectil && targetToken) {
+      seq.effect()
+        .file(fxProyectil)
+        .atLocation(casterToken)
+        .stretchTo(targetToken)
+        .scale(escala);
+    }
+
+    // =========================
+    // FX SOBRE TARGET
+    // =========================
+    if (fxTarget && targetToken) {
+      seq.effect()
+        .file(fxTarget)
+        .atLocation(targetToken)
+        .scale(escala)
+        .fadeIn(300)
+        .fadeOut(300)
+        .duration(duracion);
+    }
+
+    // =========================
+    // FALLBACK LEGACY
+    // =========================
+    if (!fxAutocast && !fxProyectil && !fxTarget && fxLegacy) {
+      seq.effect()
+        .file(fxLegacy)
+        .atLocation(targetToken ?? casterToken)
+        .scale(escala)
+        .fadeIn(300)
+        .fadeOut(300)
+        .duration(duracion);
+    }
+
+    await seq.play();
+
+  } catch (error) {
+    console.error("MtRol | Error ejecutando FX de competencia:", error);
+  }
+}
 
   async _onCreateObjeto(event) {
     event.preventDefault();
@@ -651,6 +1148,7 @@ export class PersonajeSheet extends ActorSheet {
 
     this.render(true);
   }
+  
 
   async _onUnequipItem(event) {
     event.preventDefault();
@@ -725,3 +1223,4 @@ export class PersonajeSheet extends ActorSheet {
     return labels[slot] || slot;
   }
 }
+

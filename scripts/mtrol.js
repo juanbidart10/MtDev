@@ -230,3 +230,31 @@ function _mtrolObtenerActorDesdeMensaje(message) {
 
   return null;
 }
+
+// =========================
+// MTROL | LIMPIAR COMPETENCIAS DE BOTÍN
+// =========================
+
+Hooks.on("updateActor", async (actor, changes) => {
+  const convertidoEnBotin =
+    changes?.flags?.["item-piles"] ||
+    changes?.flags?.itempiles ||
+    actor.flags?.["item-piles"];
+
+  if (!convertidoEnBotin) return;
+
+  const competencias = actor.items.filter(i =>
+    i.type === "competencia"
+  );
+
+  if (!competencias.length) return;
+
+  await actor.deleteEmbeddedDocuments(
+    "Item",
+    competencias.map(i => i.id)
+  );
+
+  console.log(
+    `MtRol | ${competencias.length} competencias eliminadas del botín ${actor.name}.`
+  );
+});

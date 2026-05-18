@@ -14,6 +14,7 @@ export class ObjetoSheet extends foundry.appv1.sheets.ItemSheet {
 
     context.item = this.item;
     context.system = this.item.system;
+    context.esGM = game.user.isGM;
 
     const slotActual = this.item.system.slot ?? "";
     const tipoActual = this.item.system.tipoObjeto ?? "general";

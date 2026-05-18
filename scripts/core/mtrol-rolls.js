@@ -18,6 +18,33 @@ function mtrolCrearFormulaVisual(formula, etiquetas = {}) {
   return visual;
 }
 
+function mtrolReglaDado(caras, valor) {
+  if (caras === 4) {
+    return {
+      critico: false,
+      pifia: false,
+      dharma: false,
+      karma: false
+    };
+  }
+
+  if (caras === 6) {
+    return {
+      critico: false,
+      pifia: valor === 1,
+      dharma: false,
+      karma: valor === 1
+    };
+  }
+
+  return {
+    critico: valor === 1,
+    pifia: valor === 2,
+    dharma: valor === 1,
+    karma: valor === 2
+  };
+}
+
 async function mtrolAplicarDharmaKarma(actor, sumaDharma, sumaKarma) {
   if (!actor) return;
   if (!sumaDharma && !sumaKarma) return;
@@ -136,13 +163,14 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
     for (const result of die.results ?? []) {
       if (result.active === false) continue;
 
-      const caras = die.faces;
+      const caras = Number(die.faces);
       const valor = Number(result.result);
+      const regla = mtrolReglaDado(caras, valor);
 
-      if (valor === 1) sumaDharma = true;
-      if (valor === 2) sumaKarma = true;
+      if (regla.dharma) sumaDharma = true;
+      if (regla.karma) sumaKarma = true;
 
-      if (valor === 2) {
+      if (regla.pifia) {
         await mtrolAplicarDharmaKarma(actor, sumaDharma, sumaKarma);
 
         await ChatMessage.create({
@@ -150,7 +178,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
           content: `
             <div class="mtrol-chat-card mtrol-chat-pifia">
               <h2>💀 PIFIA 💀</h2>
-              <p>El dado mostró un 2.</p>
+              <p>El D${caras} mostró un ${valor}.</p>
               ${rollHTMLLimpio}
             </div>
           `
@@ -163,7 +191,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
         };
       }
 
-      if (valor !== 1) continue;
+      if (!regla.critico) continue;
 
       let multiplicador = 2;
       detalles.push(`🎯 Crítico en D${caras}`);
@@ -177,13 +205,14 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
         }
 
         const extraValor = Number(extraRoll.total);
+        const reglaExtra = mtrolReglaDado(caras, extraValor);
 
-        if (extraValor === 1) sumaDharma = true;
-        if (extraValor === 2) sumaKarma = true;
+        if (reglaExtra.dharma) sumaDharma = true;
+        if (reglaExtra.karma) sumaKarma = true;
 
         detalles.push(`↳ D${caras}: ${extraValor} x${multiplicador}`);
 
-        if (extraValor === 2) {
+        if (reglaExtra.pifia) {
           await mtrolAplicarDharmaKarma(actor, sumaDharma, sumaKarma);
 
           await ChatMessage.create({
@@ -204,7 +233,7 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
           };
         }
 
-        if (extraValor === 1) {
+        if (reglaExtra.critico) {
           multiplicador++;
           continue;
         }
@@ -221,8 +250,12 @@ export async function mtrolRoll(formula, actor, flavor = "Tirada MtRol") {
     for (const result of die.results ?? []) {
       if (result.active === false) continue;
 
-      if (Number(result.result) === 1) {
-        totalBase -= 1;
+      const caras = Number(die.faces);
+      const valor = Number(result.result);
+      const regla = mtrolReglaDado(caras, valor);
+
+      if (regla.critico) {
+        totalBase -= valor;
       }
     }
   }

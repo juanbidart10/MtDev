@@ -11,98 +11,122 @@ export const MTROL_BODY_SLOTS = {
   10: "extra"
 };
 
+export const MTROL_BODY_LABELS = {
+  cabeza: "Cabeza",
+  cuello: "Cuello",
+  hombros: "Hombros",
+  brazos: "Brazos",
+  pecho: "Pecho",
+  piernas: "Piernas",
+  pies: "Pies",
+  manoIzq: "Mano izquierda",
+  manoDer: "Mano derecha",
+  extra: "Zona crítica"
+};
+
 function toNumber(value) {
   if (value === null || value === undefined || value === "") return 0;
+
   const n = Number(String(value).replace(",", "."));
+
   return Number.isFinite(n) ? n : 0;
 }
 
 export async function aplicarDanioLocalizado(actorObjetivo, danio) {
   if (!actorObjetivo) {
-    ui.notifications.warn("No se encontró actor objetivo.");
+    ui.notifications.warn("MtRol | No se encontró actor objetivo.");
     return null;
   }
 
-  const danioFinal = Math.max(0, toNumber(danio));
+  const danioFinal =
+    Math.max(0, toNumber(danio));
 
   // =========================
-  // TIRADA VISIBLE DE LOCALIZACIÓN
+  // TIRADA ÚNICA DE LOCALIZACIÓN
   // =========================
 
-  const localizacionRoll = await new Roll("1d10").evaluate({ async: true });
+  const localizacionRoll =
+    await new Roll("1d10").evaluate();
 
-  await localizacionRoll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor: actorObjetivo }),
-    flavor: "🎯 Localización del impacto"
-  });
 
-  const numeroLocalizacion = localizacionRoll.total;
+
+  const numeroLocalizacion =
+    Number(localizacionRoll.total ?? 5);
 
   const slotObjetivo =
     MTROL_BODY_SLOTS[numeroLocalizacion] ?? "pecho";
 
-  // =========================
-  // BUSCAR ITEM EQUIPADO
-  // =========================
+  const labelLocalizacion =
+    MTROL_BODY_LABELS[slotObjetivo] ?? slotObjetivo;
 
   const itemId =
-    actorObjetivo.system?.equipamiento?.[slotObjetivo];
+    actorObjetivo.system?.equipamiento?.[slotObjetivo] ?? "";
 
   const item =
-    itemId
-      ? actorObjetivo.items.get(itemId)
-      : null;
-
-  // =========================
-  // RESULTADO BASE
-  // =========================
+    itemId ? actorObjetivo.items.get(itemId) : null;
 
   const resultado = {
+    localizacionRoll,
+    numeroLocalizacion,
     slot: slotObjetivo,
-    localizacion: numeroLocalizacion,
+    zona: labelLocalizacion,
     item: item?.name ?? null,
     defensaInicial: 0,
     defensaFinal: 0,
+    danioOriginal: danioFinal,
+    danioAbsorbido: 0,
     hpPerdido: 0,
-    itemDestruido: false
+    itemDestruido: false,
+    hpAnterior: Number(actorObjetivo.system?.vitales?.hp?.value ?? 0),
+    hpNuevo: Number(actorObjetivo.system?.vitales?.hp?.value ?? 0)
   };
 
+  if (danioFinal <= 0) {
+    return resultado;
+  }
+
   // =========================
-  // SIN ITEM EQUIPADO
+  // SIN ARMADURA EN LA ZONA
   // =========================
 
   if (!item) {
-    const hpActual = toNumber(actorObjetivo.system?.vitales?.hp?.value ?? 0);
-    const hpNuevo = Math.max(0, hpActual - danioFinal);
+    const hpNuevo =
+      Math.max(0, resultado.hpAnterior - danioFinal);
 
     await actorObjetivo.update({
       "system.vitales.hp.value": hpNuevo
     });
 
     resultado.hpPerdido = danioFinal;
+    resultado.hpNuevo = hpNuevo;
 
     return resultado;
   }
 
   // =========================
-  // ITEM EQUIPADO
+  // CON ARMADURA EN LA ZONA
   // =========================
 
-  const defensaActual = toNumber(item.system?.defensa ?? 0);
+  const defensaActual =
+    Math.max(0, toNumber(item.system?.defensa ?? 0));
 
   resultado.defensaInicial = defensaActual;
 
-  const defensaNueva = defensaActual - danioFinal;
+  const danioAbsorbido =
+    Math.min(defensaActual, danioFinal);
 
-  // =========================
-  // ITEM DESTRUIDO
-  // =========================
+  const danioSobrante =
+    Math.max(0, danioFinal - defensaActual);
+
+  const defensaNueva =
+    Math.max(0, defensaActual - danioFinal);
+
+  resultado.danioAbsorbido = danioAbsorbido;
+  resultado.defensaFinal = defensaNueva;
+  resultado.hpPerdido = danioSobrante;
 
   if (defensaNueva <= 0) {
-    const sobrante = Math.abs(defensaNueva);
-
     resultado.itemDestruido = true;
-    resultado.defensaFinal = 0;
 
     await actorObjetivo.update({
       [`system.equipamiento.${slotObjetivo}`]: ""
@@ -110,30 +134,22 @@ export async function aplicarDanioLocalizado(actorObjetivo, danio) {
 
     await item.delete();
 
-    if (sobrante > 0) {
-      const hpActual = toNumber(actorObjetivo.system?.vitales?.hp?.value ?? 0);
-      const hpNuevo = Math.max(0, hpActual - sobrante);
-
-      await actorObjetivo.update({
-        "system.vitales.hp.value": hpNuevo
-      });
-
-      resultado.hpPerdido = sobrante;
-    }
-
-    return resultado;
+  } else {
+    await item.update({
+      "system.defensa": defensaNueva
+    });
   }
 
-  // =========================
-  // ITEM SOBREVIVE
-  // =========================
+  if (danioSobrante > 0) {
+    const hpNuevo =
+      Math.max(0, resultado.hpAnterior - danioSobrante);
 
-  await item.update({
-    "system.defensa": defensaNueva
-  });
+    await actorObjetivo.update({
+      "system.vitales.hp.value": hpNuevo
+    });
 
-  resultado.defensaFinal = defensaNueva;
-  resultado.hpPerdido = 0;
+    resultado.hpNuevo = hpNuevo;
+  }
 
   return resultado;
 }

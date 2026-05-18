@@ -1,7 +1,8 @@
 {
   "id": "mtrol",
   "title": "System MtRol",
-  "version": "1.3.0",
+  "version": "1.4.0",
+  "author": "Juan Bidart",
 
   "compatibility": {
     "minimum": "13",

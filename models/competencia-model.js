@@ -12,6 +12,14 @@ export class CompetenciaDataModel extends foundry.abstract.TypeDataModel {
         max: 5
       }),
 
+      categoria: new fields.StringField({
+        initial: "competencia"
+      }),
+
+      equipadaCombate: new fields.BooleanField({
+        initial: false
+      }),
+
       formula: new fields.StringField({
         initial: ""
       }),
@@ -39,7 +47,24 @@ export class CompetenciaDataModel extends foundry.abstract.TypeDataModel {
       }),
 
       fx: new fields.SchemaField({
+
+        // Compatibilidad vieja
         visual: new fields.StringField({
+          initial: ""
+        }),
+
+        // Nuevo: efecto sobre quien usa la habilidad
+        autocast: new fields.StringField({
+          initial: ""
+        }),
+
+        // Nuevo: efecto que viaja desde caster hacia target
+        proyectil: new fields.StringField({
+          initial: ""
+        }),
+
+        // Nuevo: efecto que explota/aparece sobre el target
+        target: new fields.StringField({
           initial: ""
         }),
 
@@ -57,6 +82,7 @@ export class CompetenciaDataModel extends foundry.abstract.TypeDataModel {
           initial: 1,
           min: 0
         })
+
       }),
 
       descripcion: new fields.StringField({

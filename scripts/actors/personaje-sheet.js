@@ -306,7 +306,11 @@ export class PersonajeSheet extends ActorSheet {
       return;
     }
 
-    await this.actor.unsetFlag("mtrol", "mpStacks");
+    await this.actor.update({
+  "system.mpStack": 0
+});
+
+await this.actor.unsetFlag("mtrol", "mpStacks");
 
     ui.notifications.info(`Día restaurado para ${this.actor.name}.`);
 
@@ -473,63 +477,133 @@ if (esHabilidadCombate && !targetToken) {
   const formula = item.system?.formula?.trim()
     ? item.system.formula.trim()
     : this._formulaCompetenciaPorNivel(nivel);
-   // =========================
+// =========================
 // CONSUMO DE MP + STACKING
+// NUEVA LÓGICA POR CATEGORÍA
 // =========================
 
-const esPasiva =
-  item.system?.categoria === "pasiva" ||
-  item.system?.tipo === "pasiva";
+const categoria =
+  item.system?.categoria ?? "competencia";
 
-const consumeMP =
-  !esPasiva;
+const mpActual =
+  Number(actor.system.vitales?.mp?.value ?? 0);
+
+const stackActual =
+  Number(actor.system?.mpStack ?? 0);
 
 let costoTotal = 0;
 
-if (consumeMP) {
+let nuevoStack =
+  stackActual;
 
-  const mpActual = Number(actor.system.vitales?.mp?.value ?? 0);
+// =========================
+// PASIVA
+// =========================
 
-  const stacks = foundry.utils.duplicate(
-    actor.getFlag("mtrol", "mpStacks") ?? {}
-  );
+if (categoria === "pasiva") {
 
-  const stackKey = item.id;
-  const usosPrevios = Number(stacks[stackKey] ?? 0);
-
-  const costoBasico = 1;
-
-  const costeBaseHabilidad =
-    Number(item.system?.costeMP ?? 1);
-
-  const costoCompetencia =
-    costeBaseHabilidad + usosPrevios;
-
- costoTotal =
-  costoBasico + costoCompetencia;
-
-  if (mpActual < costoTotal) {
-    ui.notifications.warn(
-      `${actor.name} no tiene suficiente MP. Necesita ${costoTotal} MP.`
-    );
-    return;
-  }
-
-  stacks[stackKey] = usosPrevios + 1;
-
-  await actor.update({
-    "system.vitales.mp.value": mpActual - costoTotal
-  });
-
-  await actor.setFlag("mtrol", "mpStacks", stacks);
-
-  const targetText = targetActor
-    ? ` contra <strong>${targetActor.name}</strong>`
-    : "";
-
-
+  costoTotal = 0;
 
 }
+
+// =========================
+// BASICO
+// NO STACKEA
+// =========================
+
+else if (categoria === "basico") {
+
+  costoTotal =
+    Number(item.system?.costeMP ?? 1);
+
+}
+
+// =========================
+// HECHIZO
+// MP = NIVEL
+// NO STACKEA
+// =========================
+
+else if (categoria === "hechizo") {
+
+  costoTotal =
+    Number(item.system?.nivel ?? 1);
+
+}
+
+// =========================
+// COMPETENCIA
+// 1 + STACK GLOBAL
+// =========================
+
+else if (categoria === "competencia") {
+
+  costoTotal =
+    1 + stackActual;
+
+  nuevoStack =
+    stackActual + 1;
+
+}
+
+// =========================
+// HABILIDAD DE COMBATE
+// =========================
+
+else if (categoria === "combate") {
+
+  costoTotal = 5;
+
+}
+
+// =========================
+// CONTRAATAQUE
+// =========================
+
+else if (categoria === "contraataque") {
+
+  costoTotal = 5;
+
+}
+
+// =========================
+// FALLBACK
+// =========================
+
+else {
+
+  costoTotal =
+    Number(item.system?.costeMP ?? 1);
+
+}
+
+// =========================
+// VALIDAR MP
+// =========================
+
+if (mpActual < costoTotal) {
+
+  ui.notifications.warn(
+    `${actor.name} no tiene suficiente MP. Necesita ${costoTotal} MP.`
+  );
+
+  return;
+
+}
+
+// =========================
+// ACTUALIZAR MP
+// =========================
+
+await actor.update({
+
+  "system.vitales.mp.value":
+    mpActual - costoTotal,
+
+  "system.mpStack":
+    nuevoStack
+
+});
     // =========================
     // FX DE COMPETENCIA
     // =========================

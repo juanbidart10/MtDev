@@ -63,7 +63,10 @@ Hooks.once("init", function () {
 });
 
 Hooks.once("ready", function () {
-  console.log("MtRol | READY - Sistema completamente cargado");
+
+  console.log(
+    "MtRol | READY - Sistema completamente cargado"
+  );
 
   // =========================
   // API GLOBAL MTROL
@@ -71,12 +74,81 @@ Hooks.once("ready", function () {
 
   game.mtrol = game.mtrol || {};
 
-  game.mtrol.aplicarDanioLocalizado = aplicarDanioLocalizado;
+  game.mtrol.aplicarDanioLocalizado =
+    aplicarDanioLocalizado;
+
+  game.mtrol.aplicarDanioAutorizado =
+    aplicarDanioAutorizado;
 
   // MOTOR CENTRAL DE TIRADAS
   game.mtrol.roll = mtrolRoll;
 
-  console.log("MtRol | API de combate registrada.");
+  console.log(
+    "MtRol | API de combate registrada."
+  );
+
+  // =====================================================
+  // MTROL SOCKET - ACCIONES AUTORIZADAS
+  // =====================================================
+
+  game.socket.on("system.mtrol", async (data) => {
+
+    // Solo GM ejecuta modificaciones reales
+    if (!game.user.isGM) return;
+
+    if (!data) return;
+
+    if (data.action !== "mtrolAplicarDanio")
+      return;
+
+    try {
+
+      const attackerActor =
+        await fromUuid(data.attackerUuid);
+
+      const targetTokenDocument =
+        await fromUuid(data.targetTokenUuid);
+
+      if (
+        !attackerActor ||
+        !targetTokenDocument ||
+        !targetTokenDocument.actor
+      ) {
+
+        console.warn(
+          "MTROL | Datos inválidos socket daño",
+          data
+        );
+
+        return;
+      }
+
+      const targetActor =
+        targetTokenDocument.actor;
+
+      const payload =
+        data.payload ?? {};
+
+      await game.mtrol.aplicarDanioAutorizado({
+
+        attackerActor,
+        targetActor,
+        targetTokenDocument,
+        payload
+
+      });
+
+    } catch (err) {
+
+      console.error(
+        "MTROL | Error socket daño:",
+        err
+      );
+
+    }
+
+  });
+
 });
 
 // =========================

@@ -587,44 +587,142 @@ function mtrolCalcularCostoMP(actor, item) {
   const categoria =
     item.system?.categoria ?? "competencia";
 
+  const tipo =
+    item.system?.tipo ?? "";
+
   const nivel =
     Number(item.system?.nivel ?? 1);
 
   const costoBase =
     Number(item.system?.costoMP ?? 1);
 
+  // ======================================
+  // STACK GLOBAL ACTUAL
+  // ======================================
+
   const stackActual =
     Number(actor.system?.mpStack ?? 0);
 
-  if (categoria === "pasiva") {
-    return { costo: 0, stackea: false, nuevoStack: stackActual };
+  // ======================================
+  // ATRIBUTOS
+  // ======================================
+
+  if (categoria === "atributo") {
+
+    return {
+      costo: 0,
+      stackea: false,
+      nuevoStack: stackActual
+    };
+
   }
+
+  // ======================================
+  // ATAQUE BASICO
+  // ======================================
 
   if (categoria === "basico") {
-    return { costo: costoBase, stackea: false, nuevoStack: stackActual };
+
+    return {
+      costo: 1,
+      stackea: false,
+      nuevoStack: stackActual
+    };
+
   }
 
-  if (categoria === "hechizo") {
-    return { costo: nivel, stackea: false, nuevoStack: stackActual };
+  // ======================================
+  // HECHIZOS
+  // COSTE POR NIVEL
+  // ======================================
+
+  if (
+    categoria === "hechizo" ||
+    tipo === "hechizo"
+  ) {
+
+    return {
+      costo: nivel,
+      stackea: false,
+      nuevoStack: stackActual
+    };
+
   }
 
-  if (categoria === "competencia") {
-    return { costo: 1 + stackActual, stackea: true, nuevoStack: stackActual + 1 };
+  // ======================================
+  // COMPETENCIAS
+  // STACKING PROGRESIVO
+  // ======================================
+
+  if (
+    categoria === "competencia" ||
+    tipo === "competencia"
+  ) {
+
+    return {
+
+      // 1 → 2 → 3 → 4...
+      costo:
+        1 + stackActual,
+
+      stackea: true,
+
+      nuevoStack:
+        stackActual + 1
+
+    };
+
   }
 
-  if (categoria === "combate") {
-    return { costo: 5, stackea: false, nuevoStack: stackActual };
+  // ======================================
+  // HABILIDADES ESPECIALES
+  // ======================================
+
+  if (
+    categoria === "combate" ||
+    tipo === "habilidadEspecial"
+  ) {
+
+    return {
+      costo: 5,
+      stackea: false,
+      nuevoStack: stackActual
+    };
+
   }
 
-  if (categoria === "contraataque") {
-    return { costo: 5, stackea: false, nuevoStack: stackActual };
+  // ======================================
+  // CONTRAATAQUES
+  // ======================================
+
+  if (
+    categoria === "contraataque" ||
+    tipo === "contraataque"
+  ) {
+
+    return {
+      costo: 5,
+      stackea: false,
+      nuevoStack: stackActual
+    };
+
   }
+
+  // ======================================
+  // DEFAULT
+  // ======================================
 
   return {
+
     costo: costoBase,
+
     stackea: false,
-    nuevoStack: stackActual
+
+    nuevoStack:
+      stackActual
+
   };
+
 }
 
 // ==========================================

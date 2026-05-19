@@ -3785,3 +3785,11 @@ a {
 
   font-weight: 900;
 }
+
+/* =========================================
+   OCULTAR HOTBAR DE MACROS
+========================================= */
+
+#hotbar {
+  display: none !important;
+}

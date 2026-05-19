@@ -78,39 +78,46 @@ export class PersonajeSheet extends ActorSheet {
   }
 
   getData(options) {
-    const context = super.getData(options);
+  const context = super.getData(options);
 
-    context.actor = this.actor;
-    context.system = this.actor.system;
-    context.esGM = game.user.isGM;
+  context.actor = this.actor;
+  context.system = this.actor.system;
+  context.esGM = game.user.isGM;
 
   context.competencias = this.actor.items.filter(
-  i => i.type === "competencia"
-);
+    i => i.type === "competencia"
+  );
 
-context.competenciasGenerales = context.competencias.filter(
-  i => i.system?.categoria !== "combate"
-);
+  const categoriasBarraCombate = [
+    "basico",
+    "combate",
+    "hechizo",
+    "contraataque"
+  ];
 
-context.habilidadesCombate = context.competencias.filter(
-  i => i.system?.categoria === "combate"
-);
+  context.habilidadesCombate = context.competencias.filter(
+    i => categoriasBarraCombate.includes(i.system?.categoria)
+  );
 
-context.habilidadesEquipadasCombate = context.habilidadesCombate.filter(
-  i => i.system?.equipadaCombate === true || i.system?.equipadaCombate === "true"
-);
+  context.competenciasGenerales = context.competencias.filter(
+    i => !categoriasBarraCombate.includes(i.system?.categoria)
+  );
 
-    const objetos = this.actor.items.filter(
-      i => i.type === "objeto" || i.type === "item"
-    );
+  context.habilidadesEquipadasCombate = context.habilidadesCombate.filter(
+    i => i.system?.equipadaCombate === true || i.system?.equipadaCombate === "true"
+  );
 
-    context.objetosInventario = objetos.filter(
-      o => !o.system.equipado
-    );
+  const objetos = this.actor.items.filter(
+    i => i.type === "objeto" || i.type === "item"
+  );
 
-    context.objetosEquipados = objetos.filter(
-      o => o.system.equipado
-    );
+  context.objetosInventario = objetos.filter(
+    o => !o.system.equipado
+  );
+
+  context.objetosEquipados = objetos.filter(
+    o => o.system.equipado
+  );
 
     const slotsBase = [
       "cabeza",

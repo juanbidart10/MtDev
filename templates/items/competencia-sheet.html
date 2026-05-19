@@ -42,9 +42,11 @@
         <div>
           <label>Categoría</label>
           <select name="system.categoria">
+            <option value="basico" {{#if (eq system.categoria "basico")}}selected{{/if}}>Básico</option>
             <option value="competencia" {{#if (eq system.categoria "competencia")}}selected{{/if}}>Competencia</option>
             <option value="combate" {{#if (eq system.categoria "combate")}}selected{{/if}}>Habilidad de combate</option>
             <option value="hechizo" {{#if (eq system.categoria "hechizo")}}selected{{/if}}>Hechizo</option>
+            <option value="contraataque" {{#if (eq system.categoria "contraataque")}}selected{{/if}}>Contraataque</option>
             <option value="pasiva" {{#if (eq system.categoria "pasiva")}}selected{{/if}}>Pasiva</option>
           </select>
         </div>
@@ -109,72 +111,72 @@
 
     <div class="sheet-section mtrol-competencia-section">
 
-<div class="sheet-section mtrol-competencia-section">
+      <h2>FX Visuales</h2>
 
-  <h2>FX Visuales</h2>
+      <div class="form-grid">
 
-  <div class="form-grid">
+        <div class="wide">
+          <label>FX Autocast / Caster</label>
+          <input type="text"
+                 name="system.fx.autocast"
+                 value="{{system.fx.autocast}}"
+                 placeholder="Efecto sobre quien lanza la habilidad" />
+        </div>
 
-    <div class="wide">
-      <label>FX Autocast / Caster</label>
-      <input type="text"
-             name="system.fx.autocast"
-             value="{{system.fx.autocast}}"
-             placeholder="Efecto sobre quien lanza la habilidad" />
+        <div class="wide">
+          <label>FX Proyectil / Trayectoria</label>
+          <input type="text"
+                 name="system.fx.proyectil"
+                 value="{{system.fx.proyectil}}"
+                 placeholder="jb2a.fire_bolt.orange" />
+        </div>
+
+        <div class="wide">
+          <label>FX Target / Impacto</label>
+          <input type="text"
+                 name="system.fx.target"
+                 value="{{system.fx.target}}"
+                 placeholder="modules/JB2A_DnD5e/Library/3rd_Level/Fireball/FireballExplosion_01_Orange_800x800.webm" />
+        </div>
+
+        <div class="wide">
+          <label>FX Visual Legacy</label>
+          <input type="text"
+                 name="system.fx.visual"
+                 value="{{system.fx.visual}}"
+                 placeholder="Campo antiguo. Se usará como fallback temporal." />
+        </div>
+
+        <div class="wide">
+          <label>FX Sonido</label>
+          <input type="text"
+                 name="system.fx.sonido"
+                 value="{{system.fx.sonido}}"
+                 placeholder="sounds/fireball.ogg" />
+        </div>
+
+        <div>
+          <label>Duración</label>
+          <input type="number"
+                 name="system.fx.duracion"
+                 value="{{system.fx.duracion}}"
+                 min="0" />
+        </div>
+
+        <div>
+          <label>Escala</label>
+          <input type="number"
+                 step="0.1"
+                 name="system.fx.escala"
+                 value="{{system.fx.escala}}"
+                 min="0" />
+        </div>
+
+      </div>
+
     </div>
 
-    <div class="wide">
-      <label>FX Proyectil / Trayectoria</label>
-      <input type="text"
-             name="system.fx.proyectil"
-             value="{{system.fx.proyectil}}"
-             placeholder="jb2a.fire_bolt.orange" />
-    </div>
-
-    <div class="wide">
-      <label>FX Target / Impacto</label>
-      <input type="text"
-             name="system.fx.target"
-             value="{{system.fx.target}}"
-             placeholder="modules/JB2A_DnD5e/Library/3rd_Level/Fireball/FireballExplosion_01_Orange_800x800.webm" />
-    </div>
-
-    <div class="wide">
-      <label>FX Visual Legacy</label>
-      <input type="text"
-             name="system.fx.visual"
-             value="{{system.fx.visual}}"
-             placeholder="Campo antiguo. Se usará como fallback temporal." />
-    </div>
-
-    <div class="wide">
-      <label>FX Sonido</label>
-      <input type="text"
-             name="system.fx.sonido"
-             value="{{system.fx.sonido}}"
-             placeholder="sounds/fireball.ogg" />
-    </div>
-
-    <div>
-      <label>Duración</label>
-      <input type="number"
-             name="system.fx.duracion"
-             value="{{system.fx.duracion}}"
-             min="0" />
-    </div>
-
-    <div>
-      <label>Escala</label>
-      <input type="number"
-             step="0.1"
-             name="system.fx.escala"
-             value="{{system.fx.escala}}"
-             min="0" />
-    </div>
-
-  </div>
-
-</div>
+    <div class="sheet-section mtrol-competencia-section">
 
       <h2>Descripción</h2>
 

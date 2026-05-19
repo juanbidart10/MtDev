@@ -210,13 +210,13 @@ const MTROL_SKILLS = {
     categoria: "oposicion",
 
     usaCompetencia: true,
-    formula: "1d20 + @competencia",
+    formula: "null",
 
     usaArmas: false,
 
     consumeMP: true,
-    costoMPBase: 5,
-    usaStackMP: true,
+    costoMPPorNivel: true,
+    usaStackMP: false,
 
     ejecutaDanio: false,
     usaDanioLocalizado: false,
@@ -541,7 +541,7 @@ Object.assign(MTROL_SKILLS, {
   // NO aplica daño directamente
   // ======================================
 
-  "competencia-magica": {
+    "competencia-magica": {
 
     nombre: "Competencia Mágica",
 
@@ -577,6 +577,56 @@ Object.assign(MTROL_SKILLS, {
   }
 
 });
+
+// ==========================================
+// MTROL - CALCULO CENTRAL MP
+// ==========================================
+
+function mtrolCalcularCostoMP(actor, item) {
+
+  const categoria =
+    item.system?.categoria ?? "competencia";
+
+  const nivel =
+    Number(item.system?.nivel ?? 1);
+
+  const costoBase =
+    Number(item.system?.costoMP ?? 1);
+
+  const stackActual =
+    Number(actor.system?.mpStack ?? 0);
+
+  if (categoria === "pasiva") {
+    return { costo: 0, stackea: false, nuevoStack: stackActual };
+  }
+
+  if (categoria === "basico") {
+    return { costo: costoBase, stackea: false, nuevoStack: stackActual };
+  }
+
+  if (categoria === "hechizo") {
+    return { costo: nivel, stackea: false, nuevoStack: stackActual };
+  }
+
+  if (categoria === "competencia") {
+    return { costo: 1 + stackActual, stackea: true, nuevoStack: stackActual + 1 };
+  }
+
+  if (categoria === "combate") {
+    return { costo: 5, stackea: false, nuevoStack: stackActual };
+  }
+
+  if (categoria === "contraataque") {
+    return { costo: 5, stackea: false, nuevoStack: stackActual };
+  }
+
+  return {
+    costo: costoBase,
+    stackea: false,
+    nuevoStack: stackActual
+  };
+}
+
 // ==========================================
 // MTROL SKILL ENGINE
 // ==========================================
@@ -584,6 +634,9 @@ Object.assign(MTROL_SKILLS, {
 Hooks.once("ready", () => {
 
   game.mtrol = game.mtrol ?? {};
+
+  
+  
 
   // ==========================================
   // MTROL - INICIATIVA COMPLETA
@@ -691,33 +744,80 @@ Hooks.once("ready", () => {
 
 
   // ==========================================
-  // USE SKILL
-  // ==========================================
+// USE SKILL
+// ==========================================
 
-  game.mtrol.useSkill = async function({
-    actor,
-    target = null,
-    skill,
-    combatant = null
-  }) {
+game.mtrol.useSkill = async function({
+  actor,
+  target = null,
+  skill,
+  combatant = null
+}) {
 
-    const skillData = MTROL_SKILLS[skill];
+  const skillData = MTROL_SKILLS[skill];
 
-    if (!skillData) {
-      ui.notifications.error(`Skill no encontrada: ${skill}`);
+  if (!skillData) {
+    ui.notifications.error(`Skill no encontrada: ${skill}`);
+    return;
+  }
+
+  if (skill === "iniciativa") {
+    return await game.mtrol.rollInitiative({
+      actor,
+      combatant
+    });
+  }
+
+  console.log(`Skill ejecutada: ${skill}`);
+
+  // ======================================
+  // BUSCAR ITEM REAL DEL ACTOR
+  // ======================================
+
+  const item = actor.items.find(i =>
+    i.name?.toLowerCase().trim() ===
+    skill.toLowerCase().trim()
+  );
+
+  // ======================================
+  // CALCULO Y CONSUMO MP
+  // ======================================
+
+  if (item) {
+
+    const resultadoMP =
+      mtrolCalcularCostoMP(actor, item);
+
+    const mpActual =
+      Number(actor.system.vitales?.mp?.value ?? 0);
+
+    if (mpActual < resultadoMP.costo) {
+
+      ui.notifications.warn(
+        `${actor.name} no tiene suficiente MP.`
+      );
+
       return;
     }
 
-    if (skill === "iniciativa") {
-      return await game.mtrol.rollInitiative({
-        actor,
-        combatant
-      });
-    }
+    const nuevoMP =
+      Math.max(0, mpActual - resultadoMP.costo);
 
-    console.log(`Skill ejecutada: ${skill}`);
+    await actor.update({
+      "system.vitales.mp.value": nuevoMP,
+      "system.mpStack": resultadoMP.nuevoStack
+    });
+
+    console.log(
+      `MtRol | ${actor.name} consumió ${resultadoMP.costo} MP`
+    );
+  }
+
+  return {
+    skill,
+    skillData
   };
-
+};
 
   // ==========================================
   // CONECTAR DADO DEL COMBAT TRACKER

@@ -62,6 +62,239 @@ Hooks.once("init", function () {
   );
 });
 
+// =====================================================
+// MTROL - APLICAR DAÑO AUTORIZADO
+// Ejecuta el GM, pero la acción puede venir del jugador.
+// Solo modifica HP, defensa y rotura de equipo.
+// =====================================================
+
+async function aplicarDanioAutorizado({
+  attackerActor,
+  targetActor,
+  targetTokenDocument,
+  payload
+}) {
+
+  if (!game.user.isGM) return;
+
+  const danio =
+    Number(payload?.danio ?? 0);
+
+  const slot =
+    payload?.slot ?? null;
+
+  if (
+    !targetActor ||
+    !Number.isFinite(danio) ||
+    danio <= 0
+  ) {
+
+    console.warn(
+      "MTROL | Daño autorizado inválido:",
+      payload
+    );
+
+    return;
+  }
+
+  const hpActual =
+    Number(
+      targetActor.system?.hp?.value ?? 0
+    );
+
+  let danioRestante =
+    danio;
+
+  let itemDefensivo =
+    null;
+
+  let defensaActual =
+    0;
+
+  let defensaNueva =
+    0;
+
+  let itemDestruido =
+    false;
+
+  // =========================================
+  // BUSCAR EQUIPO DEFENSIVO
+  // =========================================
+
+  if (slot) {
+
+    itemDefensivo =
+      targetActor.items.find(i =>
+
+        i.type === "objeto" &&
+        i.system?.equipado === true &&
+        i.system?.slot === slot &&
+        Number(i.system?.defensa ?? 0) > 0
+
+      );
+
+    // =====================================
+    // ARMADURA ENCONTRADA
+    // =====================================
+
+    if (itemDefensivo) {
+
+      defensaActual =
+        Number(
+          itemDefensivo.system.defensa ?? 0
+        );
+
+      // =================================
+      // ARMADURA SE ROMPE
+      // =================================
+
+      if (danio >= defensaActual) {
+
+        danioRestante =
+          danio - defensaActual;
+
+        defensaNueva =
+          0;
+
+        itemDestruido =
+          true;
+
+        await targetActor.deleteEmbeddedDocuments(
+          "Item",
+          [itemDefensivo.id]
+        );
+
+      }
+
+      // =================================
+      // ARMADURA ABSORBE
+      // =================================
+
+      else {
+
+        defensaNueva =
+          defensaActual - danio;
+
+        danioRestante =
+          0;
+
+        await itemDefensivo.update({
+
+          "system.defensa":
+            defensaNueva
+
+        });
+
+      }
+
+    }
+
+  }
+
+  // =========================================
+  // APLICAR HP
+  // =========================================
+
+  const hpNuevo =
+    Math.max(
+      0,
+      hpActual - danioRestante
+    );
+
+  await targetActor.update({
+
+    "system.hp.value":
+      hpNuevo
+
+  });
+
+  // =========================================
+  // MUERTE
+  // =========================================
+
+  if (
+    hpNuevo <= 0 &&
+    targetTokenDocument
+  ) {
+
+    await targetTokenDocument.update({
+
+      overlayEffect:
+        "icons/svg/skull.svg"
+
+    });
+
+  }
+
+  // =========================================
+  // CHAT CARD
+  // =========================================
+
+  await ChatMessage.create({
+
+    speaker:
+      ChatMessage.getSpeaker({
+        actor: attackerActor
+      }),
+
+    content: `
+
+      <div class="mtrol-chat-card">
+
+        <h2>Daño aplicado</h2>
+
+        <p>
+          <b>Atacante:</b>
+          ${attackerActor.name}
+        </p>
+
+        <p>
+          <b>Objetivo:</b>
+          ${targetActor.name}
+        </p>
+
+        <p>
+          <b>Daño total:</b>
+          ${danio}
+        </p>
+
+        ${slot
+          ? `<p><b>Zona:</b> ${slot}</p>`
+          : ""
+        }
+
+        ${itemDefensivo
+          ? `<p><b>Armadura:</b> ${itemDefensivo.name}</p>`
+          : ""
+        }
+
+        ${itemDefensivo
+          ? `<p><b>Defensa:</b> ${defensaActual} → ${defensaNueva}</p>`
+          : ""
+        }
+
+        ${itemDestruido
+          ? `<p><b>Resultado:</b> Armadura destruida</p>`
+          : ""
+        }
+
+        <p>
+          <b>Daño a HP:</b>
+          ${danioRestante}
+        </p>
+
+        <p>
+          <b>HP:</b>
+          ${hpActual} → ${hpNuevo}
+        </p>
+
+      </div>
+
+    `
+  });
+
+}
+
 Hooks.once("ready", function () {
 
   console.log(

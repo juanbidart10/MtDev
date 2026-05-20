@@ -584,56 +584,134 @@ Object.assign(MTROL_SKILLS, {
 
 function mtrolCalcularCostoMP(actor, item) {
 
+  const system =
+    item.system ?? {};
+
   const categoria =
-    item.system?.categoria ?? "competencia";
+    system.categoria ?? "";
 
   const tipo =
-    item.system?.tipo ?? "";
+    system.tipo ?? "";
+
+  const itemType =
+    item.type ?? "";
+
+  const skillKey =
+    String(system.skillKey ?? item.id ?? item.name);
 
   const nivel =
-    Number(item.system?.nivel ?? 1);
+    Number(system.nivel ?? 1);
 
   const costoBase =
-    Number(item.system?.costoMP ?? 1);
+    Number(
+      system.costoMP ??
+      system.costoMPBase ??
+      1
+    );
 
-  // ======================================
-  // STACK GLOBAL ACTUAL
-  // ======================================
+  const stacks =
+    foundry.utils.duplicate(
+      actor.getFlag("mtrol", "mpStacks") ?? {}
+    );
 
   const stackActual =
-    Number(actor.system?.mpStack ?? 0);
+    Number(stacks[skillKey] ?? 0);
 
   // ======================================
   // ATRIBUTOS
   // ======================================
 
-  if (categoria === "atributo") {
+  if (
+    categoria === "atributo" ||
+    tipo === "atributo"
+  ) {
 
     return {
       costo: 0,
       stackea: false,
-      nuevoStack: stackActual
+      stacks
     };
 
   }
 
   // ======================================
-  // ATAQUE BASICO
+  // COMPETENCIAS / STACK
   // ======================================
 
-  if (categoria === "basico") {
+  if (
+    system.usaStackMP === true ||
+    itemType === "competencia" ||
+    categoria === "competencia" ||
+    tipo === "competencia"
+  ) {
+
+    stacks[skillKey] =
+      stackActual + 1;
+
+    return {
+      costo: 1 + stackActual,
+      stackea: true,
+      stacks
+    };
+
+  }
+
+  // ======================================
+  // BÁSICO
+  // ======================================
+
+  if (
+    categoria === "basico" ||
+    tipo === "basico"
+  ) {
 
     return {
       costo: 1,
       stackea: false,
-      nuevoStack: stackActual
+      stacks
+    };
+
+  }
+
+  // ======================================
+  // CONTRAATAQUE
+  // ======================================
+
+  if (
+    categoria === "contraataque" ||
+    tipo === "contraataque" ||
+    skillKey.includes("contraataque")
+  ) {
+
+    return {
+      costo: 5,
+      stackea: false,
+      stacks
+    };
+
+  }
+
+  // ======================================
+  // HABILIDAD ESPECIAL
+  // ======================================
+
+  if (
+    categoria === "combate" ||
+    tipo === "habilidadEspecial" ||
+    tipo === "habilidad-especial" ||
+    skillKey.includes("habilidad-especial")
+  ) {
+
+    return {
+      costo: 5,
+      stackea: false,
+      stacks
     };
 
   }
 
   // ======================================
   // HECHIZOS
-  // COSTE POR NIVEL
   // ======================================
 
   if (
@@ -644,66 +722,7 @@ function mtrolCalcularCostoMP(actor, item) {
     return {
       costo: nivel,
       stackea: false,
-      nuevoStack: stackActual
-    };
-
-  }
-
-  // ======================================
-  // COMPETENCIAS
-  // STACKING PROGRESIVO
-  // ======================================
-
-  if (
-    categoria === "competencia" ||
-    tipo === "competencia"
-  ) {
-
-    return {
-
-      // 1 → 2 → 3 → 4...
-      costo:
-        1 + stackActual,
-
-      stackea: true,
-
-      nuevoStack:
-        stackActual + 1
-
-    };
-
-  }
-
-  // ======================================
-  // HABILIDADES ESPECIALES
-  // ======================================
-
-  if (
-    categoria === "combate" ||
-    tipo === "habilidadEspecial"
-  ) {
-
-    return {
-      costo: 5,
-      stackea: false,
-      nuevoStack: stackActual
-    };
-
-  }
-
-  // ======================================
-  // CONTRAATAQUES
-  // ======================================
-
-  if (
-    categoria === "contraataque" ||
-    tipo === "contraataque"
-  ) {
-
-    return {
-      costo: 5,
-      stackea: false,
-      nuevoStack: stackActual
+      stacks
     };
 
   }
@@ -713,18 +732,12 @@ function mtrolCalcularCostoMP(actor, item) {
   // ======================================
 
   return {
-
     costo: costoBase,
-
     stackea: false,
-
-    nuevoStack:
-      stackActual
-
+    stacks
   };
 
 }
-
 // ==========================================
 // MTROL SKILL ENGINE
 // ==========================================
@@ -841,7 +854,7 @@ Hooks.once("ready", () => {
   };
 
 
-  // ==========================================
+ // ==========================================
 // USE SKILL
 // ==========================================
 
@@ -868,23 +881,38 @@ game.mtrol.useSkill = async function({
 
   console.log(`Skill ejecutada: ${skill}`);
 
-  // ======================================
-  // BUSCAR ITEM REAL DEL ACTOR
-  // ======================================
-
   const item = actor.items.find(i =>
-    i.name?.toLowerCase().trim() ===
-    skill.toLowerCase().trim()
+    i.id === skill ||
+    i.name?.toLowerCase().trim() === skill.toLowerCase().trim()
   );
 
-  // ======================================
-  // CALCULO Y CONSUMO MP
-  // ======================================
+  const itemParaMP = {
+    id: item?.id ?? skill,
+    name: item?.name ?? skillData.nombre ?? skill,
+    type: item?.type ?? "",
+    system: {
+      ...(item?.system ? foundry.utils.duplicate(item.system) : {}),
+      ...skillData,
+      skillKey: skill,
+      categoria:
+        skillData.usaStackMP === true
+          ? "competencia"
+          : (item?.system?.categoria ?? skillData.categoria),
+      tipo:
+        skillData.tipo ?? item?.system?.tipo ?? "",
+      nivel:
+        item?.system?.nivel ?? skillData.nivel ?? 1,
+      costoMP:
+        item?.system?.costoMP ?? skillData.costoMPBase ?? 1,
+      usaStackMP:
+        skillData.usaStackMP === true
+    }
+  };
 
-  if (item) {
+  if (skillData.consumeMP) {
 
     const resultadoMP =
-      mtrolCalcularCostoMP(actor, item);
+      mtrolCalcularCostoMP(actor, itemParaMP);
 
     const mpActual =
       Number(actor.system.vitales?.mp?.value ?? 0);
@@ -899,24 +927,47 @@ game.mtrol.useSkill = async function({
     }
 
     const nuevoMP =
-      Math.max(0, mpActual - resultadoMP.costo);
+      Math.max(
+        0,
+        mpActual - resultadoMP.costo
+      );
 
     await actor.update({
-      "system.vitales.mp.value": nuevoMP,
-      "system.mpStack": resultadoMP.nuevoStack
+      "system.vitales.mp.value": nuevoMP
     });
+
+    const debeStackear =
+      resultadoMP.stackea === true ||
+      skillData.usaStackMP === true ||
+      item?.type === "competencia";
+
+    if (debeStackear) {
+
+      await actor.setFlag(
+        "mtrol",
+        "mpStacks",
+        resultadoMP.stacks
+      );
+
+      console.log(
+        "MTROL | Stack MP guardado",
+        resultadoMP.stacks
+      );
+
+    }
 
     console.log(
       `MtRol | ${actor.name} consumió ${resultadoMP.costo} MP`
     );
+
   }
 
   return {
     skill,
     skillData
   };
-};
 
+};
   // ==========================================
   // CONECTAR DADO DEL COMBAT TRACKER
   // ==========================================

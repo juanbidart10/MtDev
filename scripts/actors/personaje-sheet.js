@@ -479,7 +479,7 @@ if (esHabilidadCombate && !targetToken) {
     : this._formulaCompetenciaPorNivel(nivel);
 // =========================
 // CONSUMO DE MP + STACKING
-// NUEVA LÓGICA POR CATEGORÍA
+// LÓGICA POR CATEGORÍA
 // =========================
 
 const categoria =
@@ -488,13 +488,22 @@ const categoria =
 const mpActual =
   Number(actor.system.vitales?.mp?.value ?? 0);
 
-const stackActual =
-  Number(actor.system?.mpStack ?? 0);
-
 let costoTotal = 0;
 
-let nuevoStack =
-  stackActual;
+// =========================
+// STACKS POR COMPETENCIA
+// =========================
+
+const stacks =
+  foundry.utils.duplicate(
+    actor.getFlag("mtrol", "mpStacks") ?? {}
+  );
+
+const stackKey =
+  String(item.id ?? item.name);
+
+const stackActual =
+  Number(stacks[stackKey] ?? 0);
 
 // =========================
 // PASIVA
@@ -514,7 +523,11 @@ if (categoria === "pasiva") {
 else if (categoria === "basico") {
 
   costoTotal =
-    Number(item.system?.costeMP ?? 1);
+    Number(
+      item.system?.costeMP ??
+      item.system?.costoMP ??
+      1
+    );
 
 }
 
@@ -533,7 +546,10 @@ else if (categoria === "hechizo") {
 
 // =========================
 // COMPETENCIA
-// 1 + STACK GLOBAL
+// STACK POR ITEM
+// 1er uso = 1
+// 2do uso = 2
+// 3er uso = 3
 // =========================
 
 else if (categoria === "competencia") {
@@ -541,7 +557,7 @@ else if (categoria === "competencia") {
   costoTotal =
     1 + stackActual;
 
-  nuevoStack =
+  stacks[stackKey] =
     stackActual + 1;
 
 }
@@ -573,7 +589,11 @@ else if (categoria === "contraataque") {
 else {
 
   costoTotal =
-    Number(item.system?.costeMP ?? 1);
+    Number(
+      item.system?.costeMP ??
+      item.system?.costoMP ??
+      1
+    );
 
 }
 
@@ -598,17 +618,30 @@ if (mpActual < costoTotal) {
 await actor.update({
 
   "system.vitales.mp.value":
-    mpActual - costoTotal,
-
-  "system.mpStack":
-    nuevoStack
+    mpActual - costoTotal
 
 });
-    // =========================
-    // FX DE COMPETENCIA
-    // =========================
 
-  await this._playCompetenciaFX(item, targetToken);
+if (categoria === "competencia") {
+
+  await actor.setFlag(
+    "mtrol",
+    "mpStacks",
+    stacks
+  );
+
+  console.log(
+    "MTROL | Stack MP competencia guardado",
+    stacks
+  );
+
+}
+
+// =========================
+// FX DE COMPETENCIA
+// =========================
+
+await this._playCompetenciaFX(item, targetToken);
 
 // =========================
 // HABILIDAD DE BARRA
